@@ -1,4 +1,4 @@
-# reaper-multi-manager
+# Reaper-Multi-Manager
 
 The ultimate goal of this platform would be to facilitate better monitoring and risk management for Reaper and lower the technical barriers to strategy management.
 
