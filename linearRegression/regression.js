@@ -1,4 +1,4 @@
-export function calculateLinearRegression(xData, yData) {
+function calculateLinearRegression(xData, yData) {
     if (xData.length !== yData.length) {
       throw new Error("Input arrays must have the same length");
     }
@@ -38,3 +38,5 @@ export function calculateLinearRegression(xData, yData) {
         rSquared,
     };
 }  
+
+export { calculateLinearRegression };
