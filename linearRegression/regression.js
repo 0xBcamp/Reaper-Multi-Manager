@@ -1,4 +1,4 @@
-function calculateLinearRegression(xData, yData) {
+export function calculateLinearRegression(xData, yData) {
     if (xData.length !== yData.length) {
       throw new Error("Input arrays must have the same length");
     }
@@ -37,15 +37,4 @@ function calculateLinearRegression(xData, yData) {
         intercept,
         rSquared,
     };
-  }
-  
-  // Example data
-  const xData = [1, 2, 3, 4, 5];
-  const yData = [2, 3.8, 5.1, 7.2, 8.6];
-  
-  const regressionExample = calculateLinearRegression(xData, yData);
-  console.log("Slope:", regressionExample.slope);
-  console.log("Intercept:", regressionExample.intercept);
-  console.log("Linear equation:", regressionExample.slope,"* X +", regressionExample.intercept);
-  console.log("R-squared:", regressionExample.rSquared);
-  console.log("predictedY at xData(xData.length):", regressionExample.slope * xData[xData.length-1] + regressionExample.intercept)
+}  

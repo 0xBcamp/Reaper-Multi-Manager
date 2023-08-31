@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chart.js Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Linear Regression Chart</h1>
+  <form id="data-form">
+    <label for="x-data">X Data:</label>
+    <input type="text" id="x-data" placeholder="Enter x values (comma-separated)">
+    <br>
+    <label for="y-data">Y Data:</label>
+    <input type="text" id="y-data" placeholder="Enter y values (comma-separated)">
+    <br>
+    <button type="button" id="calculate-button">Calculate Regression</button>
+  </form>
+  
+  <span id="r-squared"></span> <!-- Display R-squared value here -->
+  
+  <canvas id="myChart"></canvas>
+  <script src="chart.js"></script>
+</body>
+</html>
