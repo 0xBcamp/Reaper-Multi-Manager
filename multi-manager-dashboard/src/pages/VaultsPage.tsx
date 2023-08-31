@@ -17,7 +17,7 @@ const VaultsPage = () => {
         <div className='grid grid-cols-4 gap-4 m-4'>
             {data?.vaults.map(vault => {
                 return (
-                    <Link to={`vaults/${vault.id}`} key={vault.id}>
+                    <Link to={`${vault.id}`} key={vault.id}>
                         <div className="shadow-md rounded-lg p-6 text-center bg-white">
                             <h2 className="text-sm mb-4">Vault: <span className="text-gray-600">{vault.id}</span></h2>
                             <div className='flex flex-row justify-between'>
