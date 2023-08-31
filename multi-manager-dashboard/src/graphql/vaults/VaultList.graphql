@@ -1,0 +1,9 @@
+query VaultList {
+  vaults {
+    id
+    apr
+    nrOfStrategies
+    pricePerFullShare
+    lastUpdated
+  }
+}

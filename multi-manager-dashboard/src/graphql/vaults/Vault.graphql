@@ -1,0 +1,30 @@
+query Vault($vaultId: ID!) {
+  vault(id: $vaultId) {
+    nrOfStrategies
+    id
+    lastUpdated
+    strategies {
+      id
+      reports(orderBy: timestamp, orderDirection: desc, first: 30) {
+        results {
+          apr
+          blockNumber
+          duration
+          endTimestamp
+          startTimestamp
+          timestamp
+          id
+        }
+        allocBPS
+        allocated
+        allocationAdded
+        debtPaid
+        gain
+        gains
+        id
+        loss
+        losses
+      }
+    }
+  }
+}
