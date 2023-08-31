@@ -17,7 +17,7 @@ function App() {
   return (
     <div className="bg-slate-50 h-screen w-full flex flex-row">
       <div className={`overflow-hidden w-[${isSidebarCollapsed ? "0" : "260"}px] transition-all duration-300 ease-in-out whitespace-nowrap`}>
-        <SideBar />
+        {!isSidebarCollapsed && <SideBar />}
       </div>
       <div className="flex-1">
         <NavBar
