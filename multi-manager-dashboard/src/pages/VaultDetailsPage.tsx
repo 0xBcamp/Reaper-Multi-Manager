@@ -4,6 +4,7 @@ import { executeGQL } from '../lib/excecuteGraphQL';
 import { VaultDocument, VaultQuery } from '../gql/graphql';
 import CurveFitChart, { CurveFitData, CurveFitGraph } from '../components/charts/CurveFitChart';
 import Card from '../components/cards/Card';
+import { vaults } from '../utils/vaults';
 
 const VaultDetailsPage = () => {
   let { vaultId } = useParams();
@@ -38,7 +39,7 @@ const VaultDetailsPage = () => {
   return (
     <>
       <div className='p-4'>
-        <span className='text-lg'>Vault: </span><span className='text-lg'>{vault?.vault?.id}</span>
+        <span className='text-lg'>{vaults.find(x => x.address === vault?.vault?.id)?.name}</span>
       </div>
       <div className='grid grid-cols-4 gap-4 m-4'>
         {graphs?.map((graph, index) => {
