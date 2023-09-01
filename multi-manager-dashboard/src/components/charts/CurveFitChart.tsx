@@ -82,7 +82,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
                         y: p.apr / 100
                     }
                 }),
-                backgroundColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'blue',
             },
             {
                 label: 'Regression Line',
