@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { executeGQL } from '../lib/excecuteGraphQL';
 import { VaultDocument, VaultQuery } from '../gql/graphql';
 import CurveFitChart, { CurveFitData, CurveFitGraph } from '../components/charts/CurveFitChart';
+import Card from '../components/cards/Card';
 
 const VaultDetailsPage = () => {
   let { vaultId } = useParams();
@@ -39,15 +40,12 @@ const VaultDetailsPage = () => {
       <div className='p-4'>
         <span className='text-lg'>Vault: </span><span className='text-lg'>{vault?.vault?.id}</span>
       </div>
-      <div className='grid grid-cols-3 gap-4 m-4 h-96'>
+      <div className='grid grid-cols-4 gap-4 m-4'>
         {graphs?.map((graph, index) => {
           return (
-            <div key={index} className="shadow-md rounded-lg text-center bg-white h-96">
-              <div className='p-2  shadow'>
-                {graph.name}
-              </div>
+            <Card key={index} title={graph.name}>
               <CurveFitChart graph={graph}/>
-            </div>
+            </Card>
           )
         })}
 
