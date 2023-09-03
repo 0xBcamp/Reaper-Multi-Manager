@@ -5,6 +5,7 @@ import { VaultDocument, VaultQuery } from '../gql/graphql';
 import CurveFitChart, { CurveFitData, CurveFitGraph } from '../components/charts/CurveFitChart';
 import Card from '../components/cards/Card';
 import { vaults } from '../utils/vaults';
+import { timeStamp } from 'console';
 
 const VaultDetailsPage = () => {
   let { vaultId } = useParams();
@@ -23,7 +24,8 @@ const VaultDetailsPage = () => {
           data: strategy.reports.map((report, index) => {
             const data: CurveFitData = {
               index,
-              apr: report.results?.apr ? report.results?.apr : 0
+              apr: report.results?.apr ? report.results?.apr : 0,
+              timestamp: report.results?.timestamp ? report.results?.timestamp : 0
             }
             return data;
           })

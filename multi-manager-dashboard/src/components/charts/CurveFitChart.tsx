@@ -27,18 +27,19 @@ export type CurveFitGraph = {
 export type CurveFitData = {
     index: number,
     apr: number,
+    timestamp: number,
 }
 
 interface ICurveFitChartProps {
     graph: CurveFitGraph
 }
 const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
-    const linearRegressionResults = calculateLinearRegression(graph.data.map(x => x.index), graph.data.map(x => (x.apr / 100)));
+    const linearRegressionResults = calculateLinearRegression(graph.data.map(x => x.timestamp), graph.data.map(x => (x.apr / 100)));
 
     const options: _DeepPartialObject<CoreChartOptions<"scatter"> & ElementChartOptions<"scatter"> & PluginChartOptions<"scatter"> & DatasetChartOptions<"scatter"> & ScaleChartOptions<"scatter"> & LineControllerChartOptions> = {
         scales: {
             x: {
-                beginAtZero: true,
+                beginAtZero: false,
                 ticks: {
                     display: false,
                 },
@@ -78,7 +79,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
             {
                 data: graph.data.map(p => {
                     return {
-                        x: p.index,
+                        x: p.timestamp,
                         y: p.apr / 100
                     }
                 }),
@@ -86,7 +87,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
             },
             {
                 label: 'Regression Line',
-                data: graph.data.map(x => ({ x: x.index, y: linearRegressionResults.slope * x.index + linearRegressionResults.intercept })),
+                data: graph.data.map(x => ({ x: x.timestamp, y: linearRegressionResults.slope * x.timestamp + linearRegressionResults.intercept })),
                 borderColor: 'green',
                 backgroundColor: 'transparent',
                 borderWidth: 1,
