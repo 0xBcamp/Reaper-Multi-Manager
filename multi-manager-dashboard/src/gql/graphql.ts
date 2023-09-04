@@ -1173,6 +1173,8 @@ export enum _SubgraphErrorPolicy_ {
 
 export type VaultQueryVariables = Exact<{
   vaultId: Scalars['ID']['input'];
+  currentUnixTime: Scalars['BigInt']['input'];
+  timestampOneMonthAgo: Scalars['BigInt']['input'];
 }>;
 
 
@@ -1199,14 +1201,18 @@ export class TypedDocumentString<TResult, TVariables>
 }
 
 export const VaultDocument = new TypedDocumentString(`
-    query Vault($vaultId: ID!) {
+    query Vault($vaultId: ID!, $currentUnixTime: BigInt!, $timestampOneMonthAgo: BigInt!) {
   vault(id: $vaultId) {
     nrOfStrategies
     id
     lastUpdated
     strategies {
       id
-      reports(orderBy: timestamp, orderDirection: desc, first: 30) {
+      reports(
+        orderBy: timestamp
+        orderDirection: desc
+        where: {timestamp_gte: $timestampOneMonthAgo, timestamp_lte: $currentUnixTime}
+      ) {
         results {
           apr
           blockNumber

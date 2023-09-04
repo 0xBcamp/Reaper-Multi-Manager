@@ -1,4 +1,4 @@
-query Vault($vaultId: ID!) {
+query Vault($vaultId: ID!, $currentUnixTime: BigInt!, $timestampOneMonthAgo: BigInt!) {
   vault(id: $vaultId) {
     nrOfStrategies
     id
@@ -9,8 +9,8 @@ query Vault($vaultId: ID!) {
         orderBy: timestamp
         orderDirection: desc
         where: {
-          timestamp_gte: TIMESTAMP_ONE_MONTH_AGO
-          timestamp_lte: CURRENT_UNIX_TIME
+          timestamp_gte: $timestampOneMonthAgo
+          timestamp_lte: $currentUnixTime
         }
       ) {
         results {
@@ -35,7 +35,3 @@ query Vault($vaultId: ID!) {
     }
   }
 }
-
-# Define the Unix timestamps for one month ago and now
-const TIMESTAMP_ONE_MONTH_AGO = YOUR_UNIX_TIMESTAMP_ONE_MONTH_AGO;
-const CURRENT_UNIX_TIME = Math.floor(Date.now() / 1000); // Current Unix timestamp

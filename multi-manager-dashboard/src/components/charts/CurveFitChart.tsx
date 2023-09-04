@@ -15,6 +15,7 @@ import {
 import { _DeepPartialObject } from 'chart.js/dist/types/utils';
 import { Scatter } from 'react-chartjs-2';
 import { calculateLinearRegression } from '../../lib/math/linearRegression';
+import { TIMESTAMP_ONE_MONTH_AGO } from '../../utils/constants';
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
@@ -34,12 +35,8 @@ interface ICurveFitChartProps {
     graph: CurveFitGraph
 }
 const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
-    const currentDate = new Date();
-    currentDate.setMonth(currentDate.getMonth() - 1); // Subtract one month
-    const oneMonthAgoTimestamp = currentDate.getTime() / 1000; // Convert to Unix timestamp
-
     // Normalize the x-axis data where one month ago is 0 and now is 1
-    const normalizedXData = graph.data.map(x => (x.timestamp - oneMonthAgoTimestamp) / (Date.now() / 1000 - oneMonthAgoTimestamp));
+    const normalizedXData = graph.data.map(x => (x.timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO));
 
     const linearRegressionResults = calculateLinearRegression(normalizedXData, graph.data.map(x => (x.apr / 100)));
 
@@ -86,7 +83,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
             {
                 data: graph.data.map(p => {
                     return {
-                        x: (p.timestamp - oneMonthAgoTimestamp) / (Date.now() / 1000 - oneMonthAgoTimestamp), // Normalize the x-axis data
+                        x: (p.timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO), // Normalize the x-axis data
                         y: p.apr / 100
                     }
                 }),
@@ -94,7 +91,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
             },
             {
                 label: 'Regression Line',
-                data: graph.data.map(x => ({ x: (x.timestamp - oneMonthAgoTimestamp) / (Date.now() / 1000 - oneMonthAgoTimestamp), y: linearRegressionResults.slope * (x.timestamp - oneMonthAgoTimestamp) / (Date.now() / 1000 - oneMonthAgoTimestamp) + linearRegressionResults.intercept })),
+                data: graph.data.map(x => ({ x: (x.timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO), y: linearRegressionResults.slope * (x.timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO) + linearRegressionResults.intercept })),
                 borderColor: 'green',
                 backgroundColor: 'transparent',
                 borderWidth: 1,
