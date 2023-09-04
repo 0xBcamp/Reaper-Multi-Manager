@@ -34,7 +34,14 @@ interface ICurveFitChartProps {
     graph: CurveFitGraph
 }
 const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
-    const linearRegressionResults = calculateLinearRegression(graph.data.map(x => x.timestamp), graph.data.map(x => (x.apr / 100)));
+    const currentDate = new Date();
+    currentDate.setMonth(currentDate.getMonth() - 1); // Subtract one month
+    const oneMonthAgoTimestamp = currentDate.getTime() / 1000; // Convert to Unix timestamp
+
+    // Normalize the x-axis data where one month ago is 0 and now is 1
+    const normalizedXData = graph.data.map(x => (x.timestamp - oneMonthAgoTimestamp) / (Date.now() / 1000 - oneMonthAgoTimestamp));
+
+    const linearRegressionResults = calculateLinearRegression(normalizedXData, graph.data.map(x => (x.apr / 100)));
 
     const options: _DeepPartialObject<CoreChartOptions<"scatter"> & ElementChartOptions<"scatter"> & PluginChartOptions<"scatter"> & DatasetChartOptions<"scatter"> & ScaleChartOptions<"scatter"> & LineControllerChartOptions> = {
         scales: {
@@ -79,7 +86,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
             {
                 data: graph.data.map(p => {
                     return {
-                        x: p.timestamp,
+                        x: (p.timestamp - oneMonthAgoTimestamp) / (Date.now() / 1000 - oneMonthAgoTimestamp), // Normalize the x-axis data
                         y: p.apr / 100
                     }
                 }),
@@ -87,7 +94,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
             },
             {
                 label: 'Regression Line',
-                data: graph.data.map(x => ({ x: x.timestamp, y: linearRegressionResults.slope * x.timestamp + linearRegressionResults.intercept })),
+                data: graph.data.map(x => ({ x: (x.timestamp - oneMonthAgoTimestamp) / (Date.now() / 1000 - oneMonthAgoTimestamp), y: linearRegressionResults.slope * (x.timestamp - oneMonthAgoTimestamp) / (Date.now() / 1000 - oneMonthAgoTimestamp) + linearRegressionResults.intercept })),
                 borderColor: 'green',
                 backgroundColor: 'transparent',
                 borderWidth: 1,
@@ -96,7 +103,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
             },
         ],
     };
-
+    
     return (
         <Scatter options={options} data={data} height={null} width={null} />
     )

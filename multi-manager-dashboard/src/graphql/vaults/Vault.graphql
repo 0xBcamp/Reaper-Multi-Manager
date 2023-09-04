@@ -5,7 +5,14 @@ query Vault($vaultId: ID!) {
     lastUpdated
     strategies {
       id
-      reports(orderBy: timestamp, orderDirection: desc, first: 30) {
+      reports(
+        orderBy: timestamp
+        orderDirection: desc
+        where: {
+          timestamp_gte: TIMESTAMP_ONE_MONTH_AGO
+          timestamp_lte: CURRENT_UNIX_TIME
+        }
+      ) {
         results {
           apr
           blockNumber
@@ -28,3 +35,7 @@ query Vault($vaultId: ID!) {
     }
   }
 }
+
+# Define the Unix timestamps for one month ago and now
+const TIMESTAMP_ONE_MONTH_AGO = YOUR_UNIX_TIMESTAMP_ONE_MONTH_AGO;
+const CURRENT_UNIX_TIME = Math.floor(Date.now() / 1000); // Current Unix timestamp
