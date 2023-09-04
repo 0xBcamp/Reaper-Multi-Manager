@@ -5,7 +5,7 @@ import { VaultDocument, VaultQuery } from '../gql/graphql';
 import CurveFitChart, { CurveFitData, CurveFitGraph } from '../components/charts/CurveFitChart';
 import Card from '../components/cards/Card';
 import { vaults } from '../utils/vaults';
-import { timeStamp } from 'console';
+import { CURRENT_UNIX_TIME, TIMESTAMP_ONE_MONTH_AGO } from '../utils/constants';
 
 const VaultDetailsPage = () => {
   let { vaultId } = useParams();
@@ -15,7 +15,7 @@ const VaultDetailsPage = () => {
 
   React.useEffect(() => {
     (async () => {
-      const data = await executeGQL(VaultDocument, { vaultId: vaultId });
+      const data = await executeGQL(VaultDocument, { vaultId: vaultId, currentUnixTime: CURRENT_UNIX_TIME, timestampOneMonthAgo: TIMESTAMP_ONE_MONTH_AGO });
       setVault(data);
 
       const curveFitGraphs = data.vault.strategies.map((strategy) => {
