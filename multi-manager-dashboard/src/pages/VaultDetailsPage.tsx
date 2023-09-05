@@ -24,8 +24,11 @@ const VaultDetailsPage = () => {
           data: strategy.reports.map((report, index) => {
             const data: CurveFitData = {
               index,
-              apr: report.results?.apr ? report.results?.apr : 0,
-              timestamp: report.results?.timestamp ? report.results?.timestamp : 0
+              timestamp: report.results?.timestamp ? report.results?.timestamp : 0,
+              gain: report?.gain ? report?.gain : 0,
+              loss: report?.loss ? report?.loss : 0,
+              allocated: report?.allocated ? report?.allocated : 0,
+              duration: report.results?.duration ? report.results?.duration : 0,
             }
             return data;
           })
