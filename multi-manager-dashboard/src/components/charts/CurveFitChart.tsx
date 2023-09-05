@@ -11,99 +11,143 @@ import {
     PluginChartOptions,
     ScaleChartOptions,
     LineControllerChartOptions,
-} from 'chart.js';
-import { _DeepPartialObject } from 'chart.js/dist/types/utils';
-import { Scatter } from 'react-chartjs-2';
-import { calculateLinearRegression } from '../../lib/math/linearRegression';
-import { TIMESTAMP_ONE_MONTH_AGO } from '../../utils/constants';
-
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
-
-
-export type CurveFitGraph = {
-    name: string,
-    data: CurveFitData[]
-}
-
-export type CurveFitData = {
-    index: number,
-    apr: number,
-    timestamp: number,
-}
-
-interface ICurveFitChartProps {
-    graph: CurveFitGraph
-}
-const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
-    // Normalize the x-axis data where one month ago is 0 and now is 1
-    const normalizedXData = graph.data.map(x => (x.timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO));
-
-    const linearRegressionResults = calculateLinearRegression(normalizedXData, graph.data.map(x => (x.apr / 100)));
-
-    const options: _DeepPartialObject<CoreChartOptions<"scatter"> & ElementChartOptions<"scatter"> & PluginChartOptions<"scatter"> & DatasetChartOptions<"scatter"> & ScaleChartOptions<"scatter"> & LineControllerChartOptions> = {
-        scales: {
-            x: {
-                beginAtZero: false,
-                ticks: {
-                    display: false,
-                },
-                grid: {
-                    display: false,
-                }
-            },
-            y: {
-                beginAtZero: true,
-                max: Math.round((Math.max(...graph.data.map(p => p.apr / 100)) * 1.1)),
-                ticks: {
-                    font: {
-                        size: 10
-                    },
-                    count: 2
-                },
-                grid: {
-                    display: false
-                }
-            },
-        },
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        maintainAspectRatio: false,
-        hover: {
-            mode: 'index',
-            intersect: false,
-            axis: 'x'
-        },
+  } from 'chart.js';
+  import { _DeepPartialObject } from 'chart.js/dist/types/utils';
+  import { Scatter } from 'react-chartjs-2';
+  import { calculateLinearRegression } from '../../lib/math/linearRegression';
+  import { TIMESTAMP_ONE_MONTH_AGO, ONE_UNIX_YEAR } from '../../utils/constants';
+  
+  ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
+  
+  export type CurveFitGraph = {
+    name: string;
+    data: CurveFitData[];
+  };
+  
+  export type CurveFitData = {
+    index: number;
+    timestamp: number;
+    gain: number;
+    loss: number;
+    allocated: number;
+    duration: number;
+  };
+  
+  interface ICurveFitChartProps {
+    graph: CurveFitGraph;
+  }
+  
+  const calculateXData = (data: CurveFitData[]) =>
+    data.map(({ timestamp }) =>
+      (timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO)
+    );
+  
+  const calculateYData = (data: CurveFitData[]) =>
+    data.map(({ gain, loss, allocated, duration }) =>
+      ((gain - loss) / allocated * 100) / (duration / ONE_UNIX_YEAR)
+    );
+  
+  const calculateYDataWithThreshold = (data: CurveFitData[], threshold: number) => {
+    const yValues = calculateYData(data);
+  
+    const mean = yValues.reduce((acc, val) => acc + val, 0) / yValues.length;
+  
+    // Calculate the standard deviation
+    const squaredDifferences = yValues.map((y) => Math.pow(y - mean, 2));
+    const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / yValues.length;
+    const standardDeviation = Math.sqrt(variance);
+  
+    // Filter out data points that are more than `threshold` standard deviations away
+    const filteredData = data.filter((_, i) =>
+      Math.abs(yValues[i] - mean) <= threshold * standardDeviation
+    );
+  
+    const { xData, yData } = {
+      xData: calculateXData(filteredData),
+      yData: calculateYData(filteredData),
     };
-
+  
+    return { xData, yData };
+  };
+  
+  const calculateRegressionData = (xData: number[], yData: number[]) =>
+    calculateLinearRegression(xData, yData);
+  
+  const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
+    const threshold = 1.8; // Adjust the threshold value as needed
+    const { xData, yData } = calculateYDataWithThreshold(graph.data, threshold);
+    const regressionResults = calculateRegressionData(xData, yData);
+  
+    const options: _DeepPartialObject<
+      CoreChartOptions<"scatter"> &
+        ElementChartOptions<"scatter"> &
+        PluginChartOptions<"scatter"> &
+        DatasetChartOptions<"scatter"> &
+        ScaleChartOptions<"scatter"> &
+        LineControllerChartOptions
+    > = {
+      scales: {
+        x: {
+          beginAtZero: false,
+          ticks: {
+            display: false,
+          },
+          grid: {
+            display: false,
+          },
+        },
+        y: {
+          beginAtZero: false,
+          ticks: {
+            font: {
+              size: 10,
+            },
+            count: 2,
+          },
+          grid: {
+            display: false,
+          },
+        },
+      },
+      plugins: {
+        legend: {
+          display: false,
+        },
+      },
+      maintainAspectRatio: false,
+      hover: {
+        mode: 'index',
+        intersect: false,
+        axis: 'x',
+      },
+    };
+  
     const data = {
-        datasets: [
-            {
-                data: graph.data.map(p => {
-                    return {
-                        x: (p.timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO), // Normalize the x-axis data
-                        y: p.apr / 100
-                    }
-                }),
-                backgroundColor: 'blue',
-            },
-            {
-                label: 'Regression Line',
-                data: graph.data.map(x => ({ x: (x.timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO), y: linearRegressionResults.slope * (x.timestamp - TIMESTAMP_ONE_MONTH_AGO) / (Date.now() / 1000 - TIMESTAMP_ONE_MONTH_AGO) + linearRegressionResults.intercept })),
-                borderColor: 'green',
-                backgroundColor: 'transparent',
-                borderWidth: 1,
-                showLine: true,
-                pointRadius: 1
-            },
-        ],
+      datasets: [
+        {
+          data: xData.map((x, index) => ({
+            x,
+            y: yData[index],
+          })),
+          backgroundColor: 'blue',
+        },
+        {
+          label: 'Regression Line',
+          data: xData.map((x, index) => ({
+            x,
+            y: regressionResults.slope * x + regressionResults.intercept,
+          })),
+          borderColor: 'green',
+          backgroundColor: 'transparent',
+          borderWidth: 1,
+          showLine: true,
+          pointRadius: 1,
+        },
+      ],
     };
-    
-    return (
-        <Scatter options={options} data={data} height={null} width={null} />
-    )
-}
-
-export default CurveFitChart;
+  
+    return <Scatter options={options} data={data} height={null} width={null} />;
+  };
+  
+  export default CurveFitChart;
+  
