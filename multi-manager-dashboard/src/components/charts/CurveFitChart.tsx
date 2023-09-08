@@ -44,7 +44,7 @@ import {
   
   const calculateYData = (data: CurveFitData[]) =>
     data.map(({ gain, loss, allocated, duration }) =>
-      ((gain - loss) / allocated * 100) / (duration / ONE_UNIX_YEAR)
+      ((gain - loss) / allocated * 100) / duration * ONE_UNIX_YEAR
     );
   
   const calculateYDataWithThreshold = (data: CurveFitData[], threshold: number) => {
@@ -72,11 +72,13 @@ import {
   
   const calculateRegressionData = (xData: number[], yData: number[]) =>
     calculateLinearRegression(xData, yData);
+
   
   const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
     const threshold = 1.8; // Adjust the threshold value as needed
     const { xData, yData } = calculateYDataWithThreshold(graph.data, threshold);
     const regressionResults = calculateRegressionData(xData, yData);
+    const lastAllocationValue = graph.data[graph.data.length - 1].allocated;
   
     const options: _DeepPartialObject<
       CoreChartOptions<"scatter"> &
@@ -153,6 +155,9 @@ import {
         </div>
         <div style={{ textAlign: 'center', marginTop: '10px' }}>
         APR: {(regressionResults.slope * xData[xData.length - 1] + regressionResults.intercept).toFixed(2)}%
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+        Last Allocated Value: {lastAllocationValue}
         </div>
       </div>
     );
