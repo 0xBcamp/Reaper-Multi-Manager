@@ -1178,7 +1178,7 @@ export type VaultQueryVariables = Exact<{
 }>;
 
 
-export type VaultQuery = { __typename?: 'Query', vault?: { __typename?: 'Vault', nrOfStrategies: any, id: string, lastUpdated: any, strategies: Array<{ __typename?: 'Strategy', id: string, reports: Array<{ __typename?: 'StrategyReport', allocBPS: any, allocated: any, allocationAdded: any, debtPaid: any, gain: any, gains: any, id: string, loss: any, losses: any, results?: { __typename?: 'StrategyReportResult', apr: any, blockNumber: any, duration: any, endTimestamp: any, startTimestamp: any, timestamp: any, id: string } | null }> }> } | null };
+export type VaultQuery = { __typename?: 'Query', vault?: { __typename?: 'Vault', nrOfStrategies: any, id: string, lastUpdated: any, strategies: Array<{ __typename?: 'Strategy', id: string, reports: Array<{ __typename?: 'StrategyReport', allocBPS: any, allocated: any, allocationAdded: any, debtPaid: any, gain: any, gains: any, id: string, loss: any, losses: any, results?: { __typename?: 'StrategyReportResult', apr: any, blockNumber: any, duration: any, endTimestamp: any, startTimestamp: any, timestamp: any, id: string } | null }> }>, mostRecentTimestamp: Array<{ __typename?: 'Strategy', reports: Array<{ __typename?: 'StrategyReport', results?: { __typename?: 'StrategyReportResult', timestamp: any } | null }> }> } | null };
 
 export type VaultListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1231,6 +1231,13 @@ export const VaultDocument = new TypedDocumentString(`
         id
         loss
         losses
+      }
+    }
+    mostRecentTimestamp: strategies {
+      reports(orderBy: timestamp, orderDirection: desc, first: 1) {
+        results {
+          timestamp
+        }
       }
     }
   }
