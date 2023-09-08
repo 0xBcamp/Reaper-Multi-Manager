@@ -7,7 +7,7 @@ query Vault($vaultId: ID!, $currentUnixTime: BigInt!, $timestampOneMonthAgo: Big
       id
       reports(
         orderBy: timestamp
-        orderDirection: desc
+        orderDirection: asc
         where: {
           timestamp_gte: $timestampOneMonthAgo
           timestamp_lte: $currentUnixTime

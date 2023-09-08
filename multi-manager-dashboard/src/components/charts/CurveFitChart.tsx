@@ -146,8 +146,16 @@ import {
       ],
     };
   
-    return <Scatter options={options} data={data} height={null} width={null} />;
+    return (
+      <div style={{ width: '100%', height: '200px' }}>
+        <div style={{ width: '100%', height: '100%' }}>
+          <Scatter options={options} data={data} height={null} width={null} />
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+        APR: {(regressionResults.slope * xData[xData.length - 1] + regressionResults.intercept).toFixed(2)}%
+        </div>
+      </div>
+    );
   };
   
   export default CurveFitChart;
-  
