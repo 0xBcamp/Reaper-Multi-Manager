@@ -78,7 +78,7 @@ import {
     const threshold = 1.8; // Adjust the threshold value as needed
     const { xData, yData } = calculateYDataWithThreshold(graph.data, threshold);
     const regressionResults = calculateRegressionData(xData, yData);
-    const lastAllocationValue = graph.data[graph.data.length - 1].allocated;
+    const lastAllocationValue = graph.data[graph.data.length - 1]?.allocated;
   
     const options: _DeepPartialObject<
       CoreChartOptions<"scatter"> &

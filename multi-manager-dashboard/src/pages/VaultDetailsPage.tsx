@@ -4,6 +4,7 @@ import { executeGQL } from '../lib/excecuteGraphQL';
 import { VaultDocument, VaultQuery } from '../gql/graphql';
 import CurveFitChart, { CurveFitData, CurveFitGraph } from '../components/charts/CurveFitChart';
 import Card from '../components/cards/Card';
+import LastHarvest from '../components/cards/LastHarvest';
 import { vaults } from '../utils/vaults';
 import { CURRENT_UNIX_TIME, TIMESTAMP_ONE_MONTH_AGO } from '../utils/constants';
 
@@ -50,7 +51,10 @@ const VaultDetailsPage = () => {
         {graphs?.map((graph, index) => {
           return (
             <Card key={index} title={graph.name}>
-              <CurveFitChart graph={graph}/>
+              <div>
+                <LastHarvest/>
+                <CurveFitChart graph={graph}/>
+              </div>
             </Card>
           )
         })}
