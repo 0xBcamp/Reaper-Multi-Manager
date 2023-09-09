@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import VaultsPage from "./pages/VaultsPage";
-import VaultDetailsPage from "./pages/VaultDetailsPage";
+import VaultDetailsPage from "./pages/VaultDetails/index";
 import NavBar from "./components/NavBar";
 import SideBar from "./components/sidebar/SideBar";
 import { useState } from "react";
