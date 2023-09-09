@@ -17,6 +17,7 @@ import { _DeepPartialObject } from 'chart.js/dist/types/utils';
 import { Scatter } from 'react-chartjs-2';
 import { calculateYDataWithThreshold, calculateRegressionData } from '../../lib/math/linearRegression';
 import { CurveFitGraph } from './types';
+import { defaultStdDevThreshold } from '../../utils/constants';
   
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
   interface ICurveFitChartProps {
@@ -24,7 +25,7 @@ ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 }
 
 const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
-  const [threshold, setThreshold] = useState(1.8); // Initialize threshold with a default value 1.8
+  const [threshold, setThreshold] = useState(defaultStdDevThreshold); // Initialize threshold with a default value 1.8
   const { xData, yData } = calculateYDataWithThreshold(graph.data, threshold);
   const regressionResults = calculateRegressionData(xData, yData);
   const lastAllocationValue = graph.data[graph.data.length - 1]?.allocated;
