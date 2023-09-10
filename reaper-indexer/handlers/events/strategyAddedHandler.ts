@@ -1,37 +1,46 @@
 import { VAULT_V2_ABI } from "../../abi/vaultV2Abi.ts";
 import { EventHandlerFor } from "../../deps.ts";
 import { Strategy } from "../../entities/Strategy.ts";
-import { getChainOrCreate, getVaultOrCreate, getBlockTimestamp } from "../helpers.ts";
+import { getChainOrCreate, getVaultOrCreate, getBlockTimestamp, isVaultWhitelisted } from "../helpers.ts";
 
 export const strategyAddedHandler: EventHandlerFor<typeof VAULT_V2_ABI, 'StrategyAdded'> = async ({ event, logger, contract, client, store }) => {
     try {
         const { strategy, feeBPS, allocBPS } = event.args;
-        const block = Number(event.blockNumber)
-
-        const blockTimestamp = await getBlockTimestamp(client, store, event)
 
         const contractAddress = event.address as string;
 
-        const chain = await getChainOrCreate(store, client);
-        const vault = await getVaultOrCreate(client, event, contractAddress, chain);
+        if (await isVaultWhitelisted(store, contractAddress)) {
+            const block = Number(event.blockNumber)
 
-        const newStrategy = new Strategy({
-            block,
-            hash: event.transactionHash,
-            vault,
-            vaultAddress: contractAddress,
-            address: strategy,
-            feeBPS,
-            allocBPS,
-            isActive: true,
-            dateAdded: blockTimestamp,
-            chainId: chain.chainId,
-            chain
-        });
+            const blockTimestamp = await getBlockTimestamp(client, store, event)
 
-        newStrategy.save();
+            const chain = await getChainOrCreate(store, client);
+            const vault = await getVaultOrCreate(client, event, contractAddress, chain, blockTimestamp);
 
-        logger.info(`strategy added - ${strategy}`);
+            const newStrategy = new Strategy({
+                block,
+                hash: event.transactionHash,
+                vault,
+                vaultAddress: contractAddress,
+                address: strategy,
+                feeBPS,
+                allocBPS,
+                isActive: true,
+                dateAdded: blockTimestamp,
+                chainId: chain.chainId,
+                chain
+            });
+
+            const savedStrategy = await newStrategy.save();
+
+            if (vault.strategies) {
+                vault.strategies.push(savedStrategy);
+            } else {
+                vault.strategies = [savedStrategy];
+            }
+
+            vault.save();
+        }
     } catch (error) {
         logger.error(error);
     }

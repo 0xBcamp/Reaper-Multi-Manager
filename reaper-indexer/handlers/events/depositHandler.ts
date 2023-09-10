@@ -1,11 +1,7 @@
-import { Hex, pad } from "npm:viem";
 import { VAULT_V2_ABI } from "../../abi/vaultV2Abi.ts";
-import { EventHandlerFor, formatUnits } from "../../deps.ts";
-import { Vault } from "../../entities/Vault.ts";
+import { EventHandlerFor } from "../../deps.ts";
 import { VaultTransaction, VaultTransactionEnum } from "../../entities/VaultTransaction.ts";
-import { CHAINS } from "../../utils/chains.ts";
-import { Chain } from "../../entities/Chain.ts";
-import { getChainOrCreate, getVaultOrCreate, getBlockTimestamp } from "../helpers.ts";
+import { getChainOrCreate, getVaultOrCreate, getBlockTimestamp, isVaultWhitelisted } from "../helpers.ts";
 
 export const depositHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Deposit"> =
   async (
@@ -14,32 +10,33 @@ export const depositHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Deposit"> =
     try {
       const { sender, owner, assets, shares } = event.args;
 
-      const block = Number(event.blockNumber);
-
-      const blockTimestamp = await getBlockTimestamp(client, store, event)
-
       const contractAddress = event.address as string;
+      const iswhitelisted = await isVaultWhitelisted(store, contractAddress)
+      if (iswhitelisted) {
+        const block = Number(event.blockNumber);
 
-      const chain = await getChainOrCreate(store, client);
-      const vault = await getVaultOrCreate(client, event, contractAddress, chain);
+        const blockTimestamp = await getBlockTimestamp(client, store, event)
 
-      const newTransaction = new VaultTransaction({
-        block,
-        hash: event.transactionHash,
-        vault,
-        sender,
-        owner,
-        transactionType: VaultTransactionEnum.Deposit.toString(),
-        assets: assets.toString(),
-        shares: shares.toString(),
-        dateExecuted: blockTimestamp,
-        chainId: chain.chainId,
-        chain
-      });
+        const chain = await getChainOrCreate(store, client);
+        const vault = await getVaultOrCreate(client, event, contractAddress, chain, blockTimestamp);
 
+        const newTransaction = new VaultTransaction({
+          block,
+          hash: event.transactionHash,
+          vault,
+          sender,
+          owner,
+          transactionType: VaultTransactionEnum.Deposit.toString(),
+          assets: assets.toString(),
+          shares: shares.toString(),
+          dateExecuted: blockTimestamp,
+          chainId: chain.chainId,
+          chain,
+          vaultAddress: contractAddress
+        });
 
-      newTransaction.save();
-      logger.info(`deposit saved`);
+        await newTransaction.save();
+      }
     } catch (error) {
       logger.error(error);
     }

@@ -1,9 +1,7 @@
-import { Hex } from "npm:viem";
 import { VAULT_V2_ABI } from "../../abi/vaultV2Abi.ts";
-import { EventHandlerFor, formatUnits } from "../../deps.ts";
-import { Vault } from "../../entities/Vault.ts";
+import { EventHandlerFor } from "../../deps.ts";
 import { VaultTransaction, VaultTransactionEnum } from "../../entities/VaultTransaction.ts";
-import { getChainOrCreate, getVaultOrCreate, getBlockTimestamp } from "../helpers.ts";
+import { getChainOrCreate, getVaultOrCreate, getBlockTimestamp, isVaultWhitelisted } from "../helpers.ts";
 
 export const withdrawHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Withdraw"> =
   async (
@@ -12,32 +10,33 @@ export const withdrawHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Withdraw"> =
     try {
       const { sender, receiver, owner, assets, shares } = event.args;
 
-      const block = Number(event.blockNumber);
-
-      const blockTimestamp = await getBlockTimestamp(client, store, event)
-
       const contractAddress = event.address as string;
+      if (await isVaultWhitelisted(store, contractAddress)) {
+        const block = Number(event.blockNumber);
 
-      const chain = await getChainOrCreate(store, client);
-      const vault = await getVaultOrCreate(client, event, contractAddress, chain);
+        const blockTimestamp = await getBlockTimestamp(client, store, event)
 
-      const newTransaction = new VaultTransaction({
-        block,
-        hash: event.transactionHash,
-        vault,
-        sender,
-        owner,
-        receiver,
-        transactionType: VaultTransactionEnum.Withdraw.toString(),
-        assets: assets.toString(),
-        shares: shares.toString(),
-        dateExecuted: blockTimestamp,
-        chainId: chain.chainId,
-        chain
-      });
+        const chain = await getChainOrCreate(store, client);
+        const vault = await getVaultOrCreate(client, event, contractAddress, chain, blockTimestamp);
 
-      newTransaction.save();
-      logger.info(`withdrawal saved`);
+        const newTransaction = new VaultTransaction({
+          block,
+          hash: event.transactionHash,
+          vault,
+          sender,
+          owner,
+          receiver,
+          transactionType: VaultTransactionEnum.Withdraw.toString(),
+          assets: assets.toString(),
+          shares: shares.toString(),
+          dateExecuted: blockTimestamp,
+          chainId: chain.chainId,
+          chain,
+          vaultAddress: contractAddress
+        });
+
+        await newTransaction.save();
+      }
     } catch (error) {
       logger.error(error);
     }
