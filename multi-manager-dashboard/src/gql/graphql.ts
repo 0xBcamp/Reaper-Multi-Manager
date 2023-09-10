@@ -1210,7 +1210,7 @@ export const VaultDocument = new TypedDocumentString(`
       id
       reports(
         orderBy: timestamp
-        orderDirection: desc
+        orderDirection: asc
         where: {timestamp_gte: $timestampOneMonthAgo, timestamp_lte: $currentUnixTime}
       ) {
         results {
