@@ -15,26 +15,33 @@ const calculateYData = (data: CurveFitData[]) =>
 
 // refactors x and y data applying a standard deviation threshold to filter outliers
 export const calculateYDataWithThreshold = (data: CurveFitData[], threshold: number) => {
-  const yValues = calculateYData(data);
+  try {
+    const yValues = calculateYData(data);
 
-  const mean = yValues.reduce((acc, val) => acc + val, 0) / yValues.length;
+    const validYValues = yValues.filter(val => !Number.isNaN(val) && val !== Infinity && val !== -Infinity);
 
-  // Calculate the standard deviation
-  const squaredDifferences = yValues.map((y) => Math.pow(y - mean, 2));
-  const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / yValues.length;
-  const standardDeviation = Math.sqrt(variance);
+    const mean = validYValues.reduce((acc, val) => acc + val, 0) / validYValues.length;
+  
+    // Calculate the standard deviation
+    const squaredDifferences = validYValues.map((y) => Math.pow(y - mean, 2));
+    const variance = squaredDifferences.reduce((acc, val) => acc + val, 0) / validYValues.length;
+    const standardDeviation = Math.sqrt(variance);
+  
+    // Filter out data points that are more than `threshold` standard deviations away
+    const filteredData = data.filter((_, i) =>
+      Math.abs(validYValues[i] - mean) <= threshold * standardDeviation
+    );
+  
+    const { xData, yData } = {
+      xData: calculateXData(filteredData),
+      yData: calculateYData(filteredData),
+    };
+  
+    return { xData, yData };
+  } catch (error) {
+    console.log("error", error)
+  }
 
-  // Filter out data points that are more than `threshold` standard deviations away
-  const filteredData = data.filter((_, i) =>
-    Math.abs(yValues[i] - mean) <= threshold * standardDeviation
-  );
-
-  const { xData, yData } = {
-    xData: calculateXData(filteredData),
-    yData: calculateYData(filteredData),
-  };
-
-  return { xData, yData };
 };
 
 // Calculate time-based moving average with a window of 1 week

@@ -1,6 +1,7 @@
 export type CurveFitGraph = {
     name: string;
     data: CurveFitData[];
+    threshold: number;
 };
 
 export type CurveFitData = {
