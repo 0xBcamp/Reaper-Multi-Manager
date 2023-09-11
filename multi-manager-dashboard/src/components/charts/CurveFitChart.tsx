@@ -15,19 +15,20 @@ import {
   } from 'chart.js';
 import { _DeepPartialObject } from 'chart.js/dist/types/utils';
 import { Scatter } from 'react-chartjs-2';
-import { calculateYDataWithThreshold, calculateRegressionData } from '../../lib/math/linearRegression';
+import { calculateYDataWithThreshold, calculateTimeBasedMovingAverage } from '../../lib/math/linearRegression';
 import { CurveFitGraph } from './types';
 import { defaultStdDevThreshold } from '../../utils/constants';
   
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
-  interface ICurveFitChartProps {
+
+interface ICurveFitChartProps {
   graph: CurveFitGraph;
 }
 
 const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
-  const [threshold, setThreshold] = useState(defaultStdDevThreshold); // Initialize threshold with a default value 1.8
+  const [threshold, setThreshold] = useState(defaultStdDevThreshold);
   const { xData, yData } = calculateYDataWithThreshold(graph.data, threshold);
-  const regressionResults = calculateRegressionData(xData, yData);
+  const timeBasedMovingAverageResults = calculateTimeBasedMovingAverage(xData, yData,);
   const lastAllocationValue = graph.data[graph.data.length - 1]?.allocated;
   const handleThresholdChange = (event) => {
     const newThreshold = parseFloat(event.target.value);
@@ -89,9 +90,9 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
       },
       {
         label: 'Regression Line',
-        data: xData.map((x, index) => ({
+        data: timeBasedMovingAverageResults.resultXData.map((x, index) => ({
           x,
-          y: regressionResults.slope * x + regressionResults.intercept,
+          y: timeBasedMovingAverageResults.resultYData[index],
         })),
         borderColor: 'green',
         backgroundColor: 'transparent',
@@ -118,7 +119,7 @@ const CurveFitChart = ({ graph }: ICurveFitChartProps) => {
         <Scatter options={options} data={data} height={null} width={null} />
       </div>
       <div style={{ textAlign: 'center', marginTop: '10px' }}>
-      APR: {(regressionResults.slope * xData[xData.length - 1] + regressionResults.intercept).toFixed(2)}%
+      APR: {(timeBasedMovingAverageResults.resultYData[timeBasedMovingAverageResults.resultYData.length-1])}%
       </div>
       <div style={{ textAlign: 'center', marginTop: '10px' }}>
       Last Allocated Value: {lastAllocationValue}

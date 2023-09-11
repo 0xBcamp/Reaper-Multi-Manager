@@ -1,4 +1,4 @@
-import { TIMESTAMP_ONE_MONTH_AGO, ONE_UNIX_YEAR } from '../../utils/constants';
+import { TIMESTAMP_ONE_MONTH_AGO, ONE_UNIX_YEAR, oneWeekInMilliseconds } from '../../utils/constants';
 import { CurveFitData } from '../../components/charts/types';
 
 // x data calculated as one month of timestamps normalized from 0 (one month ago) to 1 (now)
@@ -37,48 +37,44 @@ export const calculateYDataWithThreshold = (data: CurveFitData[], threshold: num
   return { xData, yData };
 };
 
-// performs the linear regression calculation
-export const calculateLinearRegression = (xData: number[], yData: number[]) => {
+// Calculate time-based moving average with a window of 1 week
+export const calculateTimeBasedMovingAverage = (xData: number[], yData: number[]) => {
   if (xData.length !== yData.length) {
     throw new Error("Input arrays must have the same length");
   }
 
-  const n = xData.length;
+  const resultX: number[] = [];
+  const resultY: number[] = [];
 
-  let sumX = 0;
-  let sumY = 0;
-  let sumXY = 0;
-  let sumX2 = 0;
-  let sumY2 = 0;
+  const totalDataPoints = xData.length;
 
-  for (let i = 0; i < n; i++) {
-    sumX += xData[i];
-    sumY += yData[i];
-    sumXY += xData[i] * yData[i];
-    sumX2 += xData[i] * xData[i];
-    sumY2 += yData[i] * yData[i];
+  for (let i = 0; i < totalDataPoints; i++) {
+    // Calculate the time window boundaries
+    const windowStart = xData[i] - oneWeekInMilliseconds;
+    const windowEnd = xData[i];
+
+    // Calculate the moving average for the current window
+    let sumY = 0;
+    let count = 0;
+
+    for (let j = i; j >= 0; j--) {
+      if (xData[j] < windowStart) {
+        break;
+      }
+
+      sumY += yData[j];
+      count++;
+    }
+
+    const averageY = sumY / count;
+
+    // Push the timestamp and moving average into the result arrays
+    resultX.push(windowEnd);
+    resultY.push(averageY);
   }
 
-  const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX ** 2);
-  const intercept = (sumY - slope * sumX) / n;
-
-  const predictedY = xData.map(x => slope * x + intercept);
-
-  const residualSumOfSquares = predictedY.reduce((sum, predicted, i) => {
-    return sum + (predicted - yData[i]) ** 2;
-  }, 0);
-
-  const totalSumOfSquares = sumY2 - (sumY ** 2) / n;
-
-  const rSquared = 1 - residualSumOfSquares / totalSumOfSquares;
-
   return {
-      slope,
-      intercept,
-      rSquared,
+    resultXData: resultX,
+    resultYData: resultY,
   };
-}
-
-// wrapper function
-export const calculateRegressionData = (xData: number[], yData: number[]) =>
-    calculateLinearRegression(xData, yData);
+};
