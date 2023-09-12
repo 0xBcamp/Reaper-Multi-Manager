@@ -10,5 +10,6 @@ export type CurveFitData = {
     gain: number;
     loss: number;
     allocated: number;
+    allocationAdded: number;
     duration: number;
 };

@@ -38,6 +38,7 @@ const VaultDetailsPage = () => {
           gain: report?.gain || 0,
           loss: report?.loss || 0,
           allocated: report?.allocated || 0,
+          allocationAdded: report?.allocationAdded || 0,
           duration: report.results?.duration || 0,
         })),
         threshold: defaultStdDevThreshold

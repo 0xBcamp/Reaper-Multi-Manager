@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import {
   Chart as ChartJS,
   LinearScale,
@@ -15,7 +15,7 @@ import {
 } from 'chart.js';
 import { _DeepPartialObject } from 'chart.js/dist/types/utils';
 import { Scatter } from 'react-chartjs-2';
-import { calculateYDataWithThreshold, calculateTimeBasedMovingAverage } from '../../lib/math/linearRegression';
+import { calculateDataWithThreshold, calculateTimeBasedMovingAverage } from '../../lib/math/linearRegression';
 import { CurveFitGraph } from './types';
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
@@ -26,7 +26,7 @@ interface ICurveFitChartProps {
 }
 
 const CurveFitChart = ({ graph, graphUpdated }: ICurveFitChartProps) => {
-  const { xData, yData } = useMemo(() => calculateYDataWithThreshold(graph.data, graph.threshold), [graph.data, graph.threshold]);
+  const { xData, yData } = useMemo(() => calculateDataWithThreshold(graph.data, graph.threshold), [graph.data, graph.threshold]);
 
   const timeBasedMovingAverageResults = useMemo(() => {
     if (xData.length > 0 && yData.length > 0) {
