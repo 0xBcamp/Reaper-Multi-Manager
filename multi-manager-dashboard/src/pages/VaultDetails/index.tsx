@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { executeGQL } from '../../lib/excecuteGraphQL';
-import { VaultDocument } from '../../gql/graphql';
 import CurveFitChart from '../../components/charts/CurveFitChart';
 import Card from '../../components/cards/Card';
 import LastHarvest from '../../components/cards/LastHarvest';
@@ -10,62 +9,63 @@ import { CURRENT_UNIX_TIME, TIMESTAMP_ONE_MONTH_AGO, defaultStdDevThreshold } fr
 import { CurveFitGraph } from '../../components/charts/types';
 
 const VaultDetailsPage = () => {
-  let { vaultId } = useParams();
+  // let { vaultId } = useParams();
 
-  const [graphs, setGraphs] = useState<CurveFitGraph[]>([]);
-  const [vault, setVault] = useState(null);
+  // const [graphs, setGraphs] = useState<CurveFitGraph[]>([]);
+  // const [vault, setVault] = useState(null);
 
-  useEffect(() => {
-    if (vaultId) {
-      fetchData();
-    }
-  }, [vaultId]);
+  // useEffect(() => {
+  //   if (vaultId) {
+  //     fetchData();
+  //   }
+  // }, [vaultId]);
 
-  const fetchData = async () => {
-    const data = await executeGQL(VaultDocument, {
-      vaultId: vaultId,
-      currentUnixTime: CURRENT_UNIX_TIME,
-      timestampOneMonthAgo: TIMESTAMP_ONE_MONTH_AGO,
-    });
-    setVault(data);
+  // const fetchData = async () => {
+  //   const data = await executeGQL(VaultDocument, {
+  //     vaultId: vaultId,
+  //     currentUnixTime: CURRENT_UNIX_TIME,
+  //     timestampOneMonthAgo: TIMESTAMP_ONE_MONTH_AGO,
+  //   });
+  //   setVault(data);
 
-    const curveFitGraphs = data?.vault?.strategies.map((strategy) => {
-      const graph: CurveFitGraph = {
-        name: strategy.id,
-        data: strategy.reports.map((report, index) => ({
-          index,
-          timestamp: report.results?.timestamp || 0,
-          gain: report?.gain || 0,
-          loss: report?.loss || 0,
-          allocated: report?.allocated || 0,
-          allocationAdded: report?.allocationAdded || 0,
-          duration: report.results?.duration || 0,
-        })),
-        threshold: defaultStdDevThreshold
-      };
+  //   const curveFitGraphs = data?.vault?.strategies.map((strategy) => {
+  //     const graph: CurveFitGraph = {
+  //       name: strategy.id,
+  //       data: strategy.reports.map((report, index) => ({
+  //         index,
+  //         timestamp: report.results?.timestamp || 0,
+  //         gain: report?.gain || 0,
+  //         loss: report?.loss || 0,
+  //         allocated: report?.allocated || 0,
+  //         allocationAdded: report?.allocationAdded || 0,
+  //         duration: report.results?.duration || 0,
+  //       })),
+  //       threshold: defaultStdDevThreshold
+  //     };
 
-      return graph;
-    });
+  //     return graph;
+  //   });
 
-    setGraphs(curveFitGraphs);
-  };
+  //   setGraphs(curveFitGraphs);
+  // };
 
-  const handleGraphUpdate = (updatedGraph: CurveFitGraph) => {
-    const updatedGraphs = graphs.map(graph => {
-      if (graph.name === updatedGraph.name) {
-        return updatedGraph;
-      }
-      return graph;
-    });
+  // const handleGraphUpdate = (updatedGraph: CurveFitGraph) => {
+  //   const updatedGraphs = graphs.map(graph => {
+  //     if (graph.name === updatedGraph.name) {
+  //       return updatedGraph;
+  //     }
+  //     return graph;
+  //   });
   
-    setGraphs(updatedGraphs);
-  };
+  //   setGraphs(updatedGraphs);
+  // };
 
-  const vaultName = vaults.find((x) => x.address === vault?.vault?.id)?.name;
+  // const vaultName = vaults.find((x) => x.address === vault?.vault?.id)?.name;
 
   return (
     <>
-      <div className="p-4">
+    <div>Vault page coming soon</div>
+      {/* <div className="p-4">
         <span className="text-lg">{vaultName}</span>
       </div>
       <div className="grid grid-cols-4 gap-4 m-4">
@@ -77,7 +77,7 @@ const VaultDetailsPage = () => {
             </div>
           </Card>
         ))}
-      </div>
+      </div> */}
     </>
   );
 };

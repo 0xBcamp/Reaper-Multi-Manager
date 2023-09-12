@@ -1,9 +1,27 @@
 query VaultList {
-  vaults {
-    id
-    apr
-    nrOfStrategies
-    pricePerFullShare
-    lastUpdated
+  Vaults {
+    address
+    asset
+    chain {
+      chainId
+      name
+    }
+    dateAdded
+    name
+    symbol
+    lastSnapShot {
+      depositCount
+      deposits
+      lockedProfit
+      pricePerFullShare
+      timestamp
+      totalAllocated
+      totalAssets
+      totalIdle
+      totalSupply
+      vaultAddress
+      withdrawCount
+      withdrawals
+    }
   }
 }

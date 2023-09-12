@@ -14,18 +14,18 @@ import * as types from './graphql';
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "query Vault($vaultId: ID!, $currentUnixTime: BigInt!, $timestampOneMonthAgo: BigInt!) {\n  vault(id: $vaultId) {\n    nrOfStrategies\n    id\n    lastUpdated\n    strategies {\n      id\n      reports(\n        orderBy: timestamp\n        orderDirection: asc\n        where: {timestamp_gte: $timestampOneMonthAgo, timestamp_lte: $currentUnixTime}\n      ) {\n        results {\n          apr\n          blockNumber\n          duration\n          endTimestamp\n          startTimestamp\n          timestamp\n          id\n        }\n        allocBPS\n        allocated\n        allocationAdded\n        debtPaid\n        gain\n        gains\n        id\n        loss\n        losses\n      }\n    }\n  }\n}": types.VaultDocument,
-    "query VaultList {\n  vaults {\n    id\n    apr\n    nrOfStrategies\n    pricePerFullShare\n    lastUpdated\n  }\n}": types.VaultListDocument,
+    "query ChainList {\n  Chains {\n    _id\n    chainId\n    name\n  }\n}": types.ChainListDocument,
+    "query VaultList {\n  Vaults {\n    address\n    asset\n    chain {\n      chainId\n      name\n    }\n    dateAdded\n    name\n    symbol\n    lastSnapShot {\n      depositCount\n      deposits\n      lockedProfit\n      pricePerFullShare\n      timestamp\n      totalAllocated\n      totalAssets\n      totalIdle\n      totalSupply\n      vaultAddress\n      withdrawCount\n      withdrawals\n    }\n  }\n}": types.VaultListDocument,
 };
 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Vault($vaultId: ID!, $currentUnixTime: BigInt!, $timestampOneMonthAgo: BigInt!) {\n  vault(id: $vaultId) {\n    nrOfStrategies\n    id\n    lastUpdated\n    strategies {\n      id\n      reports(\n        orderBy: timestamp\n        orderDirection: asc\n        where: {timestamp_gte: $timestampOneMonthAgo, timestamp_lte: $currentUnixTime}\n      ) {\n        results {\n          apr\n          blockNumber\n          duration\n          endTimestamp\n          startTimestamp\n          timestamp\n          id\n        }\n        allocBPS\n        allocated\n        allocationAdded\n        debtPaid\n        gain\n        gains\n        id\n        loss\n        losses\n      }\n    }\n  }\n}"): typeof import('./graphql').VaultDocument;
+export function graphql(source: "query ChainList {\n  Chains {\n    _id\n    chainId\n    name\n  }\n}"): typeof import('./graphql').ChainListDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query VaultList {\n  vaults {\n    id\n    apr\n    nrOfStrategies\n    pricePerFullShare\n    lastUpdated\n  }\n}"): typeof import('./graphql').VaultListDocument;
+export function graphql(source: "query VaultList {\n  Vaults {\n    address\n    asset\n    chain {\n      chainId\n      name\n    }\n    dateAdded\n    name\n    symbol\n    lastSnapShot {\n      depositCount\n      deposits\n      lockedProfit\n      pricePerFullShare\n      timestamp\n      totalAllocated\n      totalAssets\n      totalIdle\n      totalSupply\n      vaultAddress\n      withdrawCount\n      withdrawals\n    }\n  }\n}"): typeof import('./graphql').VaultListDocument;
 
 
 export function graphql(source: string) {

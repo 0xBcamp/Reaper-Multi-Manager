@@ -6,21 +6,21 @@ import { vaults } from '../utils/vaults';
 
 const VaultsPage = () => {
 
-    const [data, setData] = React.useState<VaultListQuery>();
+    // const [data, setData] = React.useState<VaultListQuery>();
     
-    React.useEffect(() => {
-        (async () => {
-            setData(await executeGQL(VaultListDocument));
-        })();
-    }, []);
+    // React.useEffect(() => {
+    //     (async () => {
+    //         setData(await executeGQL(VaultListDocument));
+    //     })();
+    // }, []);
 
-    const filteredVaults = data?.vaults.filter(vault =>
-        vaults.some(configVault => configVault.address === vault.id && configVault.name)
-    );
+    // const filteredVaults = data?.vaults.filter(vault =>
+    //     vaults.some(configVault => configVault.address === vault.id && configVault.name)
+    // );
 
     return (
         <div className='grid grid-cols-4 gap-4 m-4'>
-            {filteredVaults?.map(vault => {
+            {/* {filteredVaults?.map(vault => {
                 return (
                     <Link to={`${vault.id}`} key={vault.id}>
                         <div className="shadow-md rounded-lg p-6 text-center bg-white">
@@ -40,7 +40,7 @@ const VaultsPage = () => {
                     </Link>
 
                 )
-            })}
+            })} */}
 
         </div>
     )
