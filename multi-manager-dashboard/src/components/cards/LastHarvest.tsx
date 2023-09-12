@@ -2,7 +2,7 @@
 import { useMemo } from 'react';
 import { CurveFitGraph } from '../charts/types';
 import { formatUnits } from 'ethers';
-import { calculateTimeBasedMovingAverage, calculateYDataWithThreshold } from '../../lib/math/linearRegression';
+import { calculateTimeBasedMovingAverage, calculateDataWithThreshold } from '../../lib/math/linearRegression';
 import { formatDate } from '../../utils/dateUtils';
 
 interface ILastHarvestProps {
@@ -13,7 +13,7 @@ const LastHarvest = ({ graph }: ILastHarvestProps) => {
   
   const lastHarvest = useMemo(() => graph.data[graph.data.length - 1], [graph.data]);
 
-  const { xData, yData } = calculateYDataWithThreshold(graph.data, graph.threshold);
+  const { xData, yData } = calculateDataWithThreshold(graph.data, graph.threshold);
   const timeBasedMovingAverageResults = calculateTimeBasedMovingAverage(xData, yData);
 
   return (
