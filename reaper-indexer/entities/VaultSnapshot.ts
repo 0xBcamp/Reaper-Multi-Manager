@@ -13,24 +13,24 @@ export interface IVaultSnapshot {
   withdrawals: string;
   depositCount: number;
   withdrawCount: number;
-  addresses: {
-    admin: string;
-    gaurdian: string;
-    strategist: string;
-    treasury: string;
-  };
-  asset: string;
-  availableCapital: string;
-  balance: string;
+  // addresses: {
+  //   admin: string;
+  //   gaurdian: string;
+  //   strategist: string;
+  //   treasury: string;
+  // };
+  // asset: string;
+  // availableCapital: string;
+  // balance: string;
   pricePerFullShare: string;
   lockedProfit: string;
-  lockedProfitDegradation: string;
-  token: string;
-  totalAllocBPS: string;
+  // lockedProfitDegradation: string;
+  // token: string;
+  // totalAllocBPS: string;
   totalAssets: string;
   totalSupply: string;
-  tvlCap: string;
-  withdrawalQue: string[];
+  // tvlCap: string;
+  // withdrawalQue: string[];
 }
 
 
@@ -55,13 +55,13 @@ export const VaultSnapshot = createEntity<IVaultSnapshot>("VaultSnapshot", {
   // asset: String,
   // availableCapital: String,
   // balance: String,
-  // pricePerFullShare: String,
-  // lockedProfit: String,
+  pricePerFullShare: String,
+  lockedProfit: String,
   // lockedProfitDegradation: String,
   // token: String,
   // totalAllocBPS: String,
-  // totalAssets: String,
-  // totalSupply: String,
+  totalAssets: String,
+  totalSupply: String,
   // tvlCap: String,
   // withdrawalQue: [String],
 });

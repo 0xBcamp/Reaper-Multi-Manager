@@ -7,8 +7,9 @@ export const strategyRevokedHandler: EventHandlerFor<typeof VAULT_V2_ABI, 'Strat
     try {
         const { strategy } = event.args;
         const vaultAddress = event.address;
+        const chainId = await client.getChainId();
 
-        if (await isVaultWhitelisted(store, vaultAddress)) {
+        if (await isVaultWhitelisted(store, vaultAddress, chainId)) {
             const strategyDB = await Strategy.findOne({ address: strategy, vaultAddress });
 
             if (strategyDB) {

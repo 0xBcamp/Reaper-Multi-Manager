@@ -1,5 +1,4 @@
 import { Store } from "https://deno.land/x/robo_arkiver@v0.4.21/mod.ts";
-import { load } from "https://deno.land/std/dotenv/mod.ts";
 import { PublicClient } from "https://deno.land/x/robo_arkiver@v0.4.21/src/deps.ts";
 import { Chain, IChain } from "../entities/Chain.ts";
 import { CHAINS } from "../utils/chains.ts";
@@ -8,8 +7,6 @@ import { VAULT_V2_ABI } from "../abi/vaultV2Abi.ts";
 import { Hex } from "npm:viem";
 import { Strategy } from "../entities/Strategy.ts";
 
-const env = await load();
-const apiUrl = env["REAPER_API_URL"];
 
 export type DBVault = {
   address: string;
@@ -29,9 +26,7 @@ export const getBlockTimestamp = async (client: PublicClient, store: Store, even
   return timestamp;
 }
 
-export const getChainOrCreate = async (store: Store, client: PublicClient) => {
-  const chainId = await client.getChainId();
-
+export const getChainOrCreate = async (store: Store, chainId: number) => {
   let chainDB = await store.retrieve(
     `${chainId}:chain`,
     async () => {
@@ -62,10 +57,11 @@ export const getVaultOrCreate = async (client: PublicClient, event: any, contrac
   let vault = await Vault.findOne({ address: contractAddress, chainId: chain.chainId });
 
   if (!vault) {
-    const [nameResult, symbolResult] = await client.multicall({
+    const [nameResult, symbolResult, assetRes] = await client.multicall({
       contracts: [
         { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "name" },
         { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "symbol" },
+        { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "asset" },
       ],
       blockNumber: event.blockNumber!,
     });
@@ -74,6 +70,7 @@ export const getVaultOrCreate = async (client: PublicClient, event: any, contrac
       address: contractAddress,
       name: nameResult.status === "success" ? nameResult.result : "",
       symbol: symbolResult.status === "success" ? symbolResult.result : "",
+      asset: assetRes.status === "success" ? assetRes.result : "",
       chainId: chain.chainId,
       chain,
       dateAdded: blockTimestamp
@@ -89,18 +86,13 @@ export const getStrategy = async (vaultAddress: string, strategyAddress: string)
   return await Strategy.findOne({ address: strategyAddress, vaultAddress });
 }
 
-export const isVaultWhitelisted = async(store: Store, vaultAddress: string) => {
-  console.log("apiUrl", apiUrl)
-  if (!apiUrl) {
-    throw new Error("REAPER_API_URL environment variable is not set.");
-  }
-
-  const response = await fetch(apiUrl);
+export const isVaultWhitelisted = async(store: Store, vaultAddress: string, chainId: number) => {
+  const response = await fetch("https://reaper-api.onrender.com/api/vaults");
   if (!response.ok) {
     return []
   }
 
   const dbVaults: DBVault[] = await response.json();
 
-  return dbVaults.some(vault => vault.address.toLowerCase() === vaultAddress.toLowerCase());
+  return dbVaults.some(vault => vault.address.toLowerCase() === vaultAddress.toLowerCase() && vault.chainId === chainId);
 }

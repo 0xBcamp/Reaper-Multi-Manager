@@ -28,7 +28,6 @@ export const snaphotVaultHandler: BlockHandler = async (
     logger: Logger;
   },
 ) => {
-  
   const now = Number(block.timestamp);
   const nowDay = nearestDay(Number(now));
 
@@ -42,10 +41,18 @@ export const snaphotVaultHandler: BlockHandler = async (
         const [
           totalIdleResult, 
           totalAllocatedResult,
+          pricePerFullShareResult,
+          lockedProfitResult,
+          totalAssetsResult,
+          totalSupplyResult,
         ] = await client.multicall({
           contracts: [
             { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "totalIdle" },
             { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "totalAllocated" },
+            { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "getPricePerFullShare" },
+            { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "lockedProfit" },
+            { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "totalAssets" },
+            { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "totalSupply" },
           ],
           blockNumber: block.number!
         });
@@ -75,6 +82,10 @@ export const snaphotVaultHandler: BlockHandler = async (
             vaultAddress: vault.address.toString(),
             totalIdle: totalIdleResult.status === "success" ? totalIdleResult.result.toString() : "0",
             totalAllocated: totalAllocatedResult.status === "success" ? totalAllocatedResult.result.toString() : "0",
+            pricePerFullShare: pricePerFullShareResult.status === "success" ? pricePerFullShareResult.result.toString() : "0",
+            lockedProfit: lockedProfitResult.status === "success" ? lockedProfitResult.result.toString() : "0",
+            totalAssets: totalAssetsResult.status === "success" ? totalAssetsResult.result.toString() : "0",
+            totalSupply: totalSupplyResult.status === "success" ? totalSupplyResult.result.toString() : "0",
             deposits: totalDeposits.toString(),
             withdrawals: totalWithdrawals.toString(),
             depositCount: deposits?.length,
@@ -87,8 +98,12 @@ export const snaphotVaultHandler: BlockHandler = async (
           vault.save();
   
         } else {
-          currentSnapshot.totalIdle = totalIdleResult.status === "success" ? totalIdleResult.result.toString() : "0";
-          currentSnapshot.totalAllocated = totalAllocatedResult.status === "success" ? totalAllocatedResult.result.toString() : "0";
+          currentSnapshot.totalIdle = totalIdleResult.status === "success" ? totalIdleResult.result.toString() : currentSnapshot.totalIdle;
+          currentSnapshot.totalAllocated = totalAllocatedResult.status === "success" ? totalAllocatedResult.result.toString() : currentSnapshot.totalAllocated;
+          currentSnapshot.pricePerFullShare = pricePerFullShareResult.status === "success" ? pricePerFullShareResult.result.toString() : currentSnapshot.pricePerFullShare,
+          currentSnapshot.lockedProfit = lockedProfitResult.status === "success" ? lockedProfitResult.result.toString() : currentSnapshot.lockedProfit,
+          currentSnapshot.totalAssets = totalAssetsResult.status === "success" ? totalAssetsResult.result.toString() : currentSnapshot.totalAssets,
+          currentSnapshot.totalSupply = totalSupplyResult.status === "success" ? totalSupplyResult.result.toString() : currentSnapshot.totalSupply,
           currentSnapshot.deposits = totalDeposits.toString();
           currentSnapshot.withdrawals = totalWithdrawals.toString();
           currentSnapshot.depositCount = deposits?.length;

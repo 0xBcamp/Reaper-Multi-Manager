@@ -11,12 +11,14 @@ export const withdrawHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Withdraw"> =
       const { sender, receiver, owner, assets, shares } = event.args;
 
       const contractAddress = event.address as string;
-      if (await isVaultWhitelisted(store, contractAddress)) {
+      const chainId = await client.getChainId();
+
+      if (await isVaultWhitelisted(store, contractAddress, chainId)) {
         const block = Number(event.blockNumber);
 
         const blockTimestamp = await getBlockTimestamp(client, store, event)
 
-        const chain = await getChainOrCreate(store, client);
+        const chain = await getChainOrCreate(store, chainId);
         const vault = await getVaultOrCreate(client, event, contractAddress, chain, blockTimestamp);
 
         const newTransaction = new VaultTransaction({

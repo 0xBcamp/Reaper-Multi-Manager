@@ -13,13 +13,13 @@ import { strategyReportedHandler } from "./handlers/events/strategyReportedHandl
 import { strategyRevokedHandler } from "./handlers/events/strategyRevokedHandler.ts";
 import { withdrawHandler } from "./handlers/events/withdrawHandler.ts";
 
-const manifest = new Manifest("Reaper");
+const manifest = new Manifest("Reaperv2");
 
 manifest
   .addEntities([Chain, Vault, Strategy, StrategyReport, VaultTransaction, VaultSnapshot])
   .addChain("optimism", (chain) =>
     chain
-      .setOptions({ blockRange: 400n, })
+      .setOptions({ blockRange: 200n, })
       .addContract({
         name: "OP - MultiStrategy",
         abi: VAULT_V2_ABI,
@@ -40,7 +40,7 @@ manifest
   )
   .addChain("fantom", (chain) =>
     chain
-      .setOptions({ blockRange: 400n, })
+      .setOptions({ blockRange: 200n, })
       .addContract({
         name: "Fantom - MultiStrategy",
         abi: VAULT_V2_ABI,
@@ -61,7 +61,7 @@ manifest
   )
   .addChain("arbitrum", (chain) =>
     chain
-      .setOptions({ blockRange: 400n, })
+      .setOptions({ blockRange: 200n, })
       .addContract({
         name: "Arbitrum - MultiStrategy",
         abi: VAULT_V2_ABI,

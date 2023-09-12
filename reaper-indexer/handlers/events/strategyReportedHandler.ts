@@ -13,13 +13,14 @@ export const strategyReportedHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Stra
 
       const vaultAddress = event.address as string;
       const strategyAddress = strategy as string;
+      const chainId = await client.getChainId();
 
-      if (await isVaultWhitelisted(store, vaultAddress)) {
+      if (await isVaultWhitelisted(store, vaultAddress, chainId)) {
         const block = Number(event.blockNumber);
 
         const blockTimestamp = await getBlockTimestamp(client, store, event)
 
-        const chain = await getChainOrCreate(store, client);
+        const chain = await getChainOrCreate(store, chainId);
 
         const [vault, strategy] = await Promise.all([
           getVaultOrCreate(client, event, vaultAddress, chain, blockTimestamp),
@@ -27,6 +28,8 @@ export const strategyReportedHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Stra
         ])
 
         if (strategy) {
+          const prevReport = await StrategyReport.findOne({vaultAddress: vault.address.toString(), strategyAddress: strategy.address.toString()}).sort({reportDate: -1});
+
           const newReport = new StrategyReport({
             block,
             hash: event.transactionHash,
@@ -42,7 +45,8 @@ export const strategyReportedHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Stra
             losses: losses.toString(),
             allocated: allocated.toString(),
             allocationAdded: allocationAdded.toString(),
-            allocBPS: allocBPS.toString()
+            allocBPS: allocBPS.toString(),
+            duration: prevReport ? blockTimestamp - prevReport.reportDate : blockTimestamp - strategy.dateAdded!
           });
 
           await newReport.save();

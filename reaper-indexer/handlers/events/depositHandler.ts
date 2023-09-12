@@ -11,13 +11,15 @@ export const depositHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Deposit"> =
       const { sender, owner, assets, shares } = event.args;
 
       const contractAddress = event.address as string;
-      const iswhitelisted = await isVaultWhitelisted(store, contractAddress)
+      const chainId = await client.getChainId();
+
+      const iswhitelisted = await isVaultWhitelisted(store, contractAddress, chainId)
       if (iswhitelisted) {
         const block = Number(event.blockNumber);
 
         const blockTimestamp = await getBlockTimestamp(client, store, event)
 
-        const chain = await getChainOrCreate(store, client);
+        const chain = await getChainOrCreate(store, chainId);
         const vault = await getVaultOrCreate(client, event, contractAddress, chain, blockTimestamp);
 
         const newTransaction = new VaultTransaction({
