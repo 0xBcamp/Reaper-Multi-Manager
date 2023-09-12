@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import blockchainReducer from './slices/blockchainSlice';
+import vaultsReducer from './slices/vaultsSlice';
 
 const store = configureStore({
   reducer: {
     blockchain: blockchainReducer,
+    vaults: vaultsReducer,
   },
 });
 

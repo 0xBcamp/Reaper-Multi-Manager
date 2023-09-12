@@ -1,8 +1,10 @@
 query VaultList {
   Vaults {
+    _id
     address
     asset
     chain {
+      _id
       chainId
       name
     }
@@ -10,6 +12,7 @@ query VaultList {
     name
     symbol
     lastSnapShot {
+      _id
       depositCount
       deposits
       lockedProfit

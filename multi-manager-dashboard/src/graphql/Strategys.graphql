@@ -1,0 +1,15 @@
+query Strategys {
+  Strategys {
+    _id
+    address
+    allocBPS
+    block
+    chainId
+    dateAdded
+    dateRevoked
+    feeBPS
+    hash
+    isActive
+    vaultAddress
+  }
+}

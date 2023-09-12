@@ -1,0 +1,19 @@
+query MyQuery {
+  StrategyReports(sort: BLOCK_DESC) {
+    _id
+    allocBPS
+    allocated
+    allocationAdded
+    block
+    debtPaid
+    duration
+    gain
+    gains
+    hash
+    loss
+    losses
+    reportDate
+    strategyAddress
+    vaultAddress
+  }
+}

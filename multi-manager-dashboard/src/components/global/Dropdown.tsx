@@ -53,7 +53,7 @@ const Dropdown: React.FC<IDropdownProps> = ({ options, placeholder = "Select..."
           value={selectedOption ? selectedOption.label : ""}
           placeholder={placeholder}
           onClick={() => setIsOpen(!isOpen)}
-          className="flex-1 py-2 px-3 text-sm bg-transparent outline-none text-gray-500"
+          className="flex-1 py-2 px-3 text-sm bg-transparent outline-none text-gray-500 cursor-pointer"
         />
         <svg
           onClick={() => setIsOpen(!isOpen)}

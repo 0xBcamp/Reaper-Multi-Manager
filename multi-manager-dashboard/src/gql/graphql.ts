@@ -1338,10 +1338,30 @@ export type ChainListQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ChainListQuery = { __typename?: 'Query', Chains: Array<{ __typename?: 'Chain', _id: any, chainId?: number | null, name?: string | null }> };
 
+export type MyQueryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MyQueryQuery = { __typename?: 'Query', StrategyReports: Array<{ __typename?: 'StrategyReport', _id: any, allocBPS?: string | null, allocated?: string | null, allocationAdded?: string | null, block?: number | null, debtPaid?: string | null, duration?: number | null, gain?: string | null, gains?: string | null, hash?: string | null, loss?: string | null, losses?: string | null, reportDate?: number | null, strategyAddress?: string | null, vaultAddress?: string | null }> };
+
+export type StrategysQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type StrategysQuery = { __typename?: 'Query', Strategys: Array<{ __typename?: 'Strategy', _id: any, address?: string | null, allocBPS?: string | null, block?: number | null, chainId?: number | null, dateAdded?: number | null, dateRevoked?: number | null, feeBPS?: string | null, hash?: string | null, isActive?: boolean | null, vaultAddress?: string | null }> };
+
 export type VaultListQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type VaultListQuery = { __typename?: 'Query', Vaults: Array<{ __typename?: 'Vault', address?: string | null, asset?: string | null, dateAdded?: number | null, name?: string | null, symbol?: string | null, chain?: { __typename?: 'Chain', chainId?: number | null, name?: string | null } | null, lastSnapShot?: { __typename?: 'VaultSnapshot', depositCount?: number | null, deposits?: string | null, lockedProfit?: string | null, pricePerFullShare?: string | null, timestamp?: number | null, totalAllocated?: string | null, totalAssets?: string | null, totalIdle?: string | null, totalSupply?: string | null, vaultAddress?: string | null, withdrawCount?: number | null, withdrawals?: string | null } | null }> };
+export type VaultListQuery = { __typename?: 'Query', Vaults: Array<{ __typename?: 'Vault', _id: any, address?: string | null, asset?: string | null, dateAdded?: number | null, name?: string | null, symbol?: string | null, chain?: { __typename?: 'Chain', _id: any, chainId?: number | null, name?: string | null } | null, lastSnapShot?: { __typename?: 'VaultSnapshot', _id: any, depositCount?: number | null, deposits?: string | null, lockedProfit?: string | null, pricePerFullShare?: string | null, timestamp?: number | null, totalAllocated?: string | null, totalAssets?: string | null, totalIdle?: string | null, totalSupply?: string | null, vaultAddress?: string | null, withdrawCount?: number | null, withdrawals?: string | null } | null }> };
+
+export type VaultSnapshotsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type VaultSnapshotsQuery = { __typename?: 'Query', VaultSnapshots: Array<{ __typename?: 'VaultSnapshot', _id: any, depositCount?: number | null, deposits?: string | null, lockedProfit?: string | null, pricePerFullShare?: string | null, timestamp?: number | null, totalAllocated?: string | null, totalAssets?: string | null, totalIdle?: string | null, totalSupply?: string | null, vaultAddress?: string | null, withdrawCount?: number | null, withdrawals?: string | null, vault?: { __typename?: 'Vault', _id: any, chainId?: number | null } | null }> };
+
+export type VaultTransactionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type VaultTransactionsQuery = { __typename?: 'Query', VaultTransactions: Array<{ __typename?: 'VaultTransaction', _id: any, assets?: string | null, block?: number | null, chainId?: number | null, dateExecuted?: number | null, hash?: string | null, owner?: string | null, receiver?: string | null, sender?: string | null, shares?: string | null, transactionType?: string | null, vaultAddress?: string | null }> };
 
 export class TypedDocumentString<TResult, TVariables>
   extends String
@@ -1367,12 +1387,52 @@ export const ChainListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ChainListQuery, ChainListQueryVariables>;
+export const MyQueryDocument = new TypedDocumentString(`
+    query MyQuery {
+  StrategyReports(sort: BLOCK_DESC) {
+    _id
+    allocBPS
+    allocated
+    allocationAdded
+    block
+    debtPaid
+    duration
+    gain
+    gains
+    hash
+    loss
+    losses
+    reportDate
+    strategyAddress
+    vaultAddress
+  }
+}
+    `) as unknown as TypedDocumentString<MyQueryQuery, MyQueryQueryVariables>;
+export const StrategysDocument = new TypedDocumentString(`
+    query Strategys {
+  Strategys {
+    _id
+    address
+    allocBPS
+    block
+    chainId
+    dateAdded
+    dateRevoked
+    feeBPS
+    hash
+    isActive
+    vaultAddress
+  }
+}
+    `) as unknown as TypedDocumentString<StrategysQuery, StrategysQueryVariables>;
 export const VaultListDocument = new TypedDocumentString(`
     query VaultList {
   Vaults {
+    _id
     address
     asset
     chain {
+      _id
       chainId
       name
     }
@@ -1380,6 +1440,7 @@ export const VaultListDocument = new TypedDocumentString(`
     name
     symbol
     lastSnapShot {
+      _id
       depositCount
       deposits
       lockedProfit
@@ -1396,3 +1457,44 @@ export const VaultListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<VaultListQuery, VaultListQueryVariables>;
+export const VaultSnapshotsDocument = new TypedDocumentString(`
+    query VaultSnapshots {
+  VaultSnapshots(sort: TIMESTAMP_DESC, limit: 0) {
+    _id
+    depositCount
+    deposits
+    lockedProfit
+    pricePerFullShare
+    timestamp
+    totalAllocated
+    totalAssets
+    totalIdle
+    totalSupply
+    vault {
+      _id
+      chainId
+    }
+    vaultAddress
+    withdrawCount
+    withdrawals
+  }
+}
+    `) as unknown as TypedDocumentString<VaultSnapshotsQuery, VaultSnapshotsQueryVariables>;
+export const VaultTransactionsDocument = new TypedDocumentString(`
+    query VaultTransactions {
+  VaultTransactions(sort: BLOCK_DESC, limit: 0) {
+    _id
+    assets
+    block
+    chainId
+    dateExecuted
+    hash
+    owner
+    receiver
+    sender
+    shares
+    transactionType
+    vaultAddress
+  }
+}
+    `) as unknown as TypedDocumentString<VaultTransactionsQuery, VaultTransactionsQueryVariables>;
