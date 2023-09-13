@@ -36,10 +36,6 @@ const Dropdown: React.FC<IDropdownProps> = ({ options, placeholder = "Select..."
     setSelectedOption(options.find(x => x.key === selectedKey));
   }, [selectedKey, options])
 
-  useEffect(() => {
-    console.log("selectedOption", selectedOption)
-  }, [selectedOption])
-
   const handleSelect = (option: DropdownOptionType) => {
     onChange(option.key);
     setIsOpen(false);

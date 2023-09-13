@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Strategy, StrategyReport, Vault, VaultListQuery, VaultSnapshot, VaultTransaction } from '../../gql/graphql';
+import { Strategy, StrategyReport } from '../../gql/graphql';
 
 const initialState: {
   strategies: Strategy[];

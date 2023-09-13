@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import Dropdown, { DropdownOptionType } from './global/Dropdown';
-import { RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedChain } from '../redux/slices/blockchainSlice';
-import { useLoadData } from '../hooks/useLoadData';
+import { useLoadData } from '../../hooks/useLoadData';
+import { setSelectedChain } from '../../redux/slices/blockchainSlice';
+import { RootState } from '../../redux/store';
+import Dropdown, { DropdownOptionType } from '../form/Dropdown';
+import { useNavigate } from 'react-router-dom';
+import { setSelectedVault } from '../../redux/slices/vaultsSlice';
 
 interface INavBarProps {
   menuButtonToggled: () => void;
@@ -11,9 +13,11 @@ interface INavBarProps {
 
 const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const chains = useSelector((state: RootState) => state.blockchain.chains);
   const selectedChain = useSelector((state: RootState) => state.blockchain.selectedChain);
+  const selectedVault = useSelector((state: RootState) => state.vaults.selectedVault);
   const [chainOptions, setChainOptions] = useState<DropdownOptionType[]>([]);
   
   useLoadData();
@@ -26,6 +30,16 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
       }
     }));
   }, [chains])
+
+  // useEffect(() => {
+  //   dispatch(setSelectedVault(null))
+  // }, [selectedChain])
+
+  // useEffect(() => {
+  //   if (!selectedVault) {
+  //     navigate("/vaults")
+  //   }
+  // }, [selectedVault])
   
   const handleDropdownChange = (key: string) => {
     dispatch(setSelectedChain(chains.find(x => x.chainId.toString() === key)))

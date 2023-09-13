@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { ChainListDocument, StrategyReportsDocument, StrategysDocument, VaultListDocument, VaultSnapshotsDocument, VaultTransactionsDocument } from "../gql/graphql";
 import { executeGQL } from "../lib/excecuteGraphQL";
 import { useEffect } from "react";
-import { Chain, setChains, setSelectedChain } from "../redux/slices/blockchainSlice";
+import { setChains, setSelectedChain } from "../redux/slices/blockchainSlice";
 import { RootState } from "../redux/store";
 import { setVaultSnapshots, setVaultTransactions, setVaults } from "../redux/slices/vaultsSlice";
 import { setStrategies, setStrategyReports } from "../redux/slices/strategiesSlice";
@@ -26,13 +26,11 @@ export const useLoadData = () => {
     const fetchChains = async () => {
         try {
             const results = await executeGQL(ChainListDocument);
-            const chains = results.Chains as Chain[];
 
-            // Assuming results has a data property that matches ChainListQuery structure
-            if (chains && Array.isArray(chains)) {
-                dispatch(setChains(chains));
-                if (!selectedChain && chains.length > 0) {
-                    dispatch(setSelectedChain(chains[0]))
+            if (results && Array.isArray(results.Chains)) {
+                dispatch(setChains(results.Chains));
+                if (!selectedChain && results.Chains.length > 0) {
+                    dispatch(setSelectedChain(results.Chains[0]))
                 }
             }
         } catch (error) {
@@ -43,10 +41,7 @@ export const useLoadData = () => {
     const fetchVaults = async () => {
         try {
             const results = await executeGQL(VaultListDocument);
-            console.log("results", results)
-            //const chains = results.Vaults as Chain[];
 
-            // Assuming results has a data property that matches ChainListQuery structure
             if (results && Array.isArray(results.Vaults)) {
                 dispatch(setVaults(results.Vaults));
             }

@@ -1,12 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Vault, VaultListQuery, VaultSnapshot, VaultTransaction } from '../../gql/graphql';
+import { Vault, VaultSnapshot, VaultTransaction } from '../../gql/graphql';
 
 const initialState: {
   vaults: Vault[];
+  selectedVault: Vault;
   snapshots: VaultSnapshot[];
   vaultTransactions: VaultTransaction[];
 } = {
   vaults: [],
+  selectedVault: null,
   snapshots: [],
   vaultTransactions: []
 };
@@ -18,6 +20,9 @@ const vaultsSlice = createSlice({
     setVaults: (state, action: PayloadAction<Vault[]>) => {
       state.vaults = action.payload;
     },
+    setSelectedVault: (state, action: PayloadAction<Vault>) => {
+      state.selectedVault = action.payload;
+    },
     setVaultSnapshots: (state, action: PayloadAction<VaultSnapshot[]>) => {
       state.snapshots = action.payload;
     },
@@ -27,5 +32,5 @@ const vaultsSlice = createSlice({
   }
 });
 
-export const { setVaults, setVaultSnapshots, setVaultTransactions } = vaultsSlice.actions;
+export const { setVaults, setSelectedVault, setVaultSnapshots, setVaultTransactions } = vaultsSlice.actions;
 export default vaultsSlice.reducer;

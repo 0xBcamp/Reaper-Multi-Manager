@@ -1,83 +1,39 @@
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { executeGQL } from '../../lib/excecuteGraphQL';
-import CurveFitChart from '../../components/charts/CurveFitChart';
-import Card from '../../components/cards/Card';
-import LastHarvest from '../../components/cards/LastHarvest';
-import { vaults } from '../../utils/vaults';
-import { CURRENT_UNIX_TIME, TIMESTAMP_ONE_MONTH_AGO, defaultStdDevThreshold } from '../../utils/constants';
-import { CurveFitGraph } from '../../components/charts/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectStrategiesByVault, selectVault, selectVaultsByChain } from '../../redux/selectors';
+import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
+import { useEffect } from 'react';
+import { setSelectedVault } from '../../redux/slices/vaultsSlice';
 
 const VaultDetailsPage = () => {
-  // let { vaultId } = useParams();
-
-  // const [graphs, setGraphs] = useState<CurveFitGraph[]>([]);
-  // const [vault, setVault] = useState(null);
-
-  // useEffect(() => {
-  //   if (vaultId) {
-  //     fetchData();
-  //   }
-  // }, [vaultId]);
-
-  // const fetchData = async () => {
-  //   const data = await executeGQL(VaultDocument, {
-  //     vaultId: vaultId,
-  //     currentUnixTime: CURRENT_UNIX_TIME,
-  //     timestampOneMonthAgo: TIMESTAMP_ONE_MONTH_AGO,
-  //   });
-  //   setVault(data);
-
-  //   const curveFitGraphs = data?.vault?.strategies.map((strategy) => {
-  //     const graph: CurveFitGraph = {
-  //       name: strategy.id,
-  //       data: strategy.reports.map((report, index) => ({
-  //         index,
-  //         timestamp: report.results?.timestamp || 0,
-  //         gain: report?.gain || 0,
-  //         loss: report?.loss || 0,
-  //         allocated: report?.allocated || 0,
-  //         allocationAdded: report?.allocationAdded || 0,
-  //         duration: report.results?.duration || 0,
-  //       })),
-  //       threshold: defaultStdDevThreshold
-  //     };
-
-  //     return graph;
-  //   });
-
-  //   setGraphs(curveFitGraphs);
-  // };
-
-  // const handleGraphUpdate = (updatedGraph: CurveFitGraph) => {
-  //   const updatedGraphs = graphs.map(graph => {
-  //     if (graph.name === updatedGraph.name) {
-  //       return updatedGraph;
-  //     }
-  //     return graph;
-  //   });
+  let { vaultAddress } = useParams();
+  const dispatch = useDispatch();
   
-  //   setGraphs(updatedGraphs);
-  // };
+  const vault = useSelector(selectVault);
+  const strategies = useSelector(selectStrategiesByVault);
+  const vaults = useSelector(selectVaultsByChain);
 
-  // const vaultName = vaults.find((x) => x.address === vault?.vault?.id)?.name;
+  useEffect(() => {
+    if (!vault) {
+      dispatch(setSelectedVault(vaults.find(x => x.address.toLowerCase() === vaultAddress.toLowerCase())));
+    }
+  }, [vault])
 
   return (
     <>
-    <div>Vault page coming soon</div>
-      {/* <div className="p-4">
-        <span className="text-lg">{vaultName}</span>
-      </div>
-      <div className="grid grid-cols-4 gap-4 m-4">
-        {graphs.filter(x => x.data?.length > 0)?.map((graph, index) => (
-          <Card key={index} title={graph.name}>
-            <div>
-              <LastHarvest graph={graph}/>
-              <CurveFitChart graph={graph} graphUpdated={handleGraphUpdate} />
-            </div>
-          </Card>
-        ))}
-      </div> */}
+      {vault && <>
+        <div className="p-4">
+          <span className="text-lg">{vault?.name}</span>
+        </div>
+        <div className="grid grid-cols-4 gap-4 m-4">
+          {strategies.map((strategy) => (
+            <StrategyAprSummary key={strategy._id} vault={vault} strategy={strategy} />
+          ))}
+        </div>
+      </>}
+      {!vault && <div className='flex h-full justify-center'>
+        <div className='mt-16 text-xl text-gray-400'>No vault selected</div>
+      </div>}
     </>
   );
 };
