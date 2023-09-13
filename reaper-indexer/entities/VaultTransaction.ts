@@ -40,5 +40,5 @@ export const VaultTransaction = createEntity<IVaultTransaction>("VaultTransactio
   sender: String,
   owner: String,
   receiver: String,
-  dateExecuted: Number,
+  dateExecuted: { type: Number, index: true },
 });
