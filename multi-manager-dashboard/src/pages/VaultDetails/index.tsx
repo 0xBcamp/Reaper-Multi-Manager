@@ -8,6 +8,7 @@ import LastHarvest from '../../components/cards/LastHarvest';
 import { vaults } from '../../utils/vaults';
 import { CURRENT_UNIX_TIME, TIMESTAMP_ONE_MONTH_AGO, defaultStdDevThreshold } from '../../utils/constants';
 import { CurveFitGraph } from '../../components/charts/types';
+import Allocation from '../../components/cards/Allocation';
 
 const VaultDetailsPage = () => {
   let { vaultId } = useParams();
@@ -37,6 +38,7 @@ const VaultDetailsPage = () => {
           timestamp: report.results?.timestamp || 0,
           gain: report?.gain || 0,
           loss: report?.loss || 0,
+          allocBPS: report?.allocBPS || 0,
           allocated: report?.allocated || 0,
           allocationAdded: report?.allocationAdded || 0,
           duration: report.results?.duration || 0,
@@ -74,6 +76,7 @@ const VaultDetailsPage = () => {
             <div>
               <LastHarvest graph={graph}/>
               <CurveFitChart graph={graph} graphUpdated={handleGraphUpdate} />
+              <Allocation graph={graph}/>
             </div>
           </Card>
         ))}

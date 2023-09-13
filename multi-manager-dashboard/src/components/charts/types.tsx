@@ -9,6 +9,7 @@ export type CurveFitData = {
     timestamp: number;
     gain: number;
     loss: number;
+    allocBPS: number;
     allocated: number;
     allocationAdded: number;
     duration: number;
