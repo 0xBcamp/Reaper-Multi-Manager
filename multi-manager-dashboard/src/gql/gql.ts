@@ -15,8 +15,8 @@ import * as types from './graphql';
  */
 const documents = {
     "query ChainList {\n  Chains {\n    _id\n    chainId\n    name\n  }\n}": types.ChainListDocument,
-    "query MyQuery {\n  StrategyReports(sort: BLOCK_DESC) {\n    _id\n    allocBPS\n    allocated\n    allocationAdded\n    block\n    debtPaid\n    duration\n    gain\n    gains\n    hash\n    loss\n    losses\n    reportDate\n    strategyAddress\n    vaultAddress\n  }\n}": types.MyQueryDocument,
-    "query Strategys {\n  Strategys {\n    _id\n    address\n    allocBPS\n    block\n    chainId\n    dateAdded\n    dateRevoked\n    feeBPS\n    hash\n    isActive\n    vaultAddress\n  }\n}": types.StrategysDocument,
+    "query StrategyReports {\n  StrategyReports(sort: BLOCK_DESC, limit: 0) {\n    _id\n    allocBPS\n    allocated\n    allocationAdded\n    block\n    debtPaid\n    duration\n    gain\n    gains\n    hash\n    loss\n    losses\n    reportDate\n    strategyAddress\n    vaultAddress\n  }\n}": types.StrategyReportsDocument,
+    "query Strategys {\n  Strategys {\n    _id\n    address\n    allocBPS\n    block\n    chainId\n    dateAdded\n    dateRevoked\n    feeBPS\n    hash\n    isActive\n    vaultAddress\n    lastReport {\n      _id\n      block\n      hash\n      reportDate\n      strategyAddress\n      vaultAddress\n      gain\n      loss\n      debtPaid\n      gains\n      losses\n      allocated\n      allocationAdded\n      allocBPS\n      duration\n    }\n  }\n}": types.StrategysDocument,
     "query VaultList {\n  Vaults {\n    _id\n    address\n    asset\n    chain {\n      _id\n      chainId\n      name\n    }\n    dateAdded\n    name\n    symbol\n    lastSnapShot {\n      _id\n      depositCount\n      deposits\n      lockedProfit\n      pricePerFullShare\n      timestamp\n      totalAllocated\n      totalAssets\n      totalIdle\n      totalSupply\n      vaultAddress\n      withdrawCount\n      withdrawals\n    }\n  }\n}": types.VaultListDocument,
     "query VaultSnapshots {\n  VaultSnapshots(sort: TIMESTAMP_DESC, limit: 0) {\n    _id\n    depositCount\n    deposits\n    lockedProfit\n    pricePerFullShare\n    timestamp\n    totalAllocated\n    totalAssets\n    totalIdle\n    totalSupply\n    vault {\n      _id\n      chainId\n    }\n    vaultAddress\n    withdrawCount\n    withdrawals\n  }\n}": types.VaultSnapshotsDocument,
     "query VaultTransactions {\n  VaultTransactions(sort: BLOCK_DESC, limit: 0) {\n    _id\n    assets\n    block\n    chainId\n    dateExecuted\n    hash\n    owner\n    receiver\n    sender\n    shares\n    transactionType\n    vaultAddress\n  }\n}": types.VaultTransactionsDocument,
@@ -29,11 +29,11 @@ export function graphql(source: "query ChainList {\n  Chains {\n    _id\n    cha
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query MyQuery {\n  StrategyReports(sort: BLOCK_DESC) {\n    _id\n    allocBPS\n    allocated\n    allocationAdded\n    block\n    debtPaid\n    duration\n    gain\n    gains\n    hash\n    loss\n    losses\n    reportDate\n    strategyAddress\n    vaultAddress\n  }\n}"): typeof import('./graphql').MyQueryDocument;
+export function graphql(source: "query StrategyReports {\n  StrategyReports(sort: BLOCK_DESC, limit: 0) {\n    _id\n    allocBPS\n    allocated\n    allocationAdded\n    block\n    debtPaid\n    duration\n    gain\n    gains\n    hash\n    loss\n    losses\n    reportDate\n    strategyAddress\n    vaultAddress\n  }\n}"): typeof import('./graphql').StrategyReportsDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "query Strategys {\n  Strategys {\n    _id\n    address\n    allocBPS\n    block\n    chainId\n    dateAdded\n    dateRevoked\n    feeBPS\n    hash\n    isActive\n    vaultAddress\n  }\n}"): typeof import('./graphql').StrategysDocument;
+export function graphql(source: "query Strategys {\n  Strategys {\n    _id\n    address\n    allocBPS\n    block\n    chainId\n    dateAdded\n    dateRevoked\n    feeBPS\n    hash\n    isActive\n    vaultAddress\n    lastReport {\n      _id\n      block\n      hash\n      reportDate\n      strategyAddress\n      vaultAddress\n      gain\n      loss\n      debtPaid\n      gains\n      losses\n      allocated\n      allocationAdded\n      allocBPS\n      duration\n    }\n  }\n}"): typeof import('./graphql').StrategysDocument;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

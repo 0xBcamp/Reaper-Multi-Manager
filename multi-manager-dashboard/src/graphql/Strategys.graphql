@@ -11,5 +11,22 @@ query Strategys {
     hash
     isActive
     vaultAddress
+    lastReport {
+      _id
+      block
+      hash
+      reportDate
+      strategyAddress
+      vaultAddress
+      gain
+      loss
+      debtPaid
+      gains
+      losses
+      allocated
+      allocationAdded
+      allocBPS
+      duration
+    }
   }
 }

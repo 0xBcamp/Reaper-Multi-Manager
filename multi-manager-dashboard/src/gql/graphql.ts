@@ -150,7 +150,7 @@ export type FilterCountStrategyInput = {
   feeBPS?: InputMaybe<Scalars['String']['input']>;
   hash?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  reports?: InputMaybe<Array<InputMaybe<Scalars['MongoID']['input']>>>;
+  lastReport?: InputMaybe<Scalars['MongoID']['input']>;
   vault?: InputMaybe<Scalars['MongoID']['input']>;
   vaultAddress?: InputMaybe<Scalars['String']['input']>;
 };
@@ -465,7 +465,7 @@ export type FilterFindManyStrategyInput = {
   feeBPS?: InputMaybe<Scalars['String']['input']>;
   hash?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  reports?: InputMaybe<Array<InputMaybe<Scalars['MongoID']['input']>>>;
+  lastReport?: InputMaybe<Scalars['MongoID']['input']>;
   vault?: InputMaybe<Scalars['MongoID']['input']>;
   vaultAddress?: InputMaybe<Scalars['String']['input']>;
 };
@@ -780,7 +780,7 @@ export type FilterFindOneStrategyInput = {
   feeBPS?: InputMaybe<Scalars['String']['input']>;
   hash?: InputMaybe<Scalars['String']['input']>;
   isActive?: InputMaybe<Scalars['Boolean']['input']>;
-  reports?: InputMaybe<Array<InputMaybe<Scalars['MongoID']['input']>>>;
+  lastReport?: InputMaybe<Scalars['MongoID']['input']>;
   vault?: InputMaybe<Scalars['MongoID']['input']>;
   vaultAddress?: InputMaybe<Scalars['String']['input']>;
 };
@@ -1257,7 +1257,7 @@ export type Strategy = {
   feeBPS?: Maybe<Scalars['String']['output']>;
   hash?: Maybe<Scalars['String']['output']>;
   isActive?: Maybe<Scalars['Boolean']['output']>;
-  reports: Array<Maybe<StrategyReport>>;
+  lastReport?: Maybe<StrategyReport>;
   vault?: Maybe<Vault>;
   vaultAddress?: Maybe<Scalars['String']['output']>;
 };
@@ -1338,15 +1338,15 @@ export type ChainListQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type ChainListQuery = { __typename?: 'Query', Chains: Array<{ __typename?: 'Chain', _id: any, chainId?: number | null, name?: string | null }> };
 
-export type MyQueryQueryVariables = Exact<{ [key: string]: never; }>;
+export type StrategyReportsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MyQueryQuery = { __typename?: 'Query', StrategyReports: Array<{ __typename?: 'StrategyReport', _id: any, allocBPS?: string | null, allocated?: string | null, allocationAdded?: string | null, block?: number | null, debtPaid?: string | null, duration?: number | null, gain?: string | null, gains?: string | null, hash?: string | null, loss?: string | null, losses?: string | null, reportDate?: number | null, strategyAddress?: string | null, vaultAddress?: string | null }> };
+export type StrategyReportsQuery = { __typename?: 'Query', StrategyReports: Array<{ __typename?: 'StrategyReport', _id: any, allocBPS?: string | null, allocated?: string | null, allocationAdded?: string | null, block?: number | null, debtPaid?: string | null, duration?: number | null, gain?: string | null, gains?: string | null, hash?: string | null, loss?: string | null, losses?: string | null, reportDate?: number | null, strategyAddress?: string | null, vaultAddress?: string | null }> };
 
 export type StrategysQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StrategysQuery = { __typename?: 'Query', Strategys: Array<{ __typename?: 'Strategy', _id: any, address?: string | null, allocBPS?: string | null, block?: number | null, chainId?: number | null, dateAdded?: number | null, dateRevoked?: number | null, feeBPS?: string | null, hash?: string | null, isActive?: boolean | null, vaultAddress?: string | null }> };
+export type StrategysQuery = { __typename?: 'Query', Strategys: Array<{ __typename?: 'Strategy', _id: any, address?: string | null, allocBPS?: string | null, block?: number | null, chainId?: number | null, dateAdded?: number | null, dateRevoked?: number | null, feeBPS?: string | null, hash?: string | null, isActive?: boolean | null, vaultAddress?: string | null, lastReport?: { __typename?: 'StrategyReport', _id: any, block?: number | null, hash?: string | null, reportDate?: number | null, strategyAddress?: string | null, vaultAddress?: string | null, gain?: string | null, loss?: string | null, debtPaid?: string | null, gains?: string | null, losses?: string | null, allocated?: string | null, allocationAdded?: string | null, allocBPS?: string | null, duration?: number | null } | null }> };
 
 export type VaultListQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -1387,9 +1387,9 @@ export const ChainListDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<ChainListQuery, ChainListQueryVariables>;
-export const MyQueryDocument = new TypedDocumentString(`
-    query MyQuery {
-  StrategyReports(sort: BLOCK_DESC) {
+export const StrategyReportsDocument = new TypedDocumentString(`
+    query StrategyReports {
+  StrategyReports(sort: BLOCK_DESC, limit: 0) {
     _id
     allocBPS
     allocated
@@ -1407,7 +1407,7 @@ export const MyQueryDocument = new TypedDocumentString(`
     vaultAddress
   }
 }
-    `) as unknown as TypedDocumentString<MyQueryQuery, MyQueryQueryVariables>;
+    `) as unknown as TypedDocumentString<StrategyReportsQuery, StrategyReportsQueryVariables>;
 export const StrategysDocument = new TypedDocumentString(`
     query Strategys {
   Strategys {
@@ -1422,6 +1422,23 @@ export const StrategysDocument = new TypedDocumentString(`
     hash
     isActive
     vaultAddress
+    lastReport {
+      _id
+      block
+      hash
+      reportDate
+      strategyAddress
+      vaultAddress
+      gain
+      loss
+      debtPaid
+      gains
+      losses
+      allocated
+      allocationAdded
+      allocBPS
+      duration
+    }
   }
 }
     `) as unknown as TypedDocumentString<StrategysQuery, StrategysQueryVariables>;
