@@ -2,8 +2,6 @@ import { Types } from "https://deno.land/x/robo_arkiver@v0.4.21/mod.ts";
 import { createEntity } from "../deps.ts";
 import { IChain } from "./Chain.ts";
 import { IVaultSnapshot } from "./VaultSnapshot.ts";
-import { IStrategy } from "./Strategy.ts";
-import { IVaultTransaction } from "./VaultTransaction.ts";
 
 export interface IVault {
   address: string;

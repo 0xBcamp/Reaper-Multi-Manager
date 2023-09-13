@@ -17,7 +17,7 @@ export interface IStrategy {
   isActive: boolean;
   chainId: number;
   chain: IChain;
-  reports: IStrategyReport[];
+  lastReport: IStrategyReport;
 }
 
 export const Strategy = createEntity<IStrategy>("Strategy", {
@@ -36,5 +36,5 @@ export const Strategy = createEntity<IStrategy>("Strategy", {
   vault: { type: Types.ObjectId, ref: 'Vault'},
   chainId: Number,
   chain: { type: Types.ObjectId, ref: 'Chain'},
-  reports: [{ type: Types.ObjectId, ref: 'StrategyReport'}],
+  lastReport: { type: Types.ObjectId, ref: 'StrategyReport'},
 });
