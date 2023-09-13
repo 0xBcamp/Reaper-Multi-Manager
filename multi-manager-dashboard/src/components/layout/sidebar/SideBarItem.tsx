@@ -1,5 +1,5 @@
 import React from 'react'
-import { SideBarRoute } from '../../utils/routes'
+import { SideBarRoute } from '../../../utils/routes'
 import { Link } from 'react-router-dom'
 
 type Props = {

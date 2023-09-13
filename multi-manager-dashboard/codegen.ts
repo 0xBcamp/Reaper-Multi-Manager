@@ -3,7 +3,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "https://api.thegraph.com/subgraphs/name/byte-masons/multi-strategy-vaults-optimism", //process.env.REACT_APP_GRAPHQL_SCHEMA_URL,
+  schema: "https://data.staging.arkiver.net/gerdusx/reaperv2/graphql", //process.env.REACT_APP_GRAPHQL_SCHEMA_URL,
   documents: "src/graphql/**/*.graphql",
   generates: {
     "src/gql/": {

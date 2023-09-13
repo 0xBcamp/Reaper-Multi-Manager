@@ -1,0 +1,30 @@
+query VaultList {
+  Vaults {
+    _id
+    address
+    asset
+    chain {
+      _id
+      chainId
+      name
+    }
+    dateAdded
+    name
+    symbol
+    lastSnapShot {
+      _id
+      depositCount
+      deposits
+      lockedProfit
+      pricePerFullShare
+      timestamp
+      totalAllocated
+      totalAssets
+      totalIdle
+      totalSupply
+      vaultAddress
+      withdrawCount
+      withdrawals
+    }
+  }
+}

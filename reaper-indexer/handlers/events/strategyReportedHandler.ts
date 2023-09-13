@@ -49,7 +49,10 @@ export const strategyReportedHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Stra
             duration: prevReport ? blockTimestamp - prevReport.reportDate : blockTimestamp - strategy.dateAdded!
           });
 
-          await newReport.save();
+          const lastReport = await newReport.save();
+
+          strategy.lastReport = lastReport;
+          await strategy.save();
         }
       }
     } catch (error) {

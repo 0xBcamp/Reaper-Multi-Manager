@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { routes } from '../../utils/routes'
+import { routes } from '../../../utils/routes'
 import SideBarItem from './SideBarItem'
 
 function SideBar() {

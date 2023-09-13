@@ -23,12 +23,9 @@ export interface IStrategyReport {
 }
 
 export const StrategyReport = createEntity<IStrategyReport>("StrategyReport", {
-  block: {
-    type: Number,
-    index: true,
-  },
+  block: { type: Number, index: true },
   hash: String,
-  reportDate: Number,
+  reportDate: { type: Number, index: true },
   strategyAddress: String, 
   strategy: { type: Types.ObjectId, ref: 'Strategy' },
   vaultAddress: String, 
