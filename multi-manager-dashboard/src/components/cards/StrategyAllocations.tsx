@@ -36,7 +36,7 @@ const AllocationSummary = ({ vault, strategy }: IAllocationProps) => {
                 </div>
                 <div className='flex justify-between'>
                     <div>Vault assets:</div>
-                    <div>{((lastVaultAllocated))}</div>
+                    <div>{parseFloat(formatUnits(lastVaultAllocated))?.toFixed(2)}</div>
                 </div>
                 <div className='flex justify-between'>
                     <div>Contract allocated BPS:</div>
