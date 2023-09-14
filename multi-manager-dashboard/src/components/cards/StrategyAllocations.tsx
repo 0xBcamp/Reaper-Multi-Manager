@@ -20,16 +20,36 @@ const AllocationSummary = ({ vault, strategy, strategies }: IAllocationProps) =>
     const lastStrategyHarvest = strategy.aprReports?.length > 0 ? strategy.aprReports[strategy.aprReports?.length - 1] : undefined;
     const lastStrategyAllocated = lastStrategyHarvest?.allocated;
 
-    const { xData, yData } = useMemo(() => calculateDataWithThreshold(strategy.aprReports, threshold), [strategy.aprReports, threshold]);
-    const timeBasedMovingAverageResults = calculateTimeBasedMovingAverage(xData, yData);
-    const strategyAPR = timeBasedMovingAverageResults.resultYData[timeBasedMovingAverageResults.resultYData.length - 1];
+    const strategyAPR = strategy.APR;
+
+    const strategyAPRValues = strategies.map((strategy) => {
+        return strategy.APR;
+    });
+
+    const strategyAllocatedValues: number[] = strategies.map((strat) => {
+        return parseFloat(strat.aprReports?.[strat.aprReports.length - 1]?.allocated || "0");
+    });
+
+    const strategyProductValues = strategies.map((_, index) => {
+        const allocatedValue = (strategyAllocatedValues[index]);
+        const aprValue = (strategyAPRValues[index]);
+        return allocatedValue * aprValue;
+    });
+
+    const totalProductValue = strategyProductValues
+        .reduce((total, productValue) => {
+                return total + productValue;
+            }
+        );
+
+    const vaultAPR = totalProductValue / Number(lastVaultAllocated);
 
     return (
         <>
             {lastStrategyHarvest ?
                 <div className='flex flex-col p-2 text-gray-600 text-xs'>
                     <div className='flex justify-between'>
-                    <div>CALCULATIONS (IGNORE FOR NOW)</div>
+                    <div>CALCULATIONS</div>
                 </div>
                 <div className='flex justify-between'>
                     <div>Strategy allocated value:</div>
@@ -41,7 +61,7 @@ const AllocationSummary = ({ vault, strategy, strategies }: IAllocationProps) =>
                 </div>
                 <div className='flex justify-between'>
                     <div>Actual allocated BPS:</div>
-                    <div>{(Number(lastStrategyAllocated)/Number(lastVaultAllocated)*10000).toFixed(2)}</div>
+                    <div>{(parseFloat(lastStrategyAllocated)/parseFloat(lastVaultAllocated)*10000).toFixed(2)}</div>
                 </div>
                 <div className='flex justify-between'>
                     <div>Apr: </div>
@@ -49,11 +69,15 @@ const AllocationSummary = ({ vault, strategy, strategies }: IAllocationProps) =>
                 </div>
                 <div className='flex justify-between'>
                     <div>Vault APR: </div>
-                    <div>(alloc1 * apr1) + (alloc2 * apr2) + ... / (totalAlloc)</div>
+                    <div>{vaultAPR.toFixed(2)}</div>
                 </div>
                 <div className='flex justify-between'>
-                    <div>Optimum allocation: </div>
-                    <div>{lastStrategyAllocated} / vaultAPR * {strategyAPR}</div>
+                    <div>Optimum Allocation: </div>
+                    <div>{(parseFloat(formatUnits(lastStrategyAllocated))*strategyAPR/vaultAPR).toFixed(2)}</div>
+                </div>
+                <div className='flex justify-between'>
+                    <div>Optimum Allocation BPS: </div>
+                    <div>{(parseFloat(lastStrategyAllocated)*strategyAPR/vaultAPR/parseFloat(lastVaultAllocated)*10000).toFixed(2)}</div>
                 </div>
             </div> :
             <div >No harvests found</div>}
