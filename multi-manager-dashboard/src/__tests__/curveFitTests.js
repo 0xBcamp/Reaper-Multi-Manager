@@ -1,4 +1,4 @@
-import { calculateDataWithThreshold } from "../lib/math/linearRegression";
+import { calculateDataWithThreshold } from "../lib/calculateStrategyAPR";
 
 describe('calculateDataWithThreshold', () => {
 
