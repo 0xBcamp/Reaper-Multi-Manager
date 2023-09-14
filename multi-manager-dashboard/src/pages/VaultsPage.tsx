@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectStrategiesByChain, selectVaultsByChain } from '../redux/selectors';
-import { setSelectedVault } from '../redux/slices/vaultsSlice';
+import { setSelectedVaultAddress } from '../redux/slices/vaultsSlice';
 
 
 const VaultsPage = () => {
@@ -12,7 +12,7 @@ const VaultsPage = () => {
     const strategies = useSelector(selectStrategiesByChain);
 
     const handleVaultClick = (vault) => {
-        dispatch(setSelectedVault(vault));
+        dispatch(setSelectedVaultAddress(vault.address));
         navigate(`/vaults/${vault.address}`);
     }
 

@@ -3,12 +3,12 @@ import { Vault, VaultSnapshot, VaultTransaction } from '../../gql/graphql';
 
 const initialState: {
   vaults: Vault[];
-  selectedVault: Vault;
+  selectedVaultAddress: string;
   snapshots: VaultSnapshot[];
   vaultTransactions: VaultTransaction[];
 } = {
   vaults: [],
-  selectedVault: null,
+  selectedVaultAddress: null,
   snapshots: [],
   vaultTransactions: []
 };
@@ -20,8 +20,8 @@ const vaultsSlice = createSlice({
     setVaults: (state, action: PayloadAction<Vault[]>) => {
       state.vaults = action.payload;
     },
-    setSelectedVault: (state, action: PayloadAction<Vault>) => {
-      state.selectedVault = action.payload;
+    setSelectedVaultAddress: (state, action: PayloadAction<string>) => {
+      state.selectedVaultAddress = action.payload;
     },
     setVaultSnapshots: (state, action: PayloadAction<VaultSnapshot[]>) => {
       state.snapshots = action.payload;
@@ -32,5 +32,5 @@ const vaultsSlice = createSlice({
   }
 });
 
-export const { setVaults, setSelectedVault, setVaultSnapshots, setVaultTransactions } = vaultsSlice.actions;
+export const { setVaults, setSelectedVaultAddress, setVaultSnapshots, setVaultTransactions } = vaultsSlice.actions;
 export default vaultsSlice.reducer;
