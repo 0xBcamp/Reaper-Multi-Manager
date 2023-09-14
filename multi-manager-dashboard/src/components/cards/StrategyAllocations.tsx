@@ -9,6 +9,7 @@ import { DEFAULT_STD_DEV_THRESHOLD } from '../../utils/constants';
 interface IAllocationProps {
     vault: Vault;
     strategy: StrategySelector;
+    strategies: StrategySelector[];
 }
 
 const AllocationSummary = ({ vault, strategy }: IAllocationProps) => {

@@ -33,7 +33,7 @@ const VaultDetailsPage = () => {
         </div>
         <div className="grid grid-cols-4 gap-4 m-4">
           {strategies.map((strategy) => (
-            <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} />
+            <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={strategies}/>
           ))}
         </div>
       </>}
