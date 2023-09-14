@@ -25,7 +25,7 @@ const selectAllVaultSnapshots = (state: RootState) => state.vaults.snapshots;
 export const selectVaultsByChain: (state: RootState) => VaultSelector[]  = createSelector(
     [selectSelectedChain, selectAllVaults, selectAllVaultSnapshots],
     (selectedChain, vaults, vaultSnapshot) => {
-        return vaults.filter(x => x.chain.chainId === selectedChain.chainId).map(vault => {
+        return vaults.filter(x => x.chain.chainId === selectedChain?.chainId).map(vault => {
             let currentVaultSnapshots = vaultSnapshot.filter(snapshot =>
                 snapshot.vaultAddress.toLowerCase() === vault.address.toLowerCase()
             );
@@ -44,7 +44,7 @@ export const selectVaultsByChain: (state: RootState) => VaultSelector[]  = creat
 export const selectStrategiesByChain = createSelector(
     [selectSelectedChain, selectAllStrategies, selectAllStrategyReports],
     (selectedChain, strategies, strategyReports) => {
-        return strategies.filter(x => x.chainId === selectedChain.chainId && x.isActive).map(strategy => {
+        return strategies.filter(x => x.chainId === selectedChain?.chainId && x.isActive).map(strategy => {
             let currentStrategyReports = strategyReports.filter(report =>
                 report.strategyAddress.toLowerCase() === strategy.address.toLowerCase()
             );
