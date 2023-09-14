@@ -35,16 +35,12 @@ const AllocationSummary = ({ vault, strategy }: IAllocationProps) => {
                     <div>{parseFloat(formatUnits(lastStrategyAllocated))?.toFixed(2)}</div>
                 </div>
                 <div className='flex justify-between'>
-                    <div>Vault assets:</div>
-                    <div>{parseFloat(formatUnits(lastVaultAllocated))?.toFixed(2)}</div>
-                </div>
-                <div className='flex justify-between'>
                     <div>Contract allocated BPS:</div>
                     <div>{lastStrategyHarvest?.allocBPS}</div>
                 </div>
                 <div className='flex justify-between'>
                     <div>Actual allocated BPS:</div>
-                    <div>{parseFloat(formatUnits(lastStrategyAllocated))} /lastVaultAllocated </div>
+                    <div>{(Number(lastStrategyAllocated)/Number(lastVaultAllocated)*10000).toFixed(2)}</div>
                 </div>
                 <div className='flex justify-between'>
                     <div>Apr: </div>
