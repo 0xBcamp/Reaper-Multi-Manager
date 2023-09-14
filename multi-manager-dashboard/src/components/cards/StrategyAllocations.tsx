@@ -12,7 +12,7 @@ interface IAllocationProps {
     strategies: StrategySelector[];
 }
 
-const AllocationSummary = ({ vault, strategy }: IAllocationProps) => {
+const AllocationSummary = ({ vault, strategy, strategies }: IAllocationProps) => {
     const [threshold, setThreshold] = useState(DEFAULT_STD_DEV_THRESHOLD)
 
     const lastVaultAllocated = vault.lastSnapShot?.totalAllocated;
