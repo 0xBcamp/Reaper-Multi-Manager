@@ -77,7 +77,7 @@ export const getVaultOrCreate = async (client: PublicClient, event: any, contrac
       asset: assetRes.status === "success" ? assetRes.result : "",
       chainId: chain.chainId,
       chain,
-      constructionTime: constructionTimeRes.status === "success" ? constructionTimeRes.result : 0,
+      constructionTime: constructionTimeRes.status === "success" ? Number(constructionTimeRes.result) : 0,
       token: tokenRes.status === "success" ? tokenRes.result : "",
       decimals: decimalsRes.status === "success" ? decimalsRes.result : 0,
     });
