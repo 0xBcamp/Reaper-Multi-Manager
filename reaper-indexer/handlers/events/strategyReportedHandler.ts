@@ -23,7 +23,7 @@ export const strategyReportedHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Stra
         const chain = await getChainOrCreate(store, chainId);
 
         const [vault, strategy] = await Promise.all([
-          getVaultOrCreate(client, event, vaultAddress, chain, blockTimestamp),
+          getVaultOrCreate(client, event, vaultAddress, chain),
           getStrategy(vaultAddress, strategyAddress)
         ])
 

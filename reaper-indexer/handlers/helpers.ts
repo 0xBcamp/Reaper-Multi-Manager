@@ -53,15 +53,18 @@ export const getChainOrCreate = async (store: Store, chainId: number) => {
 }
 
 // deno-lint-ignore no-explicit-any
-export const getVaultOrCreate = async (client: PublicClient, event: any, contractAddress: string, chain: IChain, blockTimestamp: number) => {
+export const getVaultOrCreate = async (client: PublicClient, event: any, contractAddress: string, chain: IChain) => {
   let vault = await Vault.findOne({ address: contractAddress, chainId: chain.chainId });
 
   if (!vault) {
-    const [nameResult, symbolResult, assetRes] = await client.multicall({
+    const [nameResult, symbolResult, assetRes, constructionTimeRes, tokenRes, decimalsRes] = await client.multicall({
       contracts: [
         { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "name" },
         { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "symbol" },
         { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "asset" },
+        { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "constructionTime" },
+        { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "token" },
+        { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "decimals" },
       ],
       blockNumber: event.blockNumber!,
     });
@@ -73,7 +76,9 @@ export const getVaultOrCreate = async (client: PublicClient, event: any, contrac
       asset: assetRes.status === "success" ? assetRes.result : "",
       chainId: chain.chainId,
       chain,
-      dateAdded: blockTimestamp
+      constructionTime: constructionTimeRes.status === "success" ? constructionTimeRes.result : 0,
+      token: tokenRes.status === "success" ? tokenRes.result : "",
+      decimals: decimalsRes.status === "success" ? decimalsRes.result : 0,
     });
 
     await vault.save();

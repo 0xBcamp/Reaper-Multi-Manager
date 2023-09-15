@@ -19,7 +19,7 @@ export const withdrawHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Withdraw"> =
         const blockTimestamp = await getBlockTimestamp(client, store, event)
 
         const chain = await getChainOrCreate(store, chainId);
-        const vault = await getVaultOrCreate(client, event, contractAddress, chain, blockTimestamp);
+        const vault = await getVaultOrCreate(client, event, contractAddress, chain);
 
         const newTransaction = new VaultTransaction({
           block,

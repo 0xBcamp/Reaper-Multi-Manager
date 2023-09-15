@@ -92,10 +92,7 @@ export const snaphotVaultHandler: BlockHandler = async (
             withdrawCount: withdrawals?.length,
           });
   
-          const snap = await snapshot.save();
-  
-          vault.lastSnapShot = snap;
-          await vault.save();
+          await snapshot.save();
   
         } else {
           currentSnapshot.totalIdle = totalIdleResult.status === "success" ? totalIdleResult.result.toString() : currentSnapshot.totalIdle;
@@ -109,9 +106,7 @@ export const snaphotVaultHandler: BlockHandler = async (
           currentSnapshot.depositCount = deposits?.length;
           currentSnapshot.withdrawCount = withdrawals?.length;
 
-          const snap = await currentSnapshot.save();
-          vault.lastSnapShot = snap;
-          await vault.save();
+          await currentSnapshot.save();
         }
       } catch (error) {
         sleepSecs(60000);
