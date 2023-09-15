@@ -2,6 +2,7 @@ import { Types } from "https://deno.land/x/robo_arkiver@v0.4.21/mod.ts";
 import { createEntity } from "../deps.ts";
 import { IVault } from "./Vault.ts";
 import { IChain } from "./Chain.ts";
+import { IUser } from "./User.ts";
 
 export enum VaultTransactionEnum {
   Deposit = "Deposit",
@@ -22,6 +23,7 @@ export interface IVaultTransaction {
   owner: string;
   receiver: string;
   dateExecuted: number;
+  user: IUser;
 }
 
 export const VaultTransaction = createEntity<IVaultTransaction>("VaultTransaction", {
@@ -41,4 +43,6 @@ export const VaultTransaction = createEntity<IVaultTransaction>("VaultTransactio
   owner: String,
   receiver: String,
   dateExecuted: { type: Number, index: true },
+  user: { type: Types.ObjectId, ref: 'User'},
+
 });
