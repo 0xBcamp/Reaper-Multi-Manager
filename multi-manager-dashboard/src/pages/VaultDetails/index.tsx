@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectStrategiesByVault, selectVault, selectVaultsByChain } from '../../redux/selectors';
 import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
+import StrategyAllocations from '../../components/cards/StrategyAllocations';
 import { useEffect } from 'react';
 import { setSelectedVault } from '../../redux/slices/vaultsSlice';
 
@@ -28,6 +29,11 @@ const VaultDetailsPage = () => {
         <div className="grid grid-cols-4 gap-4 m-4">
           {strategies.map((strategy) => (
             <StrategyAprSummary key={strategy._id} vault={vault} strategy={strategy} />
+          ))}
+        </div>
+        <div className="grid grid-cols-4 gap-4 m-4">
+          {strategies.map((strategy) => (
+            <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={strategies}/>
           ))}
         </div>
       </>}
