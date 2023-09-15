@@ -86,7 +86,10 @@ const StrategyAprSummary = ({ vault, strategy }: IStrategyAprSummaryProps) => {
             x: {
                 beginAtZero: false,
                 ticks: {
-                    display: false,
+                    font: {
+                        size: 10,
+                    },
+                    count: 2,
                 },
                 grid: {
                     display: false,
