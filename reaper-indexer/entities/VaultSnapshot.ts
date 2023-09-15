@@ -4,6 +4,7 @@ import { IVault } from "./Vault.ts";
 
 export interface IVaultSnapshot {
   timestamp: number,
+  lastBlockTimestamp: number,
   vaultAddress: string;
   vault: IVault;
   totalIdle: string;
@@ -26,10 +27,10 @@ export interface IVaultSnapshot {
   lockedProfit: string;
   // lockedProfitDegradation: string;
   // token: string;
-  // totalAllocBPS: string;
+  totalAllocBPS: string;
   totalAssets: string;
   totalSupply: string;
-  // tvlCap: string;
+  tvlCap: string;
   // withdrawalQue: string[];
 }
 
@@ -37,6 +38,7 @@ export interface IVaultSnapshot {
 
 export const VaultSnapshot = createEntity<IVaultSnapshot>("VaultSnapshot", {
   timestamp: { type: Number, index: true },
+  lastBlockTimestamp: Number,
   vault: { type: Types.ObjectId, ref: 'Vault' },
   vaultAddress: String,
   totalIdle: String,
@@ -59,9 +61,9 @@ export const VaultSnapshot = createEntity<IVaultSnapshot>("VaultSnapshot", {
   lockedProfit: String,
   // lockedProfitDegradation: String,
   // token: String,
-  // totalAllocBPS: String,
+  totalAllocBPS: String,
   totalAssets: String,
   totalSupply: String,
-  // tvlCap: String,
+  tvlCap: String,
   // withdrawalQue: [String],
 });

@@ -45,6 +45,8 @@ export const snaphotVaultHandler: BlockHandler = async (
           lockedProfitResult,
           totalAssetsResult,
           totalSupplyResult,
+          totalAllocBPSResult,
+          tvlCapResult
         ] = await client.multicall({
           contracts: [
             { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "totalIdle" },
@@ -53,6 +55,8 @@ export const snaphotVaultHandler: BlockHandler = async (
             { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "lockedProfit" },
             { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "totalAssets" },
             { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "totalSupply" },
+            { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "totalAllocBPS" },
+            { abi: VAULT_V2_ABI, address: vault.address as Hex, functionName: "tvlCap" },
           ],
           blockNumber: block.number!
         });
@@ -78,6 +82,7 @@ export const snaphotVaultHandler: BlockHandler = async (
         if (!currentSnapshot) {
           const snapshot = new VaultSnapshot({
             timestamp: nowDay,
+            lastBlockTimestamp: Number(block.timestamp),
             vault: vault,
             vaultAddress: vault.address.toString(),
             totalIdle: totalIdleResult.status === "success" ? totalIdleResult.result.toString() : "0",
@@ -86,6 +91,8 @@ export const snaphotVaultHandler: BlockHandler = async (
             lockedProfit: lockedProfitResult.status === "success" ? lockedProfitResult.result.toString() : "0",
             totalAssets: totalAssetsResult.status === "success" ? totalAssetsResult.result.toString() : "0",
             totalSupply: totalSupplyResult.status === "success" ? totalSupplyResult.result.toString() : "0",
+            totalAllocBPS: totalAllocBPSResult.status === "success" ? totalAllocBPSResult.result.toString() : "0",
+            tvlCap: tvlCapResult.status === "success" ? tvlCapResult.result.toString() : "0",
             deposits: totalDeposits.toString(),
             withdrawals: totalWithdrawals.toString(),
             depositCount: deposits?.length,
@@ -95,12 +102,15 @@ export const snaphotVaultHandler: BlockHandler = async (
           await snapshot.save();
   
         } else {
+          currentSnapshot.lastBlockTimestamp = Number(block.timestamp);
           currentSnapshot.totalIdle = totalIdleResult.status === "success" ? totalIdleResult.result.toString() : currentSnapshot.totalIdle;
           currentSnapshot.totalAllocated = totalAllocatedResult.status === "success" ? totalAllocatedResult.result.toString() : currentSnapshot.totalAllocated;
           currentSnapshot.pricePerFullShare = pricePerFullShareResult.status === "success" ? pricePerFullShareResult.result.toString() : currentSnapshot.pricePerFullShare,
           currentSnapshot.lockedProfit = lockedProfitResult.status === "success" ? lockedProfitResult.result.toString() : currentSnapshot.lockedProfit,
           currentSnapshot.totalAssets = totalAssetsResult.status === "success" ? totalAssetsResult.result.toString() : currentSnapshot.totalAssets,
           currentSnapshot.totalSupply = totalSupplyResult.status === "success" ? totalSupplyResult.result.toString() : currentSnapshot.totalSupply,
+          currentSnapshot.totalAllocBPS = totalAllocBPSResult.status === "success" ? totalAllocBPSResult.result.toString() : currentSnapshot.totalSupply,
+          currentSnapshot.tvlCap = tvlCapResult.status === "success" ? tvlCapResult.result.toString() : currentSnapshot.totalSupply,
           currentSnapshot.deposits = totalDeposits.toString();
           currentSnapshot.withdrawals = totalWithdrawals.toString();
           currentSnapshot.depositCount = deposits?.length;
