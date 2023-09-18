@@ -46,7 +46,8 @@ export const strategyReportedHandler: EventHandlerFor<typeof VAULT_V2_ABI, "Stra
             allocated: allocated.toString(),
             allocationAdded: allocationAdded.toString(),
             allocBPS: allocBPS.toString(),
-            duration: prevReport ? blockTimestamp - prevReport.reportDate : blockTimestamp - strategy.dateAdded!
+            duration: prevReport ? blockTimestamp - prevReport.reportDate : blockTimestamp - strategy.dateAdded!,
+            chainId
           });
 
           const lastReport = await newReport.save();
