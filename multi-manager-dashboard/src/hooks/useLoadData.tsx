@@ -1,99 +1,167 @@
 import { useDispatch, useSelector } from "react-redux";
-import { ChainListDocument, StrategyReportsDocument, StrategysDocument, VaultListDocument, VaultSnapshotsDocument, VaultTransactionsDocument } from "../gql/graphql";
-import { executeGQL } from "../lib/excecuteGraphQL";
 import { useEffect } from "react";
-import { setChains, setSelectedChain } from "../redux/slices/blockchainSlice";
+import { Chain, setChains, setSelectedChain } from "../redux/slices/blockchainSlice";
 import { RootState } from "../redux/store";
-import { setVaultSnapshots, setVaultTransactions, setVaults } from "../redux/slices/vaultsSlice";
-import { setStrategies, setStrategyReports } from "../redux/slices/strategiesSlice";
+import { User, Vault, VaultSnapshot, VaultTransaction, setVaultSnapshots, setVaultTransactions, setVaults } from "../redux/slices/vaultsSlice";
+import { Strategy, StrategyReport, setStrategies, setStrategyReports } from "../redux/slices/strategiesSlice";
+import axios from "axios";
+import { calculateDataWithThreshold, calculateStrategyAPR } from "../lib/calculateStrategyAPR";
+import { DEFAULT_STD_DEV_THRESHOLD } from "../utils/constants";
+import { sortTimestampByProp } from "../utils/data/sortByProp";
+import { filterLastXDays } from "../utils/data/filterLastXDays";
+import { calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "../lib/calculateStrategyAllocations";
+import { setInitialized } from "../redux/slices/appSlice";
 
+type ApiResponse = {
+    data: {
+        Chains: Chain[],
+        StrategyReports: StrategyReport[],
+        Strategys: Strategy[],
+        Users: User[],
+        VaultSnapshots: VaultSnapshot[],
+        VaultTransactions: VaultTransaction[],
+        Vaults: Vault[],
+    }
+
+}
 
 export const useLoadData = () => {
     const dispatch = useDispatch();
     const selectedChain = useSelector((state: RootState) => state.blockchain.selectedChain);
 
     useEffect(() => {
-        fetchChains();
-        fetchVaults();
-        fetchVaultSnapshots();
-        fetchVaultTransactions();
-        fetchStrategies();
-        fetchStrategyReports();
+        (async () => {
+            const [response, dbVaults] = await Promise.all([
+                fecthData(),
+                fecthdbVaults()
+            ])
+
+            let strategyReports: StrategyReport[] = response.data.StrategyReports.map((report, index) => {
+                const strategyAprValue = calculateDataWithThreshold([report], DEFAULT_STD_DEV_THRESHOLD);
+                return {
+                    ...report,
+                    apr: strategyAprValue.yData[0] ? strategyAprValue.yData[0] : 0
+                }
+            });
+
+            let strategies = response.data.Strategys.filter(x => x.isActive).map(strategy => {
+                let currentStrategyReports = strategyReports.filter(report =>
+                    report.strategyAddress.toLowerCase() === strategy.address.toLowerCase()
+                );
+
+                currentStrategyReports = sortTimestampByProp(currentStrategyReports, "reportDate");
+
+                const inDateRangeReports = filterLastXDays(currentStrategyReports, "reportDate", new Date().getTime(), 30) as StrategyReport[];
+
+                const APR = calculateStrategyAPR(inDateRangeReports);
+
+                return {
+                    ...strategy,
+                    APR: APR,
+                    lastReport: inDateRangeReports?.length > 0 ? inDateRangeReports[inDateRangeReports?.length - 1] : undefined,
+                    aprReports: inDateRangeReports,
+                };
+            });
+
+
+
+            const vaultSnapshots = response.data.VaultSnapshots;
+
+            const vaults = response.data.Vaults.filter(vault => 
+                dbVaults.some(dbVault => 
+                    vault.address.toLowerCase() === dbVault.address.toLowerCase() && vault.chain.chainId === dbVault.chainId
+                )
+            ).map(vault => {
+                let currentVaultSnapshots = vaultSnapshots.filter(snapshot =>
+                    snapshot.vaultAddress.toLowerCase() === vault.address.toLowerCase()
+                );
+
+                currentVaultSnapshots = sortTimestampByProp(currentVaultSnapshots, "timestamp");
+
+                const vaultStrategies = strategies.filter(x => x.vaultAddress.toString() === vault.address.toString());
+
+                const lastSnapShot = currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined;
+
+                let lastVaultAllocated: number;
+                let strategyAPRValues: number[];
+                let strategyAllocatedValues: number[]
+;
+                if (lastSnapShot) {
+                    lastVaultAllocated = parseFloat(lastSnapShot?.totalAllocated || "0");
+                    strategyAPRValues = getStrategyAPRValues(vaultStrategies);
+                    strategyAllocatedValues = getStrategyAllocatedValues(vaultStrategies);
+                    
+                    const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
+                    
+                    const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultAllocated);
+                    vault.APR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
+                }
+
+                return {
+                    ...vault,
+                    lastSnapShot: currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined,
+                    strategyCount: vaultStrategies.length,
+                }
+            });
+
+            strategies = strategies.map(strategy => {
+
+                const strategyVault = vaults.find(x => x.address.toLowerCase() === strategy.vaultAddress.toLowerCase() && x.chain.chainId === strategy.chainId);
+
+                const lastVaultAllocated = parseFloat(strategyVault.lastSnapShot?.totalAllocated || "0");
+
+                const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated)/lastVaultAllocated*10000)?.toFixed(2);
+                const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated), strategy.APR, strategyVault.APR);
+                const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated), strategy.APR, strategyVault.APR, lastVaultAllocated);
+                
+                return {
+                    ...strategy,
+                    vault: strategyVault,
+                    actualAllocatedBPS,
+                    optimumAllocation,
+                    optimumAllocationBPS
+                }
+            })
+
+            dispatch(setChains(response.data.Chains));
+            if (!selectedChain && response.data.Chains?.length > 0) {
+                dispatch(setSelectedChain(response.data.Chains[0]))
+            }
+
+            dispatch(setStrategies(strategies));
+            dispatch(setStrategyReports(strategyReports));
+
+
+            dispatch(setVaultSnapshots(vaultSnapshots));
+            dispatch(setVaults(vaults));
+            dispatch(setVaultTransactions(response.data.VaultTransactions));
+
+            dispatch(setInitialized(true))
+        })()
+
     }, []);
 
-
-
-    const fetchChains = async () => {
+    const fecthData = async (): Promise<ApiResponse> => {
         try {
-            const results = await executeGQL(ChainListDocument);
-
-            if (results && Array.isArray(results.Chains)) {
-                dispatch(setChains(results.Chains));
-                if (!selectedChain && results.Chains.length > 0) {
-                    dispatch(setSelectedChain(results.Chains[0]))
-                }
-            }
+            const response = await axios.get(process.env.REACT_APP_DATA_URL);
+            return response.data
         } catch (error) {
-            console.error("Error fetching chains:", error);
+            console.error('Error fetching data:', error);
         }
-    };
 
-    const fetchVaults = async () => {
+        return null;
+    }
+
+    const fecthdbVaults = async (): Promise<any[]> => {
         try {
-            const results = await executeGQL(VaultListDocument);
+            const response = await axios.get(process.env.REACT_APP_VAULTS_URL);
+            console.log("response.data", response.data);
 
-            if (results && Array.isArray(results.Vaults)) {
-                dispatch(setVaults(results.Vaults));
-            }
+            return response.data
         } catch (error) {
-            console.error("Error fetching vaults:", error);
+            console.error('Error fetching data:', error);
         }
-    };
 
-    const fetchVaultSnapshots = async () => {
-        try {
-            const results = await executeGQL(VaultSnapshotsDocument);
-            if (results && Array.isArray(results.VaultSnapshots)) {
-                dispatch(setVaultSnapshots(results.VaultSnapshots));
-            }
-        } catch (error) {
-            console.error("Error fetching vault snapshots:", error);
-        }
-    };
-
-    const fetchVaultTransactions = async () => {
-        try {
-            const results = await executeGQL(VaultTransactionsDocument);
-
-            if (results && Array.isArray(results.VaultTransactions)) {
-                dispatch(setVaultTransactions(results.VaultTransactions));
-            }
-        } catch (error) {
-            console.error("Error fetching vault transactions:", error);
-        }
-    };
-    
-    const fetchStrategies = async () => {
-        try {
-            const results = await executeGQL(StrategysDocument);
-
-            if (results && Array.isArray(results.Strategys)) {
-                dispatch(setStrategies(results.Strategys));
-            }
-        } catch (error) {
-            console.error("Error fetching strategies:", error);
-        }
-    };
-
-    const fetchStrategyReports = async () => {
-        try {
-            const results = await executeGQL(StrategyReportsDocument);
-
-            if (results && Array.isArray(results.StrategyReports)) {
-                dispatch(setStrategyReports(results.StrategyReports));
-            }
-        } catch (error) {
-            console.error("Error fetching strategies:", error);
-        }
-    };
+        return null;
+    }
 }

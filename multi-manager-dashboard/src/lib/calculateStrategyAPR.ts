@@ -1,4 +1,4 @@
-import { StrategyReport } from "../gql/graphql";
+import { StrategyReport } from "../redux/slices/strategiesSlice";
 import { DEFAULT_STD_DEV_THRESHOLD, ONE_UNIX_WEEK, ONE_UNIX_YEAR } from "../utils/constants";
 
 export const calculateStrategyAPR = (strategyReports: StrategyReport[]) => {
