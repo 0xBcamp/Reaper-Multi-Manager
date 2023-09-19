@@ -14,7 +14,7 @@ import { strategyReportedHandler } from "./handlers/events/strategyReportedHandl
 import { strategyRevokedHandler } from "./handlers/events/strategyRevokedHandler.ts";
 import { withdrawHandler } from "./handlers/events/withdrawHandler.ts";
 
-const manifest = new Manifest("Reaperv2");
+const manifest = new Manifest("Reaperv3");
 
 manifest
   .addEntities([Chain, Vault, Strategy, StrategyReport, VaultTransaction, VaultSnapshot, User])
