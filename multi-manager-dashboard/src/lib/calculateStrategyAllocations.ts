@@ -1,20 +1,20 @@
-// calculateStrategyAllocations.ts
-import { StrategySelector } from "../redux/selectors";
 
-export function getLastStrategyHarvest(strategy: StrategySelector) {
+import { Strategy } from "../redux/slices/strategiesSlice";
+
+export function getLastStrategyHarvest(strategy: Strategy) {
     return strategy.aprReports?.length > 0 ? strategy.aprReports[strategy.aprReports?.length - 1] : undefined;
 }
 
-export function getLastStrategyAllocated(strategy: StrategySelector) {
+export function getLastStrategyAllocated(strategy: Strategy) {
     return strategy.aprReports?.[strategy.aprReports.length - 1]?.allocated;
 }
 
-export function getStrategyAPRValues(strategies: StrategySelector[]) {
+export function getStrategyAPRValues(strategies: Strategy[]) {
     return strategies.map((strategy) => strategy.APR);
 }
 
-export function getStrategyAllocatedValues(strategies: StrategySelector[]) {
-    return strategies.map((strat) => parseFloat(strat.aprReports?.[strat.aprReports.length - 1]?.allocated || "0"));
+export function getStrategyAllocatedValues(strategies: Strategy[]) {
+    return strategies.map((strat) => parseFloat(strat.lastReport?.allocated || "0"));
 }
 
 export function calculateStrategyProductValues(aprValues: number[], allocatedValues: number[]) {

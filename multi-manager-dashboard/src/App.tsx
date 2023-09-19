@@ -10,6 +10,7 @@ import UsersPage from "./pages/UsersPage";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import NavBar from "./components/layout/NavBar";
+import StrategyPage from "./pages/StrategyPage";
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
             <Route path="/vaults" element={<VaultsPage />} />
             <Route path="/vaults/:vaultAddress" element={<VaultDetailsPage />} />
             <Route path="/strategies" element={<StrategiesPage />} />
+            <Route path="/vaults/:vaultAddress/strategy/:strategyAddress" element={<StrategyPage />} />
             <Route path="/users" element={<UsersPage />} />
             <Route path="/transactions" element={<TransactionsPage />} />
           </Routes>

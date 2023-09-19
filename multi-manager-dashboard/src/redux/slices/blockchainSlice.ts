@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Chain } from '../../gql/graphql';
+
+export interface Chain {
+  _id: string;
+  chainId: number;
+  name: string;
+}
 
 const initialState: {
   chains: Chain[];

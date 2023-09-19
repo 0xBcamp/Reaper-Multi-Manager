@@ -1,7 +1,6 @@
 import { Types } from "https://deno.land/x/robo_arkiver@v0.4.21/mod.ts";
 import { createEntity } from "../deps.ts";
 import { IChain } from "./Chain.ts";
-import { IVaultSnapshot } from "./VaultSnapshot.ts";
 
 export interface IVault {
   address: string;
@@ -10,8 +9,9 @@ export interface IVault {
   asset: string;
   chainId: number;
   chain: IChain;
-  dateAdded: number;
-  lastSnapShot: IVaultSnapshot;
+  constructionTime: number;
+  token: string;
+  decimals: number;
 }
 
 export const Vault = createEntity<IVault>("Vault", {
@@ -21,6 +21,7 @@ export const Vault = createEntity<IVault>("Vault", {
   asset: String,
   chainId: Number,
   chain: { type: Types.ObjectId, ref: 'Chain'},
-  dateAdded: Number,
-  lastSnapShot: { type: Types.ObjectId, ref: 'VaultSnapshot'},
+  constructionTime: Number,
+  token: String,
+  decimals: Number,
 });

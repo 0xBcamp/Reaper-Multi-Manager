@@ -6,6 +6,7 @@ import { Vault } from "../entities/Vault.ts";
 import { VAULT_V2_ABI } from "../abi/vaultV2Abi.ts";
 import { Hex } from "npm:viem";
 import { Strategy } from "../entities/Strategy.ts";
+import { User } from "../entities/User.ts";
 
 
 export type DBVault = {
@@ -45,7 +46,7 @@ export const getChainOrCreate = async (store: Store, chainId: number) => {
       name: CHAIN ? CHAIN.name : "Unknown"
     });
 
-    chainDB.save();
+    chainDB = await chainDB.save();
     store.set(`${chainId}:chain`, chainDB);
   }
 
@@ -53,15 +54,18 @@ export const getChainOrCreate = async (store: Store, chainId: number) => {
 }
 
 // deno-lint-ignore no-explicit-any
-export const getVaultOrCreate = async (client: PublicClient, event: any, contractAddress: string, chain: IChain, blockTimestamp: number) => {
+export const getVaultOrCreate = async (client: PublicClient, event: any, contractAddress: string, chain: IChain) => {
   let vault = await Vault.findOne({ address: contractAddress, chainId: chain.chainId });
 
   if (!vault) {
-    const [nameResult, symbolResult, assetRes] = await client.multicall({
+    const [nameResult, symbolResult, assetRes, constructionTimeRes, tokenRes, decimalsRes] = await client.multicall({
       contracts: [
         { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "name" },
         { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "symbol" },
         { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "asset" },
+        { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "constructionTime" },
+        { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "token" },
+        { abi: VAULT_V2_ABI, address: contractAddress as Hex, functionName: "decimals" },
       ],
       blockNumber: event.blockNumber!,
     });
@@ -73,20 +77,46 @@ export const getVaultOrCreate = async (client: PublicClient, event: any, contrac
       asset: assetRes.status === "success" ? assetRes.result : "",
       chainId: chain.chainId,
       chain,
-      dateAdded: blockTimestamp
+      constructionTime: constructionTimeRes.status === "success" ? Number(constructionTimeRes.result) : 0,
+      token: tokenRes.status === "success" ? tokenRes.result : "",
+      decimals: decimalsRes.status === "success" ? decimalsRes.result : 0,
     });
 
-    await vault.save();
+    vault = await vault.save();
   }
 
   return vault;
+}
+
+export const getUserOrCreate = async (store: Store, address: string, timestamp: number) => {
+  let userDB = await store.retrieve(
+    `${address}:user`,
+    async () => {
+      const user = await User.findOne({ address });
+      store.set(`${address}:user`, user);
+      return user;
+    },
+  );
+
+
+  if (!userDB) {
+    userDB = new User({
+      address,
+      dateAdded: timestamp
+    });
+
+    userDB = await userDB.save();
+    store.set(`${address}:user`, userDB);
+  }
+
+  return userDB;
 }
 
 export const getStrategy = async (vaultAddress: string, strategyAddress: string) => {
   return await Strategy.findOne({ address: strategyAddress, vaultAddress });
 }
 
-export const isVaultWhitelisted = async(store: Store, vaultAddress: string, chainId: number) => {
+export const isVaultWhitelisted = async (store: Store, vaultAddress: string, chainId: number) => {
   const response = await fetch("https://reaper-api.onrender.com/api/vaults");
   if (!response.ok) {
     return []

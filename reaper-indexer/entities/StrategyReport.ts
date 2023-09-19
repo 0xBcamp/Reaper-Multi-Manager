@@ -20,6 +20,7 @@ export interface IStrategyReport {
   allocationAdded: string;
   allocBPS: string;
   duration: number;
+  chainId: number;
 }
 
 export const StrategyReport = createEntity<IStrategyReport>("StrategyReport", {
@@ -38,5 +39,6 @@ export const StrategyReport = createEntity<IStrategyReport>("StrategyReport", {
   allocated: String,
   allocationAdded: String,
   allocBPS: String,
-  duration: Number
+  duration: Number,
+  chainId: Number
 });

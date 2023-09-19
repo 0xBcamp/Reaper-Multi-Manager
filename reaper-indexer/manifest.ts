@@ -4,6 +4,7 @@ import { Manifest } from "./deps.ts";
 import { Chain } from "./entities/Chain.ts";
 import { Strategy } from "./entities/Strategy.ts";
 import { StrategyReport } from "./entities/StrategyReport.ts";
+import { User } from "./entities/User.ts";
 import { Vault } from "./entities/Vault.ts";
 import { VaultSnapshot } from "./entities/VaultSnapshot.ts";
 import { VaultTransaction } from "./entities/VaultTransaction.ts";
@@ -13,10 +14,10 @@ import { strategyReportedHandler } from "./handlers/events/strategyReportedHandl
 import { strategyRevokedHandler } from "./handlers/events/strategyRevokedHandler.ts";
 import { withdrawHandler } from "./handlers/events/withdrawHandler.ts";
 
-const manifest = new Manifest("Reaperv2");
+const manifest = new Manifest("Reaperv3");
 
 manifest
-  .addEntities([Chain, Vault, Strategy, StrategyReport, VaultTransaction, VaultSnapshot])
+  .addEntities([Chain, Vault, Strategy, StrategyReport, VaultTransaction, VaultSnapshot, User])
   .addChain("optimism", (chain) =>
     chain
       .setOptions({ blockRange: 200n, })

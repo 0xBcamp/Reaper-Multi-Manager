@@ -16,7 +16,7 @@ export const strategyAddedHandler: EventHandlerFor<typeof VAULT_V2_ABI, 'Strateg
             const blockTimestamp = await getBlockTimestamp(client, store, event)
 
             const chain = await getChainOrCreate(store, chainId);
-            const vault = await getVaultOrCreate(client, event, contractAddress, chain, blockTimestamp);
+            const vault = await getVaultOrCreate(client, event, contractAddress, chain);
 
             const newStrategy = new Strategy({
                 block,

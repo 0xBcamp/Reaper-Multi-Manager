@@ -42,7 +42,7 @@ const Dropdown: React.FC<IDropdownProps> = ({ options, placeholder = "Select..."
   };
 
   return (
-    <div className="relative w-64" ref={dropdownRef}>
+    <div className="relative w-64 z-50" ref={dropdownRef}>
       <div className="flex items-center border bg-white focus-within:border-blue-500 hover:border-blue-200">
         <input
           readOnly
