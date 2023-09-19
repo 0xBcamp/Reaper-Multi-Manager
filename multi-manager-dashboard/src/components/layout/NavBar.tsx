@@ -29,7 +29,7 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
         }
       }));
     }
-  }, [chains])
+  }, [chains]);
 
    const handleDropdownChange = (key: string) => {
     dispatch(setSelectedChain(chains.find(x => x.chainId.toString() === key)))

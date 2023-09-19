@@ -11,6 +11,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import NavBar from "./components/layout/NavBar";
 import StrategyPage from "./pages/StrategyPage";
+import VaultDeployPage from "./pages/Vaults/Deploy";
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Routes>
             <Route path="/" element={<DahboardPage />} />
             <Route path="/vaults" element={<VaultsPage />} />
+            <Route path="/vaults/deploy" element={<VaultDeployPage />} />
             <Route path="/vaults/:vaultAddress" element={<VaultDetailsPage />} />
             <Route path="/strategies" element={<StrategiesPage />} />
             <Route path="/vaults/:vaultAddress/strategy/:strategyAddress" element={<StrategyPage />} />
