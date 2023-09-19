@@ -1,7 +1,0 @@
-query ChainList {
-  Chains {
-    _id
-    chainId
-    name
-  }
-}
