@@ -1,5 +1,49 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Strategy, StrategyReport } from '../../gql/graphql';
+
+export interface StrategyReport {
+  _id: string;
+  allocBPS: string;
+  allocated: string;
+  allocationAdded: string;
+  block: number;
+  debtPaid: string;
+  duration: number;
+  gain: string;
+  gains: string;
+  hash: string;
+  loss: string;
+  losses: string;
+  reportDate: number;
+  strategyAddress: string;
+  vaultAddress: string;
+  apr: number;
+  chainId: number;
+}
+
+export interface Strategy {
+  _id: string;
+  address: string;
+  allocBPS: string;
+  block: number;
+  chainId: number;
+  dateAdded: number;
+  dateRevoked: number;
+  feeBPS: string;
+  hash: string;
+  isActive: boolean;
+  vaultAddress: string;
+  lastReport: StrategyReport | null;
+  APR: number;
+  aprReports: StrategyReport[];
+  reports: StrategyReport[];
+  vault: {
+    name: string
+  };
+  actualAllocatedBPS: string;
+  optimumAllocation: string;
+  optimumAllocationBPS: string;
+}
+
 
 const initialState: {
   strategies: Strategy[];
