@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
 import { useReactTable, getCoreRowModel, flexRender, ColumnDef, TableOptions, createColumnHelper, getSortedRowModel, getFilteredRowModel, getPaginationRowModel } from "@tanstack/react-table";
-import { StrategyReport } from '../../gql/graphql';
-import { DateTime } from 'luxon';
-
 type Props = {
     data: any[];
     columns: ColumnDef<any, any>[];
@@ -33,7 +30,6 @@ function DataGrid({ data, columns, heading }: Props) {
             <div className="flex justify-between items-center p-2 pl-5">
                 <span className="text-md font-bold">{heading}</span>
                 <div className="flex items-center border bg-white focus-within:border-blue-500 hover:border-blue-200 relative">
-                    {/* Icon - replace with your actual icon */}
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3">
                         <img src={`${process.env.PUBLIC_URL}/icons/search-50.png`} alt="Search icon" className="h-3 w-3 text-gray-200" />
                     </div>

@@ -1,6 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { StrategyReport } from "../../gql/graphql";
 import { DateTime } from "luxon";
+import { StrategyReport } from "../../redux/slices/strategiesSlice";
 
 export const getStrategyReportColumns = () => {
     const columnHelper = createColumnHelper<StrategyReport>();
@@ -40,6 +40,10 @@ export const getStrategyReportColumns = () => {
         }),
         columnHelper.accessor("losses", {
             cell: info => info.getValue()
+        }),
+        columnHelper.accessor("apr", {
+            header: "APR",
+            cell: info => info.getValue().toFixed(2)
         })
     ];
 
