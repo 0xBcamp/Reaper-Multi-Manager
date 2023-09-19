@@ -11,6 +11,7 @@ import { sortTimestampByProp } from "../utils/data/sortByProp";
 import { filterLastXDays } from "../utils/data/filterLastXDays";
 import { calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "../lib/calculateStrategyAllocations";
 import { setInitialized } from "../redux/slices/appSlice";
+import { setTokens } from "../redux/slices/reaperSlice";
 
 type ApiResponse = {
     data: {
@@ -31,10 +32,11 @@ export const useLoadData = () => {
 
     useEffect(() => {
         (async () => {
-            const [response, dbVaults] = await Promise.all([
+            const [response, dbVaults, reaperTokens] = await Promise.all([
                 fecthData(),
-                fecthdbVaults()
-            ])
+                fecthdbVaults(),
+                fecthReaperTokens()
+            ]);
 
             let strategyReports: StrategyReport[] = response.data.StrategyReports.map((report, index) => {
                 const strategyAprValue = calculateDataWithThreshold([report], DEFAULT_STD_DEV_THRESHOLD);
@@ -136,6 +138,9 @@ export const useLoadData = () => {
             dispatch(setVaults(vaults));
             dispatch(setVaultTransactions(response.data.VaultTransactions));
 
+            dispatch(setTokens(reaperTokens));
+
+
             dispatch(setInitialized(true))
         })()
 
@@ -143,7 +148,7 @@ export const useLoadData = () => {
 
     const fecthData = async (): Promise<ApiResponse> => {
         try {
-            const response = await axios.get(process.env.REACT_APP_DATA_URL);
+            const response = await axios.get(`${process.env.REACT_APP_API}/arkiver/data`);
             return response.data
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -154,9 +159,19 @@ export const useLoadData = () => {
 
     const fecthdbVaults = async (): Promise<any[]> => {
         try {
-            const response = await axios.get(process.env.REACT_APP_VAULTS_URL);
-            console.log("response.data", response.data);
+            const response = await axios.get(`${process.env.REACT_APP_API}/vaults`);
 
+            return response.data
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+
+        return null;
+    }
+
+    const fecthReaperTokens = async (): Promise<any[]> => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API}/tokens`);
             return response.data
         } catch (error) {
             console.error('Error fetching data:', error);
