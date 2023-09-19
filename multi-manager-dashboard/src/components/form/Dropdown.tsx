@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import Label from './Label';
 
 export type DropdownOptionType = {
   label: string;
@@ -10,9 +11,11 @@ interface IDropdownProps {
   placeholder?: string;
   selectedKey?: string;
   onChange: (key: string) => void;
+  label?: string;
+  error?: string | null;
 }
 
-const Dropdown: React.FC<IDropdownProps> = ({ options, placeholder = "Select...", selectedKey, onChange }) => {
+const Dropdown: React.FC<IDropdownProps> = ({ options, placeholder = "Select...", selectedKey, onChange, label, error }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<DropdownOptionType | undefined>();
 
@@ -43,13 +46,14 @@ const Dropdown: React.FC<IDropdownProps> = ({ options, placeholder = "Select..."
 
   return (
     <div className="relative w-64 z-50" ref={dropdownRef}>
-      <div className="flex items-center border bg-white focus-within:border-blue-500 hover:border-blue-200">
+      {label && <Label text={label} />} 
+      <div className={`flex items-center border bg-white ${error ? "border-red-400 hover:border-red-600" : "focus:border-blue-400 hover:border-blue-600"}`}>
         <input
           readOnly
           value={selectedOption ? selectedOption.label : ""}
           placeholder={placeholder}
           onClick={() => setIsOpen(!isOpen)}
-          className="flex-1 py-2 px-3 text-sm bg-transparent outline-none text-gray-500 cursor-pointer"
+          className={`flex-1 py-2 px-3 text-sm bg-transparent outline-none text-gray-500 cursor-pointer`}
         />
         <svg
           onClick={() => setIsOpen(!isOpen)}
@@ -65,6 +69,7 @@ const Dropdown: React.FC<IDropdownProps> = ({ options, placeholder = "Select..."
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"></path>
         </svg>
       </div>
+      {error && <div className="pl-1 mt-1 text-xs text-red-500">{error}</div>}
       {isOpen && (
         <div className="absolute w-full bg-white border border-gray-300">
           {options.map(option => (
