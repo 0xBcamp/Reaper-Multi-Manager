@@ -2,8 +2,6 @@ import { useMemo, useState } from 'react';
 import { formatUnits } from 'ethers';
 import { formatDate } from '../../utils/dateUtils';
 import Card from './Card';
-import { Vault } from '../../gql/graphql';
-import { StrategySelector } from '../../redux/selectors';
 import { calculateDataWithThreshold, calculateTimeBasedMovingAverage } from '../../lib/calculateStrategyAPR';
 import { DEFAULT_STD_DEV_THRESHOLD } from '../../utils/constants';
 import { Scatter } from 'react-chartjs-2';
@@ -22,15 +20,18 @@ import {
     LineControllerChartOptions,
 } from 'chart.js';
 import { _DeepPartialObject } from 'chart.js/dist/types/utils';
+import { Vault } from '../../redux/slices/vaultsSlice';
+import { Strategy } from '../../redux/slices/strategiesSlice';
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
 interface IStrategyAprSummaryProps {
     vault: Vault;
-    strategy: StrategySelector;
+    strategy: Strategy;
+    showSlider: boolean;
 }
 
-const StrategyAprSummary = ({ vault, strategy }: IStrategyAprSummaryProps) => {
+const StrategyAprSummary = ({ vault, strategy, showSlider }: IStrategyAprSummaryProps) => {
     const [threshold, setThreshold] = useState(DEFAULT_STD_DEV_THRESHOLD)
 
     const lastHarvest = strategy.aprReports?.length > 0 ? strategy.aprReports[strategy.aprReports?.length - 1] : undefined;
@@ -142,14 +143,13 @@ const StrategyAprSummary = ({ vault, strategy }: IStrategyAprSummaryProps) => {
                             <div className='flex justify-between'>
                                 <div>Apr: </div>
                                 <div>{strategy.APR?.toFixed(2)}%</div>
-                                <div>{(timeBasedMovingAverageResults?.resultYData[timeBasedMovingAverageResults?.resultYData.length - 1])?.toFixed(2)}%</div>
                             </div>
                         </div>
                         {strategy.aprReports?.length > 0 && <div style={{ width: '100%', height: '250px' }}>
-                            <div className='flex flex-col p-2 space-x-2 justify-items-center'>
+                           {showSlider && <div className='flex flex-col p-2 space-x-2 justify-items-center'>
                                 <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-gray-400 dark:text-white">Threshold: {threshold}</label>
                                 <input id="default-range" type="range" value={threshold} onChange={handleThresholdChange} min={0.1} max={4} step={0.1} className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
-                            </div>
+                            </div>}
                             <div style={{ width: '100%', height: '200px' }}>
                                 <Scatter options={options} data={data} height={null} width={null} />
                             </div>

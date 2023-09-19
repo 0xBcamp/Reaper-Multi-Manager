@@ -3,11 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { setSelectedVaultAddress } from '../redux/slices/vaultsSlice';
 import { setSelectedStrategyAddress } from '../redux/slices/strategiesSlice';
-import { selectStrategy, selectVault } from '../redux/selectors';
+import { selectStrategiesByVault, selectStrategy, selectVault } from '../redux/selectors';
 import DataGrid from '../components/tables/DataGrid';
 import { getStrategyReportColumns } from '../utils/gridColumns/strategy_report_columns';
 import { sortTimestampByProp } from '../utils/data/sortByProp';
 import StrategyAprSummary from '../components/cards/StrategyAprSummary';
+import StrategyAllocations from '../components/cards/StrategyAllocations';
 
 
 const StrategyPage = () => {
@@ -21,6 +22,7 @@ const StrategyPage = () => {
 
     const strategy = useSelector(selectStrategy);
     const vault = useSelector(selectVault);
+    const strategies = useSelector(selectStrategiesByVault)
 
     return (
         <>
@@ -28,9 +30,12 @@ const StrategyPage = () => {
                 <div>
                     <span className="text-lg">{vault?.name} - {strategy.address}</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 my-4">
-                    <div className='h-full'>
-                        <StrategyAprSummary vault={vault} strategy={strategy} />
+                <div className="grid grid-cols-4 gap-4 my-4">
+                    <div className='h-full col-span-3'>
+                        <StrategyAprSummary vault={vault} strategy={strategy} showSlider={true} />
+                    </div>
+                    <div>
+                        <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={strategies}/>
                     </div>
                 </div>
                 <div className='flex'>
