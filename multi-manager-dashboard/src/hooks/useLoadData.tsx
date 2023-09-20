@@ -12,6 +12,8 @@ import { filterLastXDays } from "../utils/data/filterLastXDays";
 import { calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "../lib/calculateStrategyAllocations";
 import { setInitialized } from "../redux/slices/appSlice";
 import { setTokens } from "../redux/slices/reaperSlice";
+import { calculateVaultHealthScore } from "../utils/processing";
+import { formatUnits } from "ethers";
 
 type ApiResponse = {
     data: {
@@ -88,8 +90,7 @@ export const useLoadData = () => {
 
                     let lastVaultAllocated: number;
                     let strategyAPRValues: number[];
-                    let strategyAllocatedValues: number[]
-                        ;
+                    let strategyAllocatedValues: number[];
                     if (lastSnapShot) {
                         lastVaultAllocated = parseFloat(lastSnapShot?.totalAllocated || "0");
                         strategyAPRValues = getStrategyAPRValues(vaultStrategies);
@@ -102,6 +103,7 @@ export const useLoadData = () => {
                     }
 
                     const reaperToken = reaperTokens.find(x => x.address.toLowerCase() === vault.token.toLowerCase());
+
 
                     return {
                         ...vault,
@@ -127,6 +129,15 @@ export const useLoadData = () => {
                     actualAllocatedBPS,
                     optimumAllocation,
                     optimumAllocationBPS
+                }
+            })
+
+            vaults = vaults.map(vault => {
+                const vaultStrategies = strategies.filter(x => x.vaultAddress.toString() === vault.address.toString());
+
+                return {
+                    ...vault,
+                    healthScore: calculateVaultHealthScore(vaultStrategies)
                 }
             })
 
