@@ -119,9 +119,9 @@ export const useLoadData = () => {
 
                 const lastVaultAllocated = parseFloat(strategyVault.lastSnapShot?.totalAllocated || "0");
 
-                const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated) / lastVaultAllocated * 10000)?.toFixed(2);
-                const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated), strategy.APR, strategyVault.APR);
-                const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated), strategy.APR, strategyVault.APR, lastVaultAllocated);
+                const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated || "0") / lastVaultAllocated * 10000)?.toFixed(2);
+                const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.APR);
+                const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.APR, lastVaultAllocated);
 
                 return {
                     ...strategy,
@@ -156,8 +156,10 @@ export const useLoadData = () => {
 
             dispatch(setTokens(reaperTokens));
 
-
-            dispatch(setInitialized(true))
+            setTimeout(() => {
+                dispatch(setInitialized(true))
+            }, 1000);
+            
         })()
 
     }, []);
