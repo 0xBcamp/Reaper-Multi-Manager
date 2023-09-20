@@ -16,5 +16,5 @@ export const calculateVaultHealthScore = (vaultStrategies: Strategy[]) => {
     
     healthScore = Math.max(0, Math.min(100, healthScore));
 
-    return healthScore;
+    return Number(healthScore.toFixed(2));
 }

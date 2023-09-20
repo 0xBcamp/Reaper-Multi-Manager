@@ -6,6 +6,8 @@ import Loader from '../../components/layout/Loader';
 import { RootState } from '../../redux/store';
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { sortTimestampByProp } from '../../utils/data/sortByProp';
+import StrategyAllocations from '../../components/cards/StrategyAllocations';
+import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
 
 const VaultDetailsPage = () => {
   let { vaultAddress } = useParams();
@@ -16,6 +18,7 @@ const VaultDetailsPage = () => {
   const isInitialized = useSelector((state: RootState) => state.app.isInitialized);
 
   const vault = useSelector(selectVault);
+  const strategies = useSelector(selectStrategiesByVault);
   const snapshots = useSelector(selectVaultSnapshotsByVault);
   const formattedSnapshots = sortTimestampByProp(snapshots, "timestamp", "asc").slice(-30);
 
@@ -75,14 +78,14 @@ const VaultDetailsPage = () => {
 
         </div>
         <div className="grid grid-cols-4 gap-4 m-4">
-          {/* {strategies.map((strategy) => (
+          {strategies.map((strategy) => (
             <div className='h-full' key={strategy._id}>
               <Link to={`strategy/${strategy?.address}`}>
                 <StrategyAprSummary vault={vault} strategy={strategy} showSlider={false} />
               </Link>
               <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={strategies} />
             </div>
-          ))} */}
+          ))}
         </div>
       </>}
       {!vault && <div className='flex h-full justify-center'>
