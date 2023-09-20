@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Chain } from './blockchainSlice';
+import { ReaperToken } from './reaperSlice';
 
 export interface Vault {
   _id: string;
@@ -15,6 +16,7 @@ export interface Vault {
   snapshots: VaultSnapshot[];
   strategyCount: number;
   APR: number;
+  reaperToken: ReaperToken;
 }
 
 export interface VaultTransaction {
@@ -50,7 +52,18 @@ export interface VaultSnapshot {
   lastBlockTimestamp: number;
   totalAllocBPS: string;
   tvlCap: string;
-  vault: Vault;
+  vault: VaultSnapshot_Vault;
+  chainId: number;
+  usd: VaultSnapshot_UsdValues
+}
+
+export interface VaultSnapshot_Vault {
+  _id: string;
+  chainId: number;
+}
+
+export interface VaultSnapshot_UsdValues {
+  tvl: number;
 }
 
 export interface User {
