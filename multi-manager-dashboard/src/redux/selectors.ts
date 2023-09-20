@@ -8,6 +8,7 @@ const selectAllVaults = (state: RootState) => state.vaults.vaults;
 const selectSelectedVaultAddress = (state: RootState) => state.vaults.selectedVaultAddress;
 const selectSelectedStrategyAddress = (state: RootState) => state.strategies.selectedStrategyAddress;
 const selectAllStrategies = (state: RootState) => state.strategies.strategies;
+const selectAllReaperTokens = (state: RootState) => state.reaper.tokens;
 
 export const selectVaultsByChain: (state: RootState) => Vault[] = createSelector(
     [selectSelectedChain, selectAllVaults],
@@ -55,5 +56,12 @@ export const selectStrategy = createSelector(
         return strategiesByVault.find(strategy =>
             strategy.address?.toLowerCase() === selectedStrategyAddress?.toLowerCase()
         );
+    }
+);
+
+export const selectReaperTokensByChain = createSelector(
+    [selectSelectedChain, selectAllReaperTokens],
+    (selectedChain, reaperTokens) => {
+        return reaperTokens?.filter(x => x.chainId === selectedChain?.chainId);
     }
 );
