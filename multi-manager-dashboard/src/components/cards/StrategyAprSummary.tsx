@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import { formatUnits } from 'ethers';
 import { formatDate } from '../../utils/dateUtils';
 import Card from './Card';
 import { calculateDataWithThreshold, calculateTimeBasedMovingAverage } from '../../lib/calculateStrategyAPR';
@@ -131,18 +130,10 @@ const StrategyAprSummary = ({ vault, strategy, showSlider }: IStrategyAprSummary
             <>
                 {lastHarvest ?
                     <>
-                        <div className='flex flex-col p-2 text-gray-600 text-xs'>
-                            <div className='flex justify-between'>
-                                <div>Last allocated value:</div>
-                                <div>{parseFloat(formatUnits(lastHarvest?.allocated)).toFixed(2)}</div>
-                            </div>
+                        <div className='flex flex-col p-2 text-gray-600 text-md h-full'>
                             <div className='flex justify-between'>
                                 <div>Last harvest:</div>
-                                <div>{formatDate(lastHarvest.reportDate)}</div>
-                            </div>
-                            <div className='flex justify-between'>
-                                <div>Apr: </div>
-                                <div>{strategy.APR?.toFixed(2)}%</div>
+                                <div>{formatDate(strategy.lastReport?.reportDate)}</div>
                             </div>
                         </div>
                         {strategy.aprReports?.length > 0 && <div style={{ width: '100%', height: '250px' }}>
