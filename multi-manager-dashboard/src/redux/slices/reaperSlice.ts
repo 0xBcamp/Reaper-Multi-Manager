@@ -6,6 +6,8 @@ export interface ReaperToken {
   name: string;
   address: string;
   image: string;
+  coinId: string;
+  usd: number;
 }
 
 const initialState: {

@@ -9,11 +9,11 @@ export const routes: SideBarRoute[] = [
         image: "charts-60.png",
         path: "/"
     },
-    {
-        name: "Vaults",
-        image: "safe-64.png",
-        path: "/vaults"
-    },
+    // {
+    //     name: "Vaults",
+    //     image: "safe-64.png",
+    //     path: "/vaults"
+    // },
     {
         name: "Strategies",
         image: "strategy-64.png",

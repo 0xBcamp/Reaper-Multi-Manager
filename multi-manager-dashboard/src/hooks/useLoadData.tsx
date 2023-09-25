@@ -12,6 +12,8 @@ import { filterLastXDays } from "../utils/data/filterLastXDays";
 import { calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "../lib/calculateStrategyAllocations";
 import { setInitialized } from "../redux/slices/appSlice";
 import { setTokens } from "../redux/slices/reaperSlice";
+import { calculateVaultHealthScore } from "../utils/processing";
+import { formatUnits } from "ethers";
 
 type ApiResponse = {
     data: {
@@ -65,46 +67,51 @@ export const useLoadData = () => {
                 };
             });
 
+            const vaultSnapshots = response.data.VaultSnapshots
 
-
-            const vaultSnapshots = response.data.VaultSnapshots;
-
-            const vaults = response.data.Vaults.filter(vault => 
-                dbVaults.some(dbVault => 
+            let vaults = response.data.Vaults.filter(vault =>
+                dbVaults.some(dbVault =>
                     vault.address.toLowerCase() === dbVault.address.toLowerCase() && vault.chain.chainId === dbVault.chainId
-                )
-            ).map(vault => {
-                let currentVaultSnapshots = vaultSnapshots.filter(snapshot =>
-                    snapshot.vaultAddress.toLowerCase() === vault.address.toLowerCase()
-                );
+                ));
 
-                currentVaultSnapshots = sortTimestampByProp(currentVaultSnapshots, "timestamp");
+            vaults = response.data.Vaults.filter(vault =>
+                dbVaults.some(dbVault =>
+                    vault.address.toLowerCase() === dbVault.address.toLowerCase() && vault.chain.chainId === dbVault.chainId
+                )).map(vault => {
+                    let currentVaultSnapshots = vaultSnapshots.filter(snapshot =>
+                        snapshot.vaultAddress.toLowerCase() === vault.address.toLowerCase()
+                    );
 
-                const vaultStrategies = strategies.filter(x => x.vaultAddress.toString() === vault.address.toString());
+                    currentVaultSnapshots = sortTimestampByProp(currentVaultSnapshots, "timestamp");
 
-                const lastSnapShot = currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined;
+                    const vaultStrategies = strategies.filter(x => x.vaultAddress.toString() === vault.address.toString());
 
-                let lastVaultAllocated: number;
-                let strategyAPRValues: number[];
-                let strategyAllocatedValues: number[]
-;
-                if (lastSnapShot) {
-                    lastVaultAllocated = parseFloat(lastSnapShot?.totalAllocated || "0");
-                    strategyAPRValues = getStrategyAPRValues(vaultStrategies);
-                    strategyAllocatedValues = getStrategyAllocatedValues(vaultStrategies);
-                    
-                    const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
-                    
-                    const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultAllocated);
-                    vault.APR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
-                }
+                    const lastSnapShot = currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined;
 
-                return {
-                    ...vault,
-                    lastSnapShot: currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined,
-                    strategyCount: vaultStrategies.length,
-                }
-            });
+                    let lastVaultAllocated: number;
+                    let strategyAPRValues: number[];
+                    let strategyAllocatedValues: number[];
+                    if (lastSnapShot) {
+                        lastVaultAllocated = parseFloat(lastSnapShot?.totalAllocated || "0");
+                        strategyAPRValues = getStrategyAPRValues(vaultStrategies);
+                        strategyAllocatedValues = getStrategyAllocatedValues(vaultStrategies);
+
+                        const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
+
+                        const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultAllocated);
+                        vault.APR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
+                    }
+
+                    const reaperToken = reaperTokens.find(x => x.address.toLowerCase() === vault.token.toLowerCase());
+
+
+                    return {
+                        ...vault,
+                        lastSnapShot: currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined,
+                        strategyCount: vaultStrategies.length,
+                        reaperToken: reaperToken
+                    }
+                });
 
             strategies = strategies.map(strategy => {
 
@@ -112,16 +119,25 @@ export const useLoadData = () => {
 
                 const lastVaultAllocated = parseFloat(strategyVault.lastSnapShot?.totalAllocated || "0");
 
-                const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated)/lastVaultAllocated*10000)?.toFixed(2);
-                const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated), strategy.APR, strategyVault.APR);
-                const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated), strategy.APR, strategyVault.APR, lastVaultAllocated);
-                
+                const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated || "0") / lastVaultAllocated * 10000)?.toFixed(2);
+                const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.APR);
+                const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.APR, lastVaultAllocated);
+
                 return {
                     ...strategy,
                     vault: strategyVault,
                     actualAllocatedBPS,
                     optimumAllocation,
                     optimumAllocationBPS
+                }
+            })
+
+            vaults = vaults.map(vault => {
+                const vaultStrategies = strategies.filter(x => x.vaultAddress.toString() === vault.address.toString());
+
+                return {
+                    ...vault,
+                    healthScore: calculateVaultHealthScore(vaultStrategies)
                 }
             })
 
@@ -140,8 +156,10 @@ export const useLoadData = () => {
 
             dispatch(setTokens(reaperTokens));
 
-
-            dispatch(setInitialized(true))
+            setTimeout(() => {
+                dispatch(setInitialized(true))
+            }, 1000);
+            
         })()
 
     }, []);

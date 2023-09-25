@@ -36,6 +36,8 @@ export const snaphotVaultHandler: BlockHandler = async (
   const vaultTransactions = await VaultTransaction.find();
 
   try {
+    const chainId = await client.getChainId();
+
     await Promise.all(vaults.map(async (vault) => {
       try {
         const [
@@ -97,6 +99,7 @@ export const snaphotVaultHandler: BlockHandler = async (
             withdrawals: totalWithdrawals.toString(),
             depositCount: deposits?.length,
             withdrawCount: withdrawals?.length,
+            chainId
           });
   
           await snapshot.save();
@@ -115,6 +118,7 @@ export const snaphotVaultHandler: BlockHandler = async (
           currentSnapshot.withdrawals = totalWithdrawals.toString();
           currentSnapshot.depositCount = deposits?.length;
           currentSnapshot.withdrawCount = withdrawals?.length;
+          currentSnapshot.chainId = chainId;
 
           await currentSnapshot.save();
         }
