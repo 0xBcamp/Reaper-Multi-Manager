@@ -89,16 +89,21 @@ export const useLoadData = () => {
                     const lastSnapShot = currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined;
 
                     let lastVaultAllocated: number;
+                    let lastVaultTotalAssets: number;
                     let strategyAPRValues: number[];
                     let strategyAllocatedValues: number[];
+                    let actualAllocated: number;
                     if (lastSnapShot) {
                         lastVaultAllocated = parseFloat(lastSnapShot?.totalAllocated || "0");
+                        lastVaultTotalAssets = parseFloat(lastSnapShot?.totalAssets || "0");
                         strategyAPRValues = getStrategyAPRValues(vaultStrategies);
                         strategyAllocatedValues = getStrategyAllocatedValues(vaultStrategies);
 
+                        actualAllocated = lastVaultTotalAssets != 0 ? lastVaultAllocated/lastVaultTotalAssets: 0;
+
                         const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
 
-                        const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultAllocated);
+                        const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultTotalAssets);
                         vault.APR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
                     }
 
@@ -109,7 +114,8 @@ export const useLoadData = () => {
                         ...vault,
                         lastSnapShot: currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined,
                         strategyCount: vaultStrategies.length,
-                        reaperToken: reaperToken
+                        reaperToken: reaperToken,
+                        actualAllocated: actualAllocated,
                     }
                 });
 
