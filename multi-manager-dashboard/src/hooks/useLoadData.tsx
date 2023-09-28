@@ -40,7 +40,7 @@ export const useLoadData = () => {
             ]);
 
             console.log("dbVaults", dbVaults)
-            console.log("dbChains", dbChains)
+            console.log("dbChains ", dbChains)
 
             let vaults = dbVaults.map((vault: Vault) => {
                 // Process strategies and update apr in aprReports within each strategy
@@ -57,9 +57,11 @@ export const useLoadData = () => {
                     const updatedStrategy: Strategy = {
                         ...strategy,
                         APR: strategyAPR,
-                        lastReport: {
-                            ...strategy.lastReport,
-                            apr: calculateStrategyReportApr(strategy.lastReport)
+                        ...strategy.lastReport && {
+                            lastReport: {
+                                ...strategy.lastReport,
+                                apr: calculateStrategyReportApr(strategy.lastReport)
+                            }
                         },
                         aprReports: updatedAprReports
                     }
@@ -109,7 +111,14 @@ export const useLoadData = () => {
             })
 
             dispatch(setVaults(vaults));
+            dispatch(setChains(dbChains));
+            if (!selectedChain && dbChains?.length > 0) {
+                dispatch(setSelectedChain(dbChains[0]))
+            }
 
+            setTimeout(() => {
+                dispatch(setInitialized(true))
+            }, 1000);
         })();
     }, []);
 
@@ -120,86 +129,10 @@ export const useLoadData = () => {
         return strategyAprValue.yData[0] ? strategyAprValue.yData[0] : 0;
     };
 
-    // useEffect(() => {
-    //     (async () => {
-    //         const [response, dbVaults, reaperTokens] = await Promise.all([
-    //             fecthData(),
-    //             fecthdbVaults(),
-    //             fecthReaperTokens(),
-
-    //         ]);
-
-
-
-    //         const vaultSnapshots = response.data.VaultSnapshots
-
-
-    //         strategies = strategies.map(strategy => {
-
-    //             const strategyVault = vaults.find(x => x.address.toLowerCase() === strategy.vaultAddress.toLowerCase() && x.chain.chainId === strategy.chainId);
-
-    //             const lastVaultAllocated = parseFloat(strategyVault.lastSnapShot?.totalAllocated || "0");
-
-    //             const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated || "0") / lastVaultAllocated * 10000)?.toFixed(2);
-    //             const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.APR);
-    //             const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.APR, lastVaultAllocated);
-
-    //             return {
-    //                 ...strategy,
-    //                 vault: strategyVault,
-    //                 actualAllocatedBPS,
-    //                 optimumAllocation,
-    //                 optimumAllocationBPS
-    //             }
-    //         })
-
-    //         vaults = vaults.map(vault => {
-    //             const vaultStrategies = strategies.filter(x => x.vaultAddress.toString() === vault.address.toString());
-
-    //             return {
-    //                 ...vault,
-    //                 healthScore: calculateVaultHealthScore(vaultStrategies)
-    //             }
-    //         })
-
-    //         dispatch(setChains(response.data.Chains));
-    //         if (!selectedChain && response.data.Chains?.length > 0) {
-    //             dispatch(setSelectedChain(response.data.Chains[0]))
-    //         }
-
-    //         dispatch(setStrategies(strategies));
-    //         dispatch(setStrategyReports(strategyReports));
-
-
-    //         dispatch(setVaultSnapshots(vaultSnapshots));
-    //         dispatch(setVaults(vaults));
-    //         dispatch(setVaultTransactions(response.data.VaultTransactions));
-
-    //         dispatch(setTokens(reaperTokens));
-
-    //         setTimeout(() => {
-    //             dispatch(setInitialized(true))
-    //         }, 1000);
-
-    //     })()
-
-    // }, []);
 
     const fecthData = async (): Promise<ApiResponse> => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API}/arkiver/data`);
-            return response.data
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-
-        return null;
-    }
-
-    const fecthdbVaults = async (): Promise<any[]> => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/vaults`);
-
             return response.data
         } catch (error) {
             console.error('Error fetching data:', error);
