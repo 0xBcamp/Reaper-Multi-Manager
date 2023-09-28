@@ -12,12 +12,12 @@ export const getVaultsColumns = () => {
         columnHelper.accessor("symbol", {
             cell: info => info.getValue()
         }),
-        columnHelper.accessor("strategyCount", {
-            header: "Strategies",
-            cell: info => {
-                return info.getValue();
-            }
-        }),
+        // columnHelper.accessor("strategyCount", {
+        //     header: "Strategies",
+        //     cell: info => {
+        //         return info.getValue();
+        //     }
+        // }),
         columnHelper.accessor("APR", {
             cell: info => {
                 return info.getValue().toFixed(2);

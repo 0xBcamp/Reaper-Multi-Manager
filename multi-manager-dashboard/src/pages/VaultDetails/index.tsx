@@ -22,6 +22,8 @@ const VaultDetailsPage = () => {
   const snapshots = useSelector(selectVaultSnapshotsByVault);
   const formattedSnapshots = sortTimestampByProp(snapshots, "timestamp", "asc").slice(-30);
 
+  console.log("formattedSnapshots", formattedSnapshots)
+
   return (
     <>
       {!isInitialized && <Loader />}
@@ -29,7 +31,7 @@ const VaultDetailsPage = () => {
         <div className="p-4">
           <span className="text-lg">{vault?.name}</span>
         </div>
-        <div className='grid grid-cols-2 gap-4 '>
+        <div className='grid grid-cols-2'>
           <div className='flex flex-col m-4 bg-white'>
             <div className='p-2'>
               TVL
@@ -75,7 +77,51 @@ const VaultDetailsPage = () => {
               </AreaChart>
             </ResponsiveContainer>
           </div>
+          <div className='flex flex-col m-4 bg-white'>
+            <div className='p-2'>
+              Total users
+            </div>
+            <ResponsiveContainer width='100%' height={200}>
+              <AreaChart data={formattedSnapshots}
+                margin={{ top: 10, right: 30, left: 30, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#2451B7" stopOpacity={1} />
+                    <stop offset="100%" stopColor="#2451B7" stopOpacity={0.05} />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="timestamp"
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(value, index) => {
+                    if (index % 7 === 0) {
+                      const date = new Date(value * 1000);
+                      const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+                      return formatter.format(date);
+                    }
 
+                    return "";
+                  }}
+                />
+
+                <YAxis
+                  dataKey="users.totalUsers"
+
+                  axisLine={false}
+                  tickLine={false}
+                  tickCount={8}
+                  tickFormatter={(value) => {
+                    return value.toLocaleString();
+                  }}
+                />
+
+                <CartesianGrid opacity={0.1} vertical={false} />
+                <Tooltip />
+                <Area dataKey="users.totalUsers" stroke="#2451B7" fillOpacity={1} fill="url(#colorUv)" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
         </div>
         <div className="grid grid-cols-4 gap-4 m-4">
           {strategies.map((strategy) => (

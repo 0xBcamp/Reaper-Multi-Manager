@@ -14,7 +14,7 @@ const selectAllReaperTokens = (state: RootState) => state.reaper.tokens;
 export const selectVaultsByChain: (state: RootState) => Vault[] = createSelector(
     [selectSelectedChain, selectAllVaults],
     (selectedChain, vaults) => {
-        return vaults?.filter(x => x.chain.chainId === selectedChain?.chainId).map(vault => {
+        return vaults?.filter(x => x.chainId === selectedChain?.chainId).map(vault => {
             return {
                 ...vault,
             }
