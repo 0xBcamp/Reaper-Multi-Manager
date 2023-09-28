@@ -28,16 +28,41 @@ type ApiResponse = {
 
 }
 
+const fetchData = async (url: string): Promise<any> => {
+    try {
+      const response = await axios.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return null;
+    }
+};
+
+const fetchDataFromAPI = async (): Promise<ApiResponse | null> => {
+    return await fetchData(`${process.env.REACT_APP_API}/arkiver/data`);
+};
+  
+const fetchDataDBVaults = async (): Promise<any[] | null> => {
+    return await fetchData(`${process.env.REACT_APP_API}/vaults`);
+};
+  
+const fetchDataReaperTokens = async (): Promise<any[] | null> => {
+    return await fetchData(`${process.env.REACT_APP_API}/tokens`);
+};
+  
+
 export const useLoadData = () => {
     const dispatch = useDispatch();
-    const selectedChain = useSelector((state: RootState) => state.blockchain.selectedChain);
+    const selectedChain = useSelector(
+        (state: RootState) => state.blockchain.selectedChain
+    );
 
     useEffect(() => {
         (async () => {
             const [response, dbVaults, reaperTokens] = await Promise.all([
-                fecthData(),
-                fecthdbVaults(),
-                fecthReaperTokens()
+                fetchDataFromAPI(),
+                fetchDataDBVaults(),
+                fetchDataReaperTokens(),
             ]);
 
             let strategyReports: StrategyReport[] = response.data.StrategyReports.map((report, index) => {
@@ -89,16 +114,21 @@ export const useLoadData = () => {
                     const lastSnapShot = currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined;
 
                     let lastVaultAllocated: number;
+                    let lastVaultTotalAssets: number;
                     let strategyAPRValues: number[];
                     let strategyAllocatedValues: number[];
+                    let actualAllocated: number;
                     if (lastSnapShot) {
                         lastVaultAllocated = parseFloat(lastSnapShot?.totalAllocated || "0");
+                        lastVaultTotalAssets = parseFloat(lastSnapShot?.totalAssets || "0");
                         strategyAPRValues = getStrategyAPRValues(vaultStrategies);
                         strategyAllocatedValues = getStrategyAllocatedValues(vaultStrategies);
 
+                        actualAllocated = lastVaultTotalAssets != 0 ? lastVaultAllocated/lastVaultTotalAssets: 0;
+
                         const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
 
-                        const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultAllocated);
+                        const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultTotalAssets);
                         vault.APR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
                     }
 
@@ -109,7 +139,8 @@ export const useLoadData = () => {
                         ...vault,
                         lastSnapShot: currentVaultSnapshots?.length > 0 ? currentVaultSnapshots[currentVaultSnapshots.length - 1] : undefined,
                         strategyCount: vaultStrategies.length,
-                        reaperToken: reaperToken
+                        reaperToken: reaperToken,
+                        actualAllocated: actualAllocated,
                     }
                 });
 

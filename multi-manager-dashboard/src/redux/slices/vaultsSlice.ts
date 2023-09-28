@@ -17,6 +17,7 @@ export interface Vault {
   strategyCount: number;
   APR: number;
   reaperToken: ReaperToken;
+  actualAllocated: number;
   healthScore?: number;
 }
 
