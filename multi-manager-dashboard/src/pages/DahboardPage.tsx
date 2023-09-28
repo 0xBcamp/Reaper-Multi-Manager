@@ -261,6 +261,10 @@ const DahboardPage = () => {
                                                 <div className="text-gray-400 text-xs">Current APR:</div>
                                             </div>
                                             <div className='flex-1'>
+                                                <div className="text-green-500 font-bold text-xl">{(vault.actualAllocated*100).toFixed(2)}%</div>
+                                                <div className="text-gray-400 text-xs">Allocated:</div>
+                                            </div>
+                                            <div className='flex-1'>
 
                                                 <div className="text-gray-700 text-xl">${Number(vault.lastSnapShot.usd.tvl.toFixed(0)).toLocaleString()}</div>
                                                 <div className="text-gray-400 text-xs">TVL</div>

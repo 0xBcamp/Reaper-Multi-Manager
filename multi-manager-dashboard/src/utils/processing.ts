@@ -1,20 +1,22 @@
 import { Strategy } from "../redux/slices/strategiesSlice";
 
 export const calculateVaultHealthScore = (vaultStrategies: Strategy[]) => {
-    let allocationPercDiff = 0;
+  const maxAllocationError = vaultStrategies.reduce((maxError, strat) => {
+    if (strat.actualAllocatedBPS && strat.optimumAllocationBPS) {
+      const allocationError = Math.abs(
+        Number(strat.actualAllocatedBPS) - Number(strat.optimumAllocationBPS)
+      );
 
-    vaultStrategies.forEach(strat => {
-        if (strat.actualAllocatedBPS && strat.optimumAllocationBPS) {
-            let diff = Math.abs(Number(strat.actualAllocatedBPS) - Number(strat.optimumAllocationBPS));
-            allocationPercDiff += diff;
-        }
-    });
+      return Math.max(maxError, allocationError);
+    }
+    return maxError;
+  }, 0);
 
-    let normalizedDiff = allocationPercDiff / 100;
-    
-    let healthScore = 100 - normalizedDiff;
-    
-    healthScore = Math.max(0, Math.min(100, healthScore));
+  const allocationHealthFactor = 1 - maxAllocationError / 10000;
 
-    return Number(healthScore.toFixed(2));
-}
+  let healthScore = 100 * allocationHealthFactor;
+
+  healthScore = Math.max(0, Math.min(100, healthScore));
+
+  return Number(healthScore.toFixed(2));
+};

@@ -20,7 +20,8 @@ export interface Vault {
   token: string | null;
   tokenDto: ReaperToken;
   APR: number;
-  healthScore?: number; 
+  actualAllocated: number;
+  healthScore?: number;
 }
 
 export interface VaultTransaction {

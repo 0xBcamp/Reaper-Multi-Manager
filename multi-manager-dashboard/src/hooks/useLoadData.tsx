@@ -28,9 +28,34 @@ type ApiResponse = {
 
 }
 
+const fetchData = async (url: string): Promise<any> => {
+    try {
+      const response = await axios.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return null;
+    }
+};
+
+const fetchDataFromAPI = async (): Promise<ApiResponse | null> => {
+    return await fetchData(`${process.env.REACT_APP_API}/arkiver/data`);
+};
+  
+const fetchDataDBVaults = async (): Promise<any[] | null> => {
+    return await fetchData(`${process.env.REACT_APP_API}/vaults`);
+};
+  
+const fetchDataReaperTokens = async (): Promise<any[] | null> => {
+    return await fetchData(`${process.env.REACT_APP_API}/tokens`);
+};
+  
+
 export const useLoadData = () => {
     const dispatch = useDispatch();
-    const selectedChain = useSelector((state: RootState) => state.blockchain.selectedChain);
+    const selectedChain = useSelector(
+        (state: RootState) => state.blockchain.selectedChain
+    );
 
     useEffect(() => {
         (async () => {
@@ -70,18 +95,23 @@ export const useLoadData = () => {
                 });
 
                 let lastVaultAllocated: number;
+                let lastVaultTotalAssets: number;
                 let strategyAPRValues: number[];
                 let strategyAllocatedValues: number[];
                 let currentVaultAPR: number = 0;
-
+                let actualAllocated: number;
+                
                 if (vault.lastSnapShot) {
                     lastVaultAllocated = parseFloat(vault.lastSnapShot?.totalAllocated || "0");
+                    lastVaultTotalAssets = parseFloat(vault.lastSnapShot?.totalAssets || "0");
                     strategyAPRValues = getStrategyAPRValues(strategiesWithUpdatedApr);
                     strategyAllocatedValues = getStrategyAllocatedValues(vault.strategies);
 
+                    actualAllocated = lastVaultTotalAssets != 0 ? lastVaultAllocated/lastVaultTotalAssets: 0;
+
                     const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
 
-                    const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultAllocated);
+                    const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultTotalAssets);
                     currentVaultAPR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
                 }
 
@@ -106,7 +136,8 @@ export const useLoadData = () => {
                 return {
                     ...vault,
                     APR: currentVaultAPR,
-                    strategies: strategiesWithOptimumValues
+                    strategies: strategiesWithOptimumValues,
+                    actualAllocated
                 };
             })
 
