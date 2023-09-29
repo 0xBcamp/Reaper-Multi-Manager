@@ -8,6 +8,7 @@ export interface Chain {
   last30SnapShots?: { timestamp: number; tvl: number; totalUsers: number }[];
   lastSnapShotDelta?: {
     tvl?: ISnapshot_Delta;
+    totalUsers?: ISnapshot_Delta;
   };
 }
 

@@ -36,8 +36,8 @@ function DashboardVaultSummary({ vault }: Props) {
         <div className=''>{vault.name}</div>
         <div className='flex flex-row items-center'>
           <div className='text-gray-700 text-lg flex-1 pr-2'>${Number(vault.lastSnapShot.usd.tvl.toFixed(0)).toLocaleString()}</div>
-          <div className='pb-[1px]'><img src={`${process.env.PUBLIC_URL}/icons/${getVaultPercentageDirection(vault.lastSnapShot.deltas.tvl.perc.days7)}.png`} alt="Menu Icon" className='h-[12px]' /></div>
-          <div className={`${getVaultPercentageClassname(vault.lastSnapShot.deltas.tvl.perc.days7)} text-xs`}>{getVaultPercentageText(vault.lastSnapShot.deltas.tvl.perc.days7)}</div>
+          <div className=''><img src={`${process.env.PUBLIC_URL}/icons/${getVaultPercentageDirection(vault.lastSnapShot.deltas.tvl.perc.days30)}.png`} alt="Menu Icon" className='h-[12px]' /></div>
+          <div className={`${getVaultPercentageClassname(vault.lastSnapShot.deltas.tvl.perc.days30)} text-xs`}>{getVaultPercentageText(vault.lastSnapShot.deltas.tvl.perc.days30)}</div>
 
         </div>
 
@@ -46,11 +46,11 @@ function DashboardVaultSummary({ vault }: Props) {
         <div className='flex-1 col-span-3'>
           <div className='flex flex-row justify-between text-center pl-2'>
             <div className='flex-1'>
-              <div className="text-green-500 font-semibold text-xl">{vault.APR.toFixed(2)}%</div>
+              <div className="text-gray-600 font-semibold text-xl">{vault.APR.toFixed(2)}%</div>
               <div className="text-gray-400 text-xs">APR</div>
             </div>
             <div className='flex-1'>
-              <div className="text-green-500 font-semibold text-xl">{(vault.actualAllocated * 100).toFixed(2)}%</div>
+              <div className="text-gray-600 font-semibold text-xl">{(vault.actualAllocated * 100).toFixed(2)}%</div>
               <div className="text-gray-400 text-xs">Allocated</div>
             </div>
           </div>

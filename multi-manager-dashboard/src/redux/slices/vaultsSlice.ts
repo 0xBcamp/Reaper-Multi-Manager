@@ -78,6 +78,7 @@ export interface VaultSnapshot {
   }
   deltas?: {
     tvl?: ISnapshot_Delta;
+    totalUsers?: ISnapshot_Delta;
   };
 }
 

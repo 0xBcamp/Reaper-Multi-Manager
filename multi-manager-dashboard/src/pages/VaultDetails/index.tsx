@@ -9,6 +9,7 @@ import { sortTimestampByProp } from '../../utils/data/sortByProp';
 import StrategyAllocations from '../../components/cards/StrategyAllocations';
 import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
 import SnapshotsCardArea from '../../components/SnapshotsCardArea';
+import SnapshotsDeltas from '../../components/SnapshotsDeltas';
 
 const VaultDetailsPage = () => {
   let { vaultAddress } = useParams();
@@ -24,64 +25,35 @@ const VaultDetailsPage = () => {
 
 
   return (
-    <>
+    <div className='p-4'>
       {!isInitialized && <Loader />}
       {isInitialized && vault && <>
-        <div className="p-4">
-          <span className="text-lg">{vault?.name}</span>
+        <div className="text-lg pb-2">
+          {vault?.name}
         </div>
-        <div className='grid grid-cols-2'>
-          <div className='flex flex-col m-4 bg-white'>
-            <div className='p-2'>
-              Total users
+        <div className='grid grid-cols-2 gap-4'>
+          <div className='grid grid-cols-12 bg-white border border-gray-200 mb-8'>
+            <div className='col-span-10 flex flex-col flex-1'>
+              <div className='p-3 text-gray-600 font-semibold'>
+                TVL
+              </div>
+              <SnapshotsCardArea data={vault.last30SnapShots} dataKey={"usd.tvl"} />
             </div>
-            <SnapshotsCardArea data={vault.last30SnapShots} dataKey={"usd.tvl"} />
+            <div className='col-span-2'>
+              <SnapshotsDeltas deltas={vault.lastSnapShot.deltas.tvl} type='usd' total={vault.lastSnapShot.usd.tvl} />
+            </div>
           </div>
-          
-          <div className='flex flex-col m-4 bg-white'>
-            <div className='p-2'>
-              Total users
+
+          <div className='grid grid-cols-12 bg-white border border-gray-200 mb-8'>
+            <div className='col-span-10 flex flex-col flex-1'>
+              <div className='p-3 text-gray-600 font-semibold'>
+                Total users
+              </div>
+              <SnapshotsCardArea data={vault.last30SnapShots} dataKey={"users.totalUsers"} />
             </div>
-            {/* <ResponsiveContainer width='100%' height={200}>
-              <AreaChart data={vault.last30SnapShots}
-                margin={{ top: 10, right: 30, left: 30, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#2451B7" stopOpacity={1} />
-                    <stop offset="100%" stopColor="#2451B7" stopOpacity={0.05} />
-                  </linearGradient>
-                </defs>
-                <XAxis
-                  dataKey="timestamp"
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={(value, index) => {
-                    if (index % 7 === 0) {
-                      const date = new Date(value * 1000);
-                      const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
-                      return formatter.format(date);
-                    }
-
-                    return "";
-                  }}
-                />
-
-                <YAxis
-                  dataKey="users.totalUsers"
-
-                  axisLine={false}
-                  tickLine={false}
-                  tickCount={8}
-                  tickFormatter={(value) => {
-                    return value.toLocaleString();
-                  }}
-                />
-
-                <CartesianGrid opacity={0.1} vertical={false} />
-                <Tooltip />
-                <Area dataKey="users.totalUsers" stroke="#2451B7" fillOpacity={1} fill="url(#colorUv)" />
-              </AreaChart>
-            </ResponsiveContainer> */}
+            <div className='col-span-2'>
+              <SnapshotsDeltas deltas={vault.lastSnapShot.deltas.totalUsers} type='number' total={vault.lastSnapShot.users.totalUsers} />
+            </div>
           </div>
         </div>
         <div className="grid grid-cols-4 gap-4 m-4">
@@ -98,7 +70,7 @@ const VaultDetailsPage = () => {
       {!vault && <div className='flex h-full justify-center'>
         <div className='mt-16 text-xl text-gray-400'>No vault selected</div>
       </div>}
-    </>
+    </div>
   );
 };
 
