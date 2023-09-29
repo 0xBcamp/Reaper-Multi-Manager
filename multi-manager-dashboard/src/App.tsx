@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import VaultDetailsPage from "./pages/VaultDetails/index";
 import SideBar from "./components/layout/sidebar/SideBar";
 import { useState } from "react";
-import DahboardPage from "./pages/DahboardPage";
+import DahboardPage from "./pages/Dashboard/DahboardPage";
 import StrategiesPage from "./pages/StrategiesPage";
 import TransactionsPage from "./pages/TransactionsPage";
 import UsersPage from "./pages/UsersPage";

@@ -76,6 +76,9 @@ export interface VaultSnapshot {
   users: {
     totalUsers: number;
   }
+  deltas?: {
+    tvl?: ISnapshot_Delta;
+  };
 }
 
 export interface VaultSnapshot_Vault {

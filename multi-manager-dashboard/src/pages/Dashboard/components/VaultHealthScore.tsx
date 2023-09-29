@@ -1,6 +1,6 @@
 import React from 'react'
 import { Area, AreaChart, CartesianGrid, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Vault } from '../redux/slices/vaultsSlice';
+import { Vault } from '../../../redux/slices/vaultsSlice';
 
 type Props = {
   vault: Vault
@@ -8,14 +8,15 @@ type Props = {
 
 function VaultHealthScore({ vault }: Props) {
   const endAngle = 90 - (360 * (vault.healthScore / 100));
-  
+  const height = 80;
+
   return (
     <RadialBarChart
-      width={100}
-      height={100}
-      cx={50}
-      cy={50}
-      innerRadius="90%"
+      width={height}
+      height={height}
+      cx={height/2}
+      cy={height/2}
+      innerRadius="85%"
       outerRadius="100%"
       barSize={10}
       data={[vault]}
@@ -29,7 +30,7 @@ function VaultHealthScore({ vault }: Props) {
         cornerRadius={2}
         fill={vault.healthScore > 75 ? "rgb(34,197,94)" : vault.healthScore > 45 ? "rgb(251,146,60)" : "rgb(239,68,68)"}
       />
-      <text x={50} y={50} textAnchor="middle" dominantBaseline="middle" fontSize={14} fill="#333">{`${vault.healthScore}%`}</text>
+      <text x={height/2} y={height/2} textAnchor="middle" dominantBaseline="middle" fontSize={12} fill="#333">{`${vault.healthScore}%`}</text>
     </RadialBarChart>
   )
 }

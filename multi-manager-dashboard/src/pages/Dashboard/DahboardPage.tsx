@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { RootState } from '../redux/store';
-import Loader from '../components/layout/Loader';
-import DataGrid from '../components/DataGrid';
-import { selectChain, selectVaultsByChain } from '../redux/selectors';
-import { getVaultsColumns } from '../utils/gridColumns/vaults_columns';
-import { getStrategyColumns } from '../utils/gridColumns/strategy_columns';
-import { VaultSnapshot, setSelectedVaultAddress } from '../redux/slices/vaultsSlice';
-import { sortTimestampByProp } from '../utils/data/sortByProp';
+import { RootState } from '../../redux/store';
+import Loader from '../../components/layout/Loader';
+import DataGrid from '../../components/DataGrid';
+import { selectChain, selectVaultsByChain } from '../../redux/selectors';
+import { getVaultsColumns } from '../../utils/gridColumns/vaults_columns';
+import { getStrategyColumns } from '../../utils/gridColumns/strategy_columns';
+import { VaultSnapshot, setSelectedVaultAddress } from '../../redux/slices/vaultsSlice';
+import { sortTimestampByProp } from '../../utils/data/sortByProp';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Area, RadialBarChart, RadialBar, Legend, BarChart, Bar } from 'recharts';
-import SnapshotsCardArea from '../components/SnapshotsCardArea';
-import SnapshotsDeltas from '../components/SnapshotsDeltas';
-import VaultHealthScore from '../components/VaultHealthScore';
-import DashboardVaultSummary from '../components/DashboardVaultSummary';
+import SnapshotsCardArea from '../../components/SnapshotsCardArea';
+import SnapshotsDeltas from '../../components/SnapshotsDeltas';
+import VaultHealthScore from './components/VaultHealthScore';
+import DashboardVaultSummary from './components/DashboardVaultSummary';
 
 const DahboardPage = () => {
     const dispatch = useDispatch();
@@ -122,10 +122,7 @@ const DahboardPage = () => {
                 <div className='grid grid-cols-4 gap-4 '>
                     {vaults.map((vault) => {
                         return (
-
-                                <DashboardVaultSummary vault={vault} key={vault._id}/>
-
-
+                            <DashboardVaultSummary vault={vault} key={vault._id} />
                         )
                     })}
 
