@@ -71,7 +71,7 @@ export const useLoadData = () => {
 
             let vaults = dbVaults.map((vault: Vault) => {
                 // Process strategies and update apr in aprReports within each strategy
-                const strategiesWithUpdatedApr = vault.strategies.map(strategy => {
+                const strategiesWithUpdatedApr = vault.strategies?.map(strategy => {
                     const updatedAprReports = strategy.aprReports.map(report => {
                         return {
                             ...report,
@@ -117,7 +117,7 @@ export const useLoadData = () => {
                     currentVaultAPR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
                 }
 
-                const strategiesWithOptimumValues = strategiesWithUpdatedApr.map(strategy => {
+                const strategiesWithOptimumValues = strategiesWithUpdatedApr?.map(strategy => {
 
                     lastVaultAllocated = parseFloat(vault.lastSnapShot?.totalAllocated || "0");
 
@@ -139,7 +139,8 @@ export const useLoadData = () => {
                     ...vault,
                     APR: currentVaultAPR,
                     strategies: strategiesWithOptimumValues,
-                    actualAllocated
+                    actualAllocated,
+                    healthScore: calculateVaultHealthScore(strategiesWithOptimumValues)
                 };
             })
 

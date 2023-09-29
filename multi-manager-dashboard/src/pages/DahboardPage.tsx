@@ -12,6 +12,8 @@ import { sortTimestampByProp } from '../utils/data/sortByProp';
 import { ResponsiveContainer, AreaChart, XAxis, YAxis, CartesianGrid, Tooltip, Area, RadialBarChart, RadialBar, Legend, BarChart, Bar } from 'recharts';
 import SnapshotsCardArea from '../components/SnapshotsCardArea';
 import SnapshotsDeltas from '../components/SnapshotsDeltas';
+import VaultHealthScore from '../components/VaultHealthScore';
+import DashboardVaultSummary from '../components/DashboardVaultSummary';
 
 const DahboardPage = () => {
     const dispatch = useDispatch();
@@ -25,13 +27,6 @@ const DahboardPage = () => {
     console.log("vaults", vaults)
     console.log("chain", chain)
 
-
-
-    const handleVaultClick = (vault) => {
-        dispatch(setSelectedVaultAddress(vault.address));
-        navigate(`/vaults/${vault.address}`);
-    }
-
     return (
         <div className='p-4'>
             {!isInitialized && <Loader />}
@@ -43,10 +38,10 @@ const DahboardPage = () => {
                             <div className='p-3 text-gray-600 font-semibold'>
                                 TVL
                             </div>
-                            <SnapshotsCardArea data={chain.last30SnapShots} dataKey={"tvl"}/>
+                            <SnapshotsCardArea data={chain.last30SnapShots} dataKey={"tvl"} />
                         </div>
                         <div className='col-span-3'>
-                            <SnapshotsDeltas deltas={chain.lastSnapShotDelta.tvl} type='usd' total={chain.last30SnapShots[chain.last30SnapShots.length - 1].tvl}/>
+                            <SnapshotsDeltas deltas={chain.lastSnapShotDelta.tvl} type='usd' total={chain.last30SnapShots[chain.last30SnapShots.length - 1].tvl} />
                         </div>
                     </div>
 
@@ -125,69 +120,10 @@ const DahboardPage = () => {
                     Vaults
                 </div>
                 <div className='grid grid-cols-4 gap-4 '>
-                    {vaults.map((vault, index) => {
-                        const endAngle = 90 - (360 * (vault.healthScore / 100));
-                        const allocatedPercentage = vault.lastSnapShot.usd.tvl !== 0
-                            ? (vault.lastSnapShot.usd.totalAllocated / vault.lastSnapShot.usd.tvl * 100).toFixed(0)
-                            : 0;
-
-                        const idlePercentage = vault.lastSnapShot.usd.tvl !== 0
-                            ? (vault.lastSnapShot.usd.totalIdle / vault.lastSnapShot.usd.tvl * 100).toFixed(0)
-                            : 0;
-
-                            console.log(vault.name, allocatedPercentage, idlePercentage)
+                    {vaults.map((vault) => {
                         return (
-                            <div key={vault._id} onClick={() => handleVaultClick(vault)} className="flex flex-col cursor-pointer bg-white border border-gray-200">
-                                <div className="flex flex-row  p-2">
-                                    <div className='flex-1'>
-                                        <h2 className="text-sm px-2 pb-4"><span className="text-gray-600 font-semibold">{vault.name}</span></h2>
-                                        <div className='flex flex-row justify-between text-center'>
-                                            <div className='flex-1'>
-                                                <div className="text-gray-700 text-xl">{vault.APR.toFixed(2)}%</div>
-                                                <div className="text-gray-400 text-xs">Current APR:</div>
-                                            </div>
-                                            <div className='flex-1'>
-                                                <div className="text-green-500 font-bold text-xl">{(vault.actualAllocated*100).toFixed(2)}%</div>
-                                                <div className="text-gray-400 text-xs">Allocated:</div>
-                                            </div>
-                                            <div className='flex-1'>
 
-                                                <div className="text-gray-700 text-xl">${Number(vault.lastSnapShot.usd.tvl.toFixed(0)).toLocaleString()}</div>
-                                                <div className="text-gray-400 text-xs">TVL</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div>
-
-                                        <RadialBarChart
-                                            width={100}
-                                            height={100}
-                                            cx={50}
-                                            cy={50}
-                                            innerRadius="90%"
-                                            outerRadius="100%"
-                                            barSize={10}
-                                            data={[vault]}
-                                            startAngle={90}
-                                            endAngle={endAngle}
-
-                                        >
-                                            <RadialBar
-                                                background={{ fill: '#e0e0e0' }}
-                                                dataKey="healthScore"
-                                                cornerRadius={2}
-                                                fill={vault.healthScore > 75 ? "rgb(34,197,94)" : vault.healthScore > 45 ? "rgb(251,146,60)" : "rgb(239,68,68)"}
-                                            />
-                                            <text x={50} y={50} textAnchor="middle" dominantBaseline="middle" fontSize={14} fill="#333">{`${vault.healthScore}%`}</text>
-                                        </RadialBarChart>
-                                    </div>
-                                </div>
-                                <div className='flex flex-row'>
-                                    <div className={`w-[${allocatedPercentage}%] bg-green-500 h-[2px]`}></div>
-                                    {idlePercentage !== 0 && <div className={`w-[${idlePercentage}%] bg-red-500 h-[2px]`}></div>}
-                                </div>
-
-                            </div>
+                                <DashboardVaultSummary vault={vault} key={vault._id}/>
 
 
                         )
