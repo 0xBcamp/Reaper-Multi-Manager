@@ -1,16 +1,13 @@
 import { Route, Routes } from "react-router-dom";
-import VaultDetailsPage from "./pages/VaultDetails/index";
+import VaultDetailsPage from "./pages/Vault/VaultPage";
 import SideBar from "./components/layout/sidebar/SideBar";
 import { useState } from "react";
 import DahboardPage from "./pages/Dashboard/DahboardPage";
-import StrategiesPage from "./pages/StrategiesPage";
-import TransactionsPage from "./pages/TransactionsPage";
-import UsersPage from "./pages/UsersPage";
 import { Provider } from "react-redux";
 import store from "./redux/store";
 import NavBar from "./components/layout/NavBar";
-import StrategyPage from "./pages/StrategyPage";
-import VaultDeployPage from "./pages/Vaults/Deploy";
+import StrategyPage from "./pages/Strategy/StrategyPage";
+import VaultDeployPage from "./pages/Vault/Deploy";
 
 
 function App() {
@@ -31,10 +28,7 @@ function App() {
             <Route path="/" element={<DahboardPage />} />
             <Route path="/vaults/deploy" element={<VaultDeployPage />} />
             <Route path="/vaults/:vaultAddress" element={<VaultDetailsPage />} />
-            <Route path="/strategies" element={<StrategiesPage />} />
             <Route path="/vaults/:vaultAddress/strategy/:strategyAddress" element={<StrategyPage />} />
-            <Route path="/users" element={<UsersPage />} />
-            <Route path="/transactions" element={<TransactionsPage />} />
           </Routes>
         </div>
       </div>

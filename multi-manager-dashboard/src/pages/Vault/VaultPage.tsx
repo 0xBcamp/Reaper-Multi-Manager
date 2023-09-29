@@ -8,10 +8,10 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 import { sortTimestampByProp } from '../../utils/data/sortByProp';
 import StrategyAllocations from '../../components/cards/StrategyAllocations';
 import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
-import SnapshotsCardArea from '../../components/SnapshotsCardArea';
-import SnapshotsDeltas from '../../components/SnapshotsDeltas';
+import SnapshotsCardArea from '../../components/SnapshotCard/SnapshotsCardArea';
+import SnapshotsDeltas from '../../components/SnapshotCard/SnapshotsDeltas';
 
-const VaultDetailsPage = () => {
+const VaultPage = () => {
   let { vaultAddress } = useParams();
   const dispatch = useDispatch();
 
@@ -74,4 +74,4 @@ const VaultDetailsPage = () => {
   );
 };
 
-export default VaultDetailsPage;
+export default VaultPage;

@@ -1,14 +1,14 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { setSelectedVaultAddress } from '../redux/slices/vaultsSlice';
-import { setSelectedStrategyAddress } from '../redux/slices/strategiesSlice';
-import { selectStrategy, selectVault } from '../redux/selectors';
-import DataGrid from '../components/DataGrid';
-import { getStrategyReportColumns } from '../utils/gridColumns/strategy_report_columns';
-import { sortTimestampByProp } from '../utils/data/sortByProp';
-import StrategyAprSummary from '../components/cards/StrategyAprSummary';
-import StrategyAllocations from '../components/cards/StrategyAllocations';
+import { setSelectedVaultAddress } from '../../redux/slices/vaultsSlice';
+import { setSelectedStrategyAddress } from '../../redux/slices/strategiesSlice';
+import { selectStrategy, selectVault } from '../../redux/selectors';
+import DataGrid from '../../components/DataGrid';
+import { getStrategyReportColumns } from '../../utils/gridColumns/strategy_report_columns';
+import { sortTimestampByProp } from '../../utils/data/sortByProp';
+import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
+import StrategyAllocations from '../../components/cards/StrategyAllocations';
 
 
 const StrategyPage = () => {
