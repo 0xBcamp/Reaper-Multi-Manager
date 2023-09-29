@@ -3,8 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { setSelectedVaultAddress } from '../redux/slices/vaultsSlice';
 import { setSelectedStrategyAddress } from '../redux/slices/strategiesSlice';
-import { selectStrategiesByVault, selectStrategy, selectVault } from '../redux/selectors';
-import DataGrid from '../components/tables/DataGrid';
+import { selectStrategy, selectVault } from '../redux/selectors';
+import DataGrid from '../components/DataGrid';
 import { getStrategyReportColumns } from '../utils/gridColumns/strategy_report_columns';
 import { sortTimestampByProp } from '../utils/data/sortByProp';
 import StrategyAprSummary from '../components/cards/StrategyAprSummary';
@@ -22,11 +22,12 @@ const StrategyPage = () => {
 
     const strategy = useSelector(selectStrategy);
     const vault = useSelector(selectVault);
-    const strategies = useSelector(selectStrategiesByVault)
+
+    console.log("strategy", strategy)
 
     return (
         <>
-            {vault && <div className='p-4'>
+            {vault && strategy && <div className='p-4'>
                 <div>
                     <span className="text-lg">{vault?.name} - {strategy.address}</span>
                 </div>
@@ -35,7 +36,7 @@ const StrategyPage = () => {
                         <StrategyAprSummary vault={vault} strategy={strategy} showSlider={true} />
                     </div>
                     <div>
-                        <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={strategies}/>
+                        <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={vault.strategies}/>
                     </div>
                 </div>
                 <div className='flex'>
@@ -43,7 +44,7 @@ const StrategyPage = () => {
                 </div>
             </div>}
             {!vault && <div className='flex h-full justify-center'>
-                <div className='mt-16 text-xl text-gray-400'>No vault selected</div>
+                <div className='mt-16 text-xl text-gray-400'>No strategy selected</div>
             </div>}
         </>
     )

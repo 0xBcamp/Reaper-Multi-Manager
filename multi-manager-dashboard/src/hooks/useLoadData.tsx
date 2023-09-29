@@ -59,13 +59,15 @@ export const useLoadData = () => {
 
     useEffect(() => {
         (async () => {
-            const [dbVaults, dbChains] = await Promise.all([
+            const [dbVaults, dbChains, dbTokens] = await Promise.all([
                 fecthVaults(),
-                fecthChains()
+                fecthChains(),
+                fecthTokens()
             ]);
 
             console.log("dbVaults", dbVaults)
             console.log("dbChains ", dbChains)
+            console.log("dbTokens ", dbTokens)
 
             let vaults = dbVaults.map((vault: Vault) => {
                 // Process strategies and update apr in aprReports within each strategy
@@ -141,6 +143,7 @@ export const useLoadData = () => {
                 };
             })
 
+            dispatch(setTokens(dbTokens));
             dispatch(setVaults(vaults));
             dispatch(setChains(dbChains));
             if (!selectedChain && dbChains?.length > 0) {
@@ -161,27 +164,6 @@ export const useLoadData = () => {
     };
 
 
-    const fecthData = async (): Promise<ApiResponse> => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/arkiver/data`);
-            return response.data
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-
-        return null;
-    }
-
-    const fecthReaperTokens = async (): Promise<any[]> => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API}/tokens`);
-            return response.data
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-
-        return null;
-    }
 
     const fecthVaults = async (): Promise<any[]> => {
         try {
@@ -198,6 +180,18 @@ export const useLoadData = () => {
     const fecthChains = async (): Promise<any[]> => {
         try {
             const response = await axios.get(`${process.env.REACT_APP_API}/dto/chains`);
+
+            return response.data
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+
+        return null;
+    }
+
+    const fecthTokens = async (): Promise<any[]> => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API}/dto/tokens`);
 
             return response.data
         } catch (error) {

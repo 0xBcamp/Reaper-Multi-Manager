@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import Loader from '../../components/layout/Loader';
-import { selectReaperTokensByChain, selectVaultsByChain } from '../../redux/selectors';
+import { selectTokensByChain, selectVaultsByChain } from '../../redux/selectors';
 import Dropdown, { DropdownOptionType } from '../../components/form/Dropdown';
 import { useEffect, useState } from 'react';
 import TextField from '../../components/form/TextField';
@@ -24,9 +24,9 @@ const VaultDeployPage = () => {
 
     const isInitialized = useSelector((state: RootState) => state.app.isInitialized);
 
-    const reaperTokens = useSelector(selectReaperTokensByChain);
+    const tokens = useSelector(selectTokensByChain);
 
-    const [reaperTokenOptions, setReaperTokenOptions] = useState<DropdownOptionType[]>([]);
+    const [tokenOptions, setTokenOptions] = useState<DropdownOptionType[]>([]);
 
     const initialValues: DeployVaultForm = {
         tokenAddress: "",
@@ -41,15 +41,15 @@ const VaultDeployPage = () => {
     const [formState, setFormState] = useState<DeployVaultForm>(initialValues);
 
     useEffect(() => {
-        if (reaperTokens?.length > 0) {
-            setReaperTokenOptions(reaperTokens.map(token => {
+        if (tokens?.length > 0) {
+            setTokenOptions(tokens.map(token => {
                 return {
                     label: token.name,
                     key: token.address
                 }
             }));
         }
-    }, [reaperTokens]);
+    }, [tokens]);
 
     const handleTokenChange = (key: string) => {
         setFormState(prev => {
@@ -72,7 +72,7 @@ const VaultDeployPage = () => {
                         </div>
                         <div className='flex flex-col gap-4 p-4 border border-gray-200'>
                             <div className=''>
-                                <Dropdown label='Token' options={reaperTokenOptions} onChange={handleTokenChange} selectedKey={formState?.tokenAddress} />
+                                <Dropdown label='Token' options={tokenOptions} onChange={handleTokenChange} selectedKey={formState?.tokenAddress} />
                             </div>
                             <div className=''>
                                 <TextField label='Name' value={formState.name} onChange={(value: string) => setFormState(prevState => ({ ...prevState, name: value }))} />

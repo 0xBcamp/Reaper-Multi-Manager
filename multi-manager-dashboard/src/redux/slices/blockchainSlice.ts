@@ -1,9 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ISnapshot_Delta } from './vaultsSlice';
 
 export interface Chain {
   _id: string;
   chainId: number;
   name: string;
+  last30SnapShots?: { timestamp: number; tvl: number; totalUsers: number }[];
+  lastSnapShotDelta?: {
+    tvl?: ISnapshot_Delta;
+  };
 }
 
 const initialState: {

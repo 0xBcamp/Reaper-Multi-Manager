@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import VaultsPage from "./pages/VaultsPage";
 import VaultDetailsPage from "./pages/VaultDetails/index";
 import SideBar from "./components/layout/sidebar/SideBar";
 import { useState } from "react";
@@ -30,7 +29,6 @@ function App() {
           />
           <Routes>
             <Route path="/" element={<DahboardPage />} />
-            <Route path="/vaults" element={<VaultsPage />} />
             <Route path="/vaults/deploy" element={<VaultDeployPage />} />
             <Route path="/vaults/:vaultAddress" element={<VaultDetailsPage />} />
             <Route path="/strategies" element={<StrategiesPage />} />

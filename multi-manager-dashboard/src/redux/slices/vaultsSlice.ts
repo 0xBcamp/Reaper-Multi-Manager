@@ -3,6 +3,19 @@ import { Chain } from './blockchainSlice';
 import { ReaperToken } from './reaperSlice';
 import { Strategy } from './strategiesSlice';
 
+export interface ISnapshot_Delta {
+  diff?: {
+      days1?: number;
+      days7?: number;
+      days30?: number;
+  },
+  perc?: {
+      days1?: number;
+      days7?: number;
+      days30?: number;
+  }
+}
+
 export interface Vault {
   _id: string;
   address: string;
