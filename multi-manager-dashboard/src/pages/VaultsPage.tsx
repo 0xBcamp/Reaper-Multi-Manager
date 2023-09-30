@@ -42,7 +42,7 @@ const VaultsPage = () => {
                                         <div className='flex flex-row justify-between'>
                                             <div className='flex-1'>
                                                 <div className="text-gray-500">Current APR:</div>
-                                                <div className="text-green-500 font-bold text-2xl">{vault.APR.toFixed(2)}%</div>
+                                                <div className="text-green-500 font-bold text-2xl">{vault.totalAPR.toFixed(2)}%</div>
                                             </div>
                                             <div className='flex-1'>
                                                 <div className="text-gray-500">Strategies</div>

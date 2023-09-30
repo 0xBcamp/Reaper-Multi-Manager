@@ -112,7 +112,7 @@ const DahboardPage = () => {
                                         <h2 className="text-sm px-2 pb-4"><span className="text-gray-600 font-semibold">{vault.name}</span></h2>
                                         <div className='flex flex-row justify-between text-center'>
                                             <div className='flex-1'>
-                                                <div className="text-green-500 font-bold text-xl">{vault.APR.toFixed(2)}%</div>
+                                                <div className="text-green-500 font-bold text-xl">{vault.totalAPR.toFixed(2)}%</div>
                                                 <div className="text-gray-400 text-xs">Current APR:</div>
                                             </div>
                                             <div className='flex-1'>
