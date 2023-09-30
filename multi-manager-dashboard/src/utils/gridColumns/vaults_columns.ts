@@ -18,7 +18,7 @@ export const getVaultsColumns = () => {
                 return info.getValue();
             }
         }),
-        columnHelper.accessor("APR", {
+        columnHelper.accessor("totalAPR", {
             cell: info => {
                 return info.getValue().toFixed(2);
             }

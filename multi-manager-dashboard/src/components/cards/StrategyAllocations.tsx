@@ -31,7 +31,7 @@ const AllocationSummary = ({ vault, strategy, strategies }: IAllocationProps) =>
                 </div>
                 <div className='flex justify-between'>
                     <div>Vault APR:</div>
-                    <div>{vault.APR?.toFixed(2)}%</div>
+                    <div>{vault.totalAPR?.toFixed(2)}%</div>
                 </div>
                 <div className='flex justify-between'>
                     <div>Optimum Allocation BPS:</div>

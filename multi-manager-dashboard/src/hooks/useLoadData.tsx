@@ -9,7 +9,7 @@ import { calculateDataWithThreshold, calculateStrategyAPR } from "../lib/calcula
 import { DEFAULT_STD_DEV_THRESHOLD } from "../utils/constants";
 import { sortTimestampByProp } from "../utils/data/sortByProp";
 import { filterLastXDays } from "../utils/data/filterLastXDays";
-import { calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "../lib/calculateStrategyAllocations";
+import { calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAllocatedAPR, calculateVaultTotalAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "../lib/calculateStrategyAllocations";
 import { setInitialized } from "../redux/slices/appSlice";
 import { setTokens } from "../redux/slices/reaperSlice";
 import { calculateVaultHealthScore } from "../utils/processing";
@@ -128,8 +128,11 @@ export const useLoadData = () => {
 
                         const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
 
-                        const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultTotalAssets);
-                        vault.APR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
+                        const vaultTotalAPR = calculateVaultTotalAPR(strategyProductValues, lastVaultTotalAssets);
+                        vault.totalAPR = vaultTotalAPR && !isNaN(vaultTotalAPR) ? vaultTotalAPR : 0
+
+                        const vaultAllocatedAPR = calculateVaultAllocatedAPR(strategyProductValues, lastVaultAllocated);
+                        vault.allocatedAPR = vaultAllocatedAPR && !isNaN(vaultAllocatedAPR) ? vaultAllocatedAPR : 0
                     }
 
                     const reaperToken = reaperTokens.find(x => x.address.toLowerCase() === vault.token.toLowerCase());
@@ -151,8 +154,8 @@ export const useLoadData = () => {
                 const lastVaultAllocated = parseFloat(strategyVault.lastSnapShot?.totalAllocated || "0");
 
                 const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated || "0") / lastVaultAllocated * 10000)?.toFixed(2);
-                const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.APR);
-                const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.APR, lastVaultAllocated);
+                const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.allocatedAPR);
+                const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, strategyVault.allocatedAPR, lastVaultAllocated);
 
                 return {
                     ...strategy,

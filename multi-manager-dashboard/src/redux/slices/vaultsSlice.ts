@@ -15,7 +15,8 @@ export interface Vault {
   lastSnapShot: VaultSnapshot;
   snapshots: VaultSnapshot[];
   strategyCount: number;
-  APR: number;
+  allocatedAPR: number;
+  totalAPR: number;
   reaperToken: ReaperToken;
   actualAllocated: number;
   healthScore?: number;
