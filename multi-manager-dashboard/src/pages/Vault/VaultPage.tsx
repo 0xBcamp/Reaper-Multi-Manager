@@ -10,6 +10,7 @@ import StrategyAllocations from '../../components/cards/StrategyAllocations';
 import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
 import SnapshotsCardArea from '../../components/SnapshotCard/SnapshotsCardArea';
 import SnapshotsDeltas from '../../components/SnapshotCard/SnapshotsDeltas';
+import VaultStrategySummary from './components/VaultStrategySummary';
 
 const VaultPage = () => {
   let { vaultAddress } = useParams();
@@ -20,9 +21,6 @@ const VaultPage = () => {
   const isInitialized = useSelector((state: RootState) => state.app.isInitialized);
 
   const vault = useSelector(selectVault);
-
-  console.log("vault", vault);
-
 
   return (
     <div className='p-4'>
@@ -60,9 +58,8 @@ const VaultPage = () => {
           {vault.strategies.map((strategy) => (
             <div className='h-full' key={strategy._id}>
               <Link to={`strategy/${strategy?.address}`}>
-                <StrategyAprSummary vault={vault} strategy={strategy} showSlider={false} />
+                <VaultStrategySummary strategy={strategy} vault={vault} />
               </Link>
-              <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={vault.strategies} />
             </div>
           ))}
         </div>
