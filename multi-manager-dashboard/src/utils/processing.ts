@@ -39,7 +39,7 @@ export const processVaults = (vaultsData: Vault[]) => {
       return {
           ...vault,
           ...vaultAPRValues,
-          healthScore: calculateVaultHealthScore(strategiesWithUpdatedApr)
+          healthScore: calculateVaultHealthScore(vaultAPRValues.strategies)
       };
   });
 };
