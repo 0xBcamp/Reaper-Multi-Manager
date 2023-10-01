@@ -71,7 +71,7 @@ export const selectVault: (state: RootState) => Vault = createSelector(
 export const selectStrategy = createSelector(
     [selectVault, selectSelectedStrategyAddress],
     (vault, selectedStrategyAddress) => {
-        return vault.strategies.find(strategy =>
+        return vault?.strategies.find(strategy =>
             strategy.address?.toLowerCase() === selectedStrategyAddress?.toLowerCase()
         );
     }

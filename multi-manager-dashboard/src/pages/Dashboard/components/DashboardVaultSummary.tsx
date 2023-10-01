@@ -46,7 +46,7 @@ function DashboardVaultSummary({ vault }: Props) {
         <div className='flex-1 col-span-3'>
           <div className='flex flex-row justify-between text-center pl-2'>
             <div className='flex-1'>
-              <div className="text-gray-600 font-semibold text-xl">{vault.APR.toFixed(2)}%</div>
+              <div className="text-gray-600 font-semibold text-xl">{vault.totalAPR.toFixed(2)}%</div>
               <div className="text-gray-400 text-xs">APR</div>
             </div>
             <div className='flex-1'>

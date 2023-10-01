@@ -21,18 +21,22 @@ export function calculateStrategyProductValues(aprValues: number[], allocatedVal
     return aprValues.map((aprValue, index) => allocatedValues[index] * aprValue);
 }
 
-export function calculateVaultAPR(strategyProductValues: number[], lastVaultAllocated: number) {
+export function calculateVaultAllocatedAPR(strategyProductValues: number[], lastVaultAllocated: number) {
     return strategyProductValues.reduce((total, productValue) => total + productValue, 0) / lastVaultAllocated;
+}
+
+export function calculateVaultTotalAPR(strategyProductValues: number[], lastVaultTotalAssets: number) {
+    return strategyProductValues.reduce((total, productValue) => total + productValue, 0) / lastVaultTotalAssets;
 }
 
 export function calculateActualAllocatedBPS(lastStrategyAllocated: number, lastVaultAllocated: number) {
     return (lastStrategyAllocated / lastVaultAllocated * 10000).toFixed(2);
 }
 
-export function calculateOptimumAllocation(lastStrategyAllocated: number, strategyAPR: number, vaultAPR: number) {
-    return (lastStrategyAllocated * strategyAPR / vaultAPR).toFixed(0);
+export function calculateOptimumAllocation(lastStrategyAllocated: number, strategyAPR: number, vaultAllocatedAPR: number) {
+    return (lastStrategyAllocated * strategyAPR / vaultAllocatedAPR).toFixed(0);
 }
 
-export function calculateOptimumAllocationBPS(lastStrategyAllocated: number, strategyAPR: number, vaultAPR: number, lastVaultAllocated: number) {
-    return (lastStrategyAllocated * strategyAPR / vaultAPR / lastVaultAllocated * 10000).toFixed(2);
+export function calculateOptimumAllocationBPS(lastStrategyAllocated: number, strategyAPR: number, vaultAllocatedAPR: number, lastVaultAllocated: number) {
+    return (lastStrategyAllocated * strategyAPR / vaultAllocatedAPR / lastVaultAllocated * 10000).toFixed(2);
 }

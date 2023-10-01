@@ -32,7 +32,8 @@ export interface Vault {
   symbol: string;
   token: string | null;
   tokenDto: ReaperToken;
-  APR: number;
+  allocatedAPR: number;
+  totalAPR: number;
   actualAllocated: number;
   healthScore?: number;
 }
