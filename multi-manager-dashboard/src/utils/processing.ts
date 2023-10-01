@@ -1,4 +1,8 @@
-import { Strategy } from "../redux/slices/strategiesSlice";
+import { calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "./calculateStrategyAllocations";
+import { Strategy, StrategyReport } from "../redux/slices/strategiesSlice";
+import { Vault } from "../redux/slices/vaultsSlice";
+import { DEFAULT_STD_DEV_THRESHOLD } from "./constants";
+import { calculateDataWithThreshold, calculateStrategyAPR } from "./calculateStrategyAPR";
 
 export const calculateVaultHealthScore = (vaultStrategies: Strategy[]) => {
   try {
@@ -25,4 +29,97 @@ export const calculateVaultHealthScore = (vaultStrategies: Strategy[]) => {
   }
 
   return 0;
+};
+
+export const processVaults = (vaultsData: Vault[]) => {
+  return vaultsData.map(vault => {
+      const strategiesWithUpdatedApr = processStrategies(vault.strategies || []);
+      const vaultAPRValues = calculateVaultAPRValues(vault, strategiesWithUpdatedApr);
+
+      return {
+          ...vault,
+          ...vaultAPRValues,
+          strategies: strategiesWithUpdatedApr,
+          healthScore: calculateVaultHealthScore(strategiesWithUpdatedApr)
+      };
+  });
+};
+
+const processStrategies = (strategies: Strategy[]) => {
+  return strategies.map(strategy => {
+      const updatedAprReports = strategy.aprReports.map(report => ({
+          ...report,
+          apr: calculateStrategyReportApr(report)
+      }));
+
+      const strategyAPR = calculateStrategyAPR(updatedAprReports);
+
+      const strategyWithOptimumValues = {
+          ...strategy,
+          APR: strategyAPR,
+          ...strategy.lastReport && {
+              lastReport: {
+                  ...strategy.lastReport,
+                  apr: calculateStrategyReportApr(strategy.lastReport)
+              }
+          },
+          aprReports: updatedAprReports
+      }
+
+      return strategyWithOptimumValues;
+  });
+};
+
+const calculateStrategyReportApr = (report: StrategyReport) => {
+  const strategyAprValue = calculateDataWithThreshold([report], DEFAULT_STD_DEV_THRESHOLD);
+  return strategyAprValue.yData[0] || 0;
+};
+
+const calculateVaultAPRValues = (vault: Vault, strategies: Strategy[]) => {
+  let lastVaultAllocated: number;
+  let lastVaultTotalAssets: number;
+  let strategyAPRValues: number[];
+  let strategyAllocatedValues: number[];
+  let currentVaultAPR: number = 0;
+  let actualAllocated: number;
+
+  if (vault.lastSnapShot) {
+      lastVaultAllocated = parseFloat(vault.lastSnapShot?.totalAllocated || "0");
+      lastVaultTotalAssets = parseFloat(vault.lastSnapShot?.totalAssets || "0");
+      strategyAPRValues = getStrategyAPRValues(strategies);
+      strategyAllocatedValues = getStrategyAllocatedValues(vault.strategies);
+
+      actualAllocated = lastVaultTotalAssets != 0 ? lastVaultAllocated / lastVaultTotalAssets : 0;
+
+      const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
+
+      const vaultAPR = calculateVaultAPR(strategyProductValues, lastVaultTotalAssets);
+      currentVaultAPR = vaultAPR && !isNaN(vaultAPR) ? vaultAPR : 0
+  }
+
+  const strategiesWithOptimumValues = strategies?.map(strategy => {
+
+      lastVaultAllocated = parseFloat(vault.lastSnapShot?.totalAllocated || "0");
+
+      const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated || "0") / lastVaultAllocated * 10000)?.toFixed(2);
+      const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, currentVaultAPR);
+      const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, currentVaultAPR, lastVaultAllocated);
+
+      const updatedStrategy: Strategy = {
+          ...strategy,
+          actualAllocatedBPS,
+          optimumAllocation,
+          optimumAllocationBPS
+      }
+
+      return updatedStrategy;
+  });
+
+  return {
+      ...vault,
+      APR: currentVaultAPR,
+      strategies: strategiesWithOptimumValues,
+      actualAllocated,
+      healthScore: calculateVaultHealthScore(strategiesWithOptimumValues)
+  };
 };
