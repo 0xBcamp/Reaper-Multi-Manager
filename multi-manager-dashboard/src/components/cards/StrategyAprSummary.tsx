@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { formatDate } from '../../utils/dateUtils';
 import Card from './Card';
-import { calculateDataWithThreshold, calculateTimeBasedMovingAverage } from '../../lib/calculateStrategyAPR';
 import { DEFAULT_STD_DEV_THRESHOLD } from '../../utils/constants';
 import { Scatter } from 'react-chartjs-2';
 import {
@@ -21,6 +20,7 @@ import {
 import { _DeepPartialObject } from 'chart.js/dist/types/utils';
 import { Vault } from '../../redux/slices/vaultsSlice';
 import { Strategy } from '../../redux/slices/strategiesSlice';
+import { calculateDataWithThreshold, calculateTimeBasedMovingAverage } from '../../utils/calculateStrategyAPR';
 
 ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 

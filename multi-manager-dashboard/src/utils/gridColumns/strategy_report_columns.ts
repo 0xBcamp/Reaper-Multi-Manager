@@ -6,11 +6,15 @@ export const getStrategyReportColumns = () => {
     const columnHelper = createColumnHelper<StrategyReport>();
 
     const columns = [
+        // columnHelper.accessor("reportDate", {
+        //     header: "Report date",
+        //     cell: info => {
+        //         return DateTime.fromSeconds(info.getValue()).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS)
+        //     }
+        // }),
         columnHelper.accessor("reportDate", {
             header: "Report date",
-            cell: info => {
-                return DateTime.fromSeconds(info.getValue()).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS)
-            }
+            cell: info => info.getValue()
         }),
         columnHelper.accessor("block", {
             cell: info => info.getValue()
