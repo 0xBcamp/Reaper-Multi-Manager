@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Chain } from './blockchainSlice';
 import { ReaperToken } from './reaperSlice';
 import { Strategy } from './strategiesSlice';
 
