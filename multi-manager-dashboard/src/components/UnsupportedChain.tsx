@@ -5,9 +5,8 @@ import Button from './form/Button';
 import { useSwitchNetwork } from 'wagmi'
 import { setWalletChainId } from '../redux/slices/blockchainSlice';
 
-type Props = {}
 
-function UnsupportedChain({ }: Props) {
+const UnsupportedChain = () => {
   const dispatch = useDispatch();
   
   const isInitialized = useSelector((state: RootState) => state.app.isInitialized);

@@ -1,5 +1,3 @@
-import React from 'react'
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ISnapshot_Delta } from '../../redux/slices/vaultsSlice';
 
 type Props = {

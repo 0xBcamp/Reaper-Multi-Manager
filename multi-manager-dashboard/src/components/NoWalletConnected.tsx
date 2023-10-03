@@ -2,9 +2,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { selectWallet } from '../redux/selectors';
 
-type Props = {}
-
-function NoWalletConnected({ }: Props) {
+const NoWalletConnected = () => {
   const isInitialized = useSelector((state: RootState) => state.app.isInitialized);
   const wallet = useSelector(selectWallet);
 

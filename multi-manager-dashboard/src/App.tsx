@@ -1,5 +1,5 @@
-import { createWeb3Modal, defaultWagmiConfig, useWeb3ModalState } from '@web3modal/wagmi/react'
-import { arbitrum, localhost, mainnet, optimism } from 'wagmi/chains'
+import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
+import { optimism } from 'wagmi/chains'
 import { Route, Routes } from "react-router-dom";
 import VaultDetailsPage from "./pages/Vault/VaultPage";
 import SideBar from "./components/layout/sidebar/SideBar";

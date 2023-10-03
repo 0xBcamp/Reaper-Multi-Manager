@@ -1,4 +1,3 @@
-import React from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { setSelectedVaultAddress } from '../../redux/slices/vaultsSlice';
@@ -22,8 +21,6 @@ const StrategyPage = () => {
 
     const strategy = useSelector(selectStrategy);
     const vault = useSelector(selectVault);
-
-    console.log("strategy", strategy)
 
     return (
         <>

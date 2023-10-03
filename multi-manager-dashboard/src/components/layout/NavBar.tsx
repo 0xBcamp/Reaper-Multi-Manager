@@ -49,7 +49,7 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
       const selectedChain = chains.find(x => x.chainId === wallet.chainId);
       dispatch(setSelectedChain(selectedChain));
     }
-  }, [wallet.chainId]);
+  }, [wallet.chainId, chains]);
 
   useLoadData();
 

@@ -1,5 +1,3 @@
-import React from 'react'
-import { Area, AreaChart, CartesianGrid, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { Vault, setSelectedVaultAddress } from '../../../redux/slices/vaultsSlice';
 import VaultHealthScore from './VaultHealthScore';
 import { useDispatch } from 'react-redux';
