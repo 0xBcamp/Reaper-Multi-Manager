@@ -1,21 +1,24 @@
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import Loader from '../../components/layout/Loader';
-import { selectChain, selectVaultsByChain } from '../../redux/selectors';
+import { selectChain, selectVaultsByChain, selectWallet } from '../../redux/selectors';
 import DashboardVaultSummary from './components/DashboardVaultSummary';
 import SnapshotContainer from '../../components/SnapshotCard/SnapshotContainer';
+import UnsupportedChain from '../../components/UnsupportedChain';
+import NoWalletConnected from '../../components/NoWalletConnected';
 
 const DahboardPage = () => {
     const isInitialized = useSelector((state: RootState) => state.app.isInitialized);
 
     const vaults = useSelector(selectVaultsByChain);
     const chain = useSelector(selectChain);
+    const wallet = useSelector(selectWallet);
 
     return (
         <div className='p-4'>
             {!isInitialized && <Loader />}
 
-            {isInitialized && <>
+            {isInitialized && chain && wallet.status === "connected" && <>
                 <div className='grid grid-cols-2 gap-4 '>
                     <SnapshotContainer
                         title="TVL"
@@ -44,6 +47,8 @@ const DahboardPage = () => {
                     })}
                 </div>
             </>}
+            <UnsupportedChain />
+            <NoWalletConnected />
 
         </div>
     )

@@ -1,5 +1,4 @@
-import React from 'react'
-import { Area, AreaChart, CartesianGrid, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { RadialBar, RadialBarChart } from 'recharts';
 import { Vault } from '../../../redux/slices/vaultsSlice';
 
 type Props = {

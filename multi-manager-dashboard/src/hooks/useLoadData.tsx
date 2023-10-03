@@ -41,10 +41,6 @@ export const useLoadData = () => {
         dispatch(setVaults(processedVaults));
         dispatch(setChains(chainsData));
 
-        if (!selectedChain && chainsData?.length > 0) {
-            dispatch(setSelectedChain(chainsData[0]));
-        }
-
         dispatch(setInitialized(true));
     };
 }
