@@ -12,12 +12,23 @@ export interface Chain {
   };
 }
 
+export interface Wallet {
+  status?: string,
+  address?: string;
+  chainId?: number;
+}
+
 const initialState: {
   chains: Chain[];
   selectedChain: Chain | null;
+  wallet?: Wallet
 } = {
   chains: [],
-  selectedChain: null
+  selectedChain: null,
+  wallet: {
+    status: "disconnected",
+    address: "",
+  }
 };
 
 const blockchainSlice = createSlice({
@@ -29,9 +40,21 @@ const blockchainSlice = createSlice({
     },
     setSelectedChain: (state, action: PayloadAction<Chain>) => {
       state.selectedChain = action.payload;
+    },
+    setWalletStatus: (state, action: PayloadAction<string>) => {
+      state.wallet.status = action.payload;
+    },
+    setWalletAddress: (state, action: PayloadAction<string>) => {
+      state.wallet.address = action.payload;
+    },
+    setWalletChainId: (state, action: PayloadAction<number>) => {
+      state.wallet.chainId = action.payload;
+    },
+    disconnectWallet: (state) => {
+      state.wallet = initialState.wallet
     }
   }
 });
 
-export const { setChains, setSelectedChain } = blockchainSlice.actions;
+export const { setChains, setSelectedChain, setWalletStatus, setWalletAddress, disconnectWallet, setWalletChainId } = blockchainSlice.actions;
 export default blockchainSlice.reducer;

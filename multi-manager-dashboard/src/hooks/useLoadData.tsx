@@ -1,7 +1,6 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { setChains, setSelectedChain } from "../redux/slices/blockchainSlice";
-import { RootState } from "../redux/store";
+import { setChains } from "../redux/slices/blockchainSlice";
 import { setVaults } from "../redux/slices/vaultsSlice";
 import axios from "axios";
 import { setInitialized } from "../redux/slices/appSlice";
@@ -10,9 +9,6 @@ import { processVaults } from "../utils/processing";
 
 export const useLoadData = () => {
     const dispatch = useDispatch();
-    const selectedChain = useSelector(
-        (state: RootState) => state.blockchain.selectedChain
-    );
 
     useEffect(() => {
         loadAndProcessData();
@@ -40,10 +36,6 @@ export const useLoadData = () => {
         dispatch(setTokens(tokensData));
         dispatch(setVaults(processedVaults));
         dispatch(setChains(chainsData));
-
-        if (!selectedChain && chainsData?.length > 0) {
-            dispatch(setSelectedChain(chainsData[0]));
-        }
 
         dispatch(setInitialized(true));
     };

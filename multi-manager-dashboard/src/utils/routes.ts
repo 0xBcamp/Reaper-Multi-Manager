@@ -14,19 +14,19 @@ export const routes: SideBarRoute[] = [
     //     image: "safe-64.png",
     //     path: "/vaults"
     // },
-    {
-        name: "Strategies",
-        image: "strategy-64.png",
-        path: "/strategies"
-    },
-    {
-        name: "Users",
-        image: "users-48.png",
-        path: "/users"
-    },
-    {
-        name: "Transactions",
-        image: "transactions-64.png",
-        path: "/transactions"
-    }
+    // {
+    //     name: "Strategies",
+    //     image: "strategy-64.png",
+    //     path: "/strategies"
+    // },
+    // {
+    //     name: "Users",
+    //     image: "users-48.png",
+    //     path: "/users"
+    // },
+    // {
+    //     name: "Transactions",
+    //     image: "transactions-64.png",
+    //     path: "/transactions"
+    // }
 ]

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, RadialBar, RadialBarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Vault } from '../../../redux/slices/vaultsSlice';
+import { useEffect, useState } from 'react'
+import { Bar, BarChart, ResponsiveContainer, Tooltip, YAxis } from 'recharts';
 import { Strategy } from '../../../redux/slices/strategiesSlice';
 
 type Props = {
@@ -25,15 +24,6 @@ function StrategyAllocationChart({ strategy }: Props) {
     }
   ];
 
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = (e) => {
-    if (e.activePayload) {
-      const barWidth = e.activePayload[0].width;
-      setTooltipPosition({ x: e.chartX + barWidth, y: e.chartY });
-    }
-  };
-
   return (
     <ResponsiveContainer width='100%' height={90}>
       <BarChart
@@ -41,7 +31,6 @@ function StrategyAllocationChart({ strategy }: Props) {
         margin={{
           top: 5, right: 10, left: 20, bottom: 5,
         }}
-        onMouseMove={handleMouseMove}
       >
         <YAxis domain={[0, 10000]} hide={true}/>
         <Tooltip />

@@ -87,7 +87,7 @@ const calculateVaultAPRValues = (vault: Vault, strategies: Strategy[]) => {
       strategyAPRValues = getStrategyAPRValues(strategies);
       strategyAllocatedValues = getStrategyAllocatedValues(vault.strategies);
 
-      actualAllocated = lastVaultTotalAssets != 0 ? lastVaultAllocated / lastVaultTotalAssets : 0;
+      actualAllocated = lastVaultTotalAssets !== 0 ? lastVaultAllocated / lastVaultTotalAssets : 0;
 
       const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
 

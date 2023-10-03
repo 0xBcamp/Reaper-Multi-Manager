@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { useReactTable, getCoreRowModel, flexRender, ColumnDef, TableOptions, createColumnHelper, getSortedRowModel, getFilteredRowModel, getPaginationRowModel } from "@tanstack/react-table";
+import { useState } from 'react'
+import { useReactTable, getCoreRowModel, flexRender, ColumnDef, getSortedRowModel, getFilteredRowModel, getPaginationRowModel } from "@tanstack/react-table";
 type Props = {
     data: any[];
     columns: ColumnDef<any, any>[];

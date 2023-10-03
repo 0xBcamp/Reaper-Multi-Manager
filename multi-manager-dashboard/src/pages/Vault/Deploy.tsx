@@ -1,8 +1,7 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import Loader from '../../components/layout/Loader';
-import { selectTokensByChain, selectVaultsByChain } from '../../redux/selectors';
+import { selectTokensByChain } from '../../redux/selectors';
 import Dropdown, { DropdownOptionType } from '../../components/form/Dropdown';
 import { useEffect, useState } from 'react';
 import TextField from '../../components/form/TextField';

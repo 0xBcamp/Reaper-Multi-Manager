@@ -1,6 +1,4 @@
-import { Vault, setSelectedVaultAddress } from '../../../redux/slices/vaultsSlice';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Vault } from '../../../redux/slices/vaultsSlice';
 import { Strategy } from '../../../redux/slices/strategiesSlice';
 import { formatUnits } from 'ethers';
 import { useEffect, useState } from 'react';
