@@ -7,11 +7,11 @@ const config: HardhatUserConfig = {
       chainId: 1337,
       forking: {
         url: "https://mainnet.optimism.io",
-        blockNumber: 110402510
+        blockNumber: 110453430
       }
     }
   },
-  solidity: "0.8.4",
+  solidity: "0.8.9",
 };
 
 export default config;
