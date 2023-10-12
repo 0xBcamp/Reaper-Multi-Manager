@@ -8,6 +8,9 @@ const config: HardhatUserConfig = {
       forking: {
         url: "https://mainnet.optimism.io",
         blockNumber: 110453430
+      },
+      mining: {
+        auto: true
       }
     }
   },
