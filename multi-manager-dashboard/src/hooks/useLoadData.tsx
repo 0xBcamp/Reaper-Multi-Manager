@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { setChains } from "../redux/slices/blockchainSlice";
 import { setVaults } from "../redux/slices/vaultsSlice";
@@ -6,13 +6,16 @@ import axios from "axios";
 import { setInitialized } from "../redux/slices/appSlice";
 import { setTokens } from "../redux/slices/reaperSlice";
 import { processVaults } from "../utils/processing";
+import { RootState } from "../redux/store";
 
 export const useLoadData = () => {
     const dispatch = useDispatch();
 
+    const lastRefetch = useSelector((state: RootState) => state.app.lastRefetch);
+
     useEffect(() => {
         loadAndProcessData();
-    }, []);
+    }, [lastRefetch]);
 
     const fetchFromApi = async (endpoint: string) => {
         try {
