@@ -27,27 +27,27 @@ const VaultPage = () => {
         </div>
         <div className='grid grid-cols-2 gap-4'>
           <div className='grid grid-cols-12 bg-white border border-gray-200 mb-8'>
-            <div className='col-span-10 flex flex-col flex-1'>
+            <div className={`col-span-${vault.last30SnapShots?.length > 0 ? "10" : "12"} flex flex-col flex-1`}>
               <div className='p-3 text-gray-600 font-semibold'>
                 TVL
               </div>
               <SnapshotsCardArea data={vault.last30SnapShots} dataKey={"usd.tvl"} />
             </div>
-            <div className='col-span-2'>
-              <SnapshotsDeltas deltas={vault.lastSnapShot.deltas.tvl} type='usd' total={vault.lastSnapShot.usd.tvl} />
-            </div>
+            {vault.last30SnapShots?.length > 0 && <div className='col-span-2'>
+            <SnapshotsDeltas deltas={vault.lastSnapShot?.deltas?.tvl} type='usd' total={vault.lastSnapShot?.usd?.tvl} />
+            </div>}
           </div>
 
           <div className='grid grid-cols-12 bg-white border border-gray-200 mb-8'>
-            <div className='col-span-10 flex flex-col flex-1'>
+            <div className={`col-span-${vault.last30SnapShots?.length > 0 ? "10" : "12"} flex flex-col flex-1`}>
               <div className='p-3 text-gray-600 font-semibold'>
                 Total users
               </div>
               <SnapshotsCardArea data={vault.last30SnapShots} dataKey={"users.totalUsers"} />
             </div>
-            <div className='col-span-2'>
-              <SnapshotsDeltas deltas={vault.lastSnapShot.deltas.totalUsers} type='number' total={vault.lastSnapShot.users.totalUsers} />
-            </div>
+            {vault.last30SnapShots?.length > 0 && <div className='col-span-2'>
+              <SnapshotsDeltas deltas={vault.lastSnapShot?.deltas?.totalUsers} type='number' total={vault.lastSnapShot?.users?.totalUsers} />
+            </div>}
           </div>
         </div>
         <div className="grid grid-cols-4 gap-4 m-4">

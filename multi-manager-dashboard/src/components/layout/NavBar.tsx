@@ -45,18 +45,26 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
 }, [selectedNetworkId])
 
   useEffect(() => {
+    console.log("wallet", wallet)
     if (chains?.length > 0 && wallet.chainId) {
-      const selectedChain = chains.find(x => x.chainId === wallet.chainId);
-      dispatch(setSelectedChain(selectedChain));
+      if (wallet.chainId === 1337) {
+        const selectedChain = chains.find(x => x.chainId === 10);
+        dispatch(setSelectedChain(selectedChain));
+      } else {
+        const selectedChain = chains.find(x => x.chainId === wallet.chainId);
+        dispatch(setSelectedChain(selectedChain));
+      }
+
     }
   }, [wallet.chainId, chains]);
 
   useLoadData();
 
   return (
-    <div className='flex flex-row justify-between w-full py-3 px-6 bg-white shadow-slate-200 text-xl text-slate-800 border-b-gray-200 border-b'>
+    <div className='flex flex-row justify-between w-full py-2 px-6 bg-white shadow-slate-200 text-xl text-slate-800 border-b-gray-200 border-b'>
       <button onClick={menuButtonToggled} aria-label="Toggle Menu">
-        <img src={`${process.env.PUBLIC_URL}/icons/icons8-hamburger-menu-50.png`} alt="Menu Icon" className='h-[25px] hover:cursor-pointer' />
+        {/* <img src={`${process.env.PUBLIC_URL}/icons/icons8-hamburger-menu-50.png`} alt="Menu Icon" className='h-[25px] hover:cursor-pointer' /> */}
+        <img src={`/icons/icons8-hamburger-menu-50.png`} alt="Menu Icon" className='h-[25px] hover:cursor-pointer' />
       </button>
       <WalletConnect />
     </div>
