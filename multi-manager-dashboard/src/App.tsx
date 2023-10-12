@@ -13,6 +13,7 @@ import VaultDeployPage from "./pages/Vault/Deploy";
 import { WagmiConfig } from 'wagmi';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import VaultAllocationsPage from './pages/Vault/allocations/Allocations';
 
 const projectId = process.env.REACT_APP_WALLET_CONNECT_PROJECTID
 
@@ -46,6 +47,7 @@ function App() {
               <Route path="/" element={<DahboardPage />} />
               <Route path="/vaults/deploy" element={<VaultDeployPage />} />
               <Route path="/vaults/:vaultAddress" element={<VaultDetailsPage />} />
+              <Route path="/vaults/:vaultAddress/allocations" element={<VaultAllocationsPage />} />
               <Route path="/vaults/:vaultAddress/strategy/:strategyAddress" element={<StrategyPage />} />
             </Routes>
           </div>
