@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { DateTime } from "luxon";
+import { DateTime, Duration } from "luxon";
 import { StrategyReport } from "../../redux/slices/strategiesSlice";
 
 export const getStrategyReportColumns = () => {
@@ -14,14 +14,18 @@ export const getStrategyReportColumns = () => {
         // }),
         columnHelper.accessor("reportDate", {
             header: "Report date",
-            cell: info => info.getValue()
+            cell: info => {
+                const date = DateTime.fromSeconds(info.getValue());
+                return date.toFormat('dd LLL yy HH:mm');
+            }
         }),
-        columnHelper.accessor("block", {
-            cell: info => info.getValue()
-        }),
+        // columnHelper.accessor("block", {
+        //     cell: info => info.getValue()
+        // }),
         columnHelper.accessor("duration", {
             cell: info => {
-                return DateTime.fromSeconds(info.getValue()).minute
+                const duration = Duration.fromObject({ seconds: info.getValue() });
+                return duration.toFormat('hh:mm:ss');
             }
         }),
         columnHelper.accessor("allocBPS", {
