@@ -19,13 +19,18 @@ const VaultPage = () => {
   const vault = useSelector(selectVault);
 
   return (
-    <div className='p-4'>
+    <>
       {!isInitialized && <Loader />}
       {isInitialized && vault && <>
-        <div className="text-lg pb-2">
-          {vault?.name}
+        <div className="bg-white p-3 shadow-md">
+          <div className="flex justify-between items-center">
+            <div className="text-gray-600 font-bold">{vault?.name}</div>
+            {/* <div className="space-x-4">
+              <Link to={"/vaults/deploy"} className="text-blue-500 hover:text-blue-700" >Add Vault</Link>
+            </div> */}
+          </div>
         </div>
-        <div className='grid grid-cols-2 gap-4'>
+        <div className='grid grid-cols-2 gap-4 p-4'>
           <div className='grid grid-cols-12 bg-white border border-gray-200 mb-8'>
             <div className={`col-span-${vault.last30SnapShots?.length > 0 ? "10" : "12"} flex flex-col flex-1`}>
               <div className='p-3 text-gray-600 font-semibold'>
@@ -34,7 +39,7 @@ const VaultPage = () => {
               <SnapshotsCardArea data={vault.last30SnapShots} dataKey={"usd.tvl"} />
             </div>
             {vault.last30SnapShots?.length > 0 && <div className='col-span-2'>
-            <SnapshotsDeltas deltas={vault.lastSnapShot?.deltas?.tvl} type='usd' total={vault.lastSnapShot?.usd?.tvl} />
+              <SnapshotsDeltas deltas={vault.lastSnapShot?.deltas?.tvl} type='usd' total={vault.lastSnapShot?.usd?.tvl} />
             </div>}
           </div>
 
@@ -63,7 +68,7 @@ const VaultPage = () => {
       {!vault && <div className='flex h-full justify-center'>
         <div className='mt-16 text-xl text-gray-400'>No vault selected</div>
       </div>}
-    </div>
+    </>
   );
 };
 

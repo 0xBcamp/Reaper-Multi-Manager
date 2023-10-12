@@ -8,9 +8,9 @@ import TextField from '../../components/form/TextField';
 import Label from '../../components/form/Label';
 import FormLink from '../../components/form/FormLink';
 import Button from '../../components/form/Button';
-import { useAccount, useSwitchNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { VAULT_V2_ABI } from '../../abi/vaultV2Abi';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import reaperVaultV2 from "../../abi/out/ReaperVaultV2.json";
 import { ethers } from 'ethers';
@@ -29,7 +29,6 @@ interface DeployVaultForm {
 }
 
 const VaultDeployPage = () => {
-    let { vaultAddress } = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -216,16 +215,6 @@ const VaultDeployPage = () => {
                             </div>
 
                         </div>
-
-                        {/* <div className=''>
-                            Deploy vault
-                        </div>
-                        <div className=''>
-                            Deploy vault
-                        </div>
-                        <div className=''>
-                            Deploy vault
-                        </div> */}
                     </div>
                 </>
             }

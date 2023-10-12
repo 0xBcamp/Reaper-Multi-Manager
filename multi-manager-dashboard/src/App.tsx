@@ -21,7 +21,8 @@ const metadata = {
   description: 'Reaper Dashboard',
 }
 
-const chains = [optimism, localhost]
+// const chains = [optimism, localhost]
+const chains = [optimism]
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 createWeb3Modal({ wagmiConfig, projectId, chains })
@@ -34,9 +35,9 @@ function App() {
     <WagmiConfig config={wagmiConfig}>
       <Provider store={store}>
         <div className="bg-slate-50 h-screen w-full flex flex-row">
-          <div className={`overflow-hidden w-[${isSidebarCollapsed ? "0" : "260"}px] transition-all duration-300 ease-in-out whitespace-nowrap`}>
+          {/* <div className={`overflow-hidden w-[${isSidebarCollapsed ? "0" : "260"}px] transition-all duration-300 ease-in-out whitespace-nowrap`}>
             {!isSidebarCollapsed && <SideBar />}
-          </div>
+          </div> */}
           <div className="flex-1">
             <NavBar
               menuButtonToggled={() => setIsSidebarCollapsed(prev => !prev)}
