@@ -25,9 +25,9 @@ const VaultPage = () => {
         <div className="bg-white p-3 shadow-md">
           <div className="flex justify-between items-center">
             <div className="text-gray-600 font-bold">{vault?.name}</div>
-            {/* <div className="space-x-4">
+            <div className="space-x-4">
               <Link to={`/vaults/${vault.address}/allocations`} className="text-blue-500 hover:text-blue-700" >Update Allocations</Link>
-            </div> */}
+            </div>
           </div>
         </div>
         <div className='grid grid-cols-2 gap-4 p-4'>
