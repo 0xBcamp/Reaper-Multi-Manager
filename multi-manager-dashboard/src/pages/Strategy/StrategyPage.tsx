@@ -27,7 +27,6 @@ const StrategyPage = () => {
             {vault && strategy && <>
                 <div className="bg-white p-3 shadow-md">
                     <div className="flex items-center flex-row gap-x-1">
-                        {/* <div className="text-gray-600">{vault?.name}</div> */}
                         <Link to={`/vaults/${vault.address}`}>{vault?.name}</Link>
                         <div className="text-gray-600">/</div>
                         <div className="text-gray-600 font-bold">{strategy.address}</div>

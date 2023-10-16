@@ -26,8 +26,8 @@ async function main() {
     value: ethers.parseEther('1')
   });
 
-  await wbtc.connect(wbtcWhale).approve(wbtcWhale.address, "10000000");
-  await wbtc.connect(wbtcWhale).transfer(account1.address, "10000000");
+  // await wbtc.connect(wbtcWhale).approve(wbtcWhale.address, "10000000");
+  // await wbtc.connect(wbtcWhale).transfer(account1.address, "10000000");
 
   await op.connect(opWhale).approve(opWhale.address, "50000000000000000000000");
   await op.connect(opWhale).transfer(account1.address, "50000000000000000000000");
