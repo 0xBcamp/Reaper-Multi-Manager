@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoadData } from '../../hooks/useLoadData';
@@ -8,6 +8,7 @@ import WalletConnect from '../WalletConnect';
 import { useWeb3ModalState } from '@web3modal/wagmi/react';
 import { useAccount } from 'wagmi';
 import { selectWallet } from '../../redux/selectors';
+import Dropdown, { DropdownOptionType } from '../form/Dropdown';
 
 interface INavBarProps {
   menuButtonToggled: () => void;
@@ -20,6 +21,18 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
   const wallet = useSelector(selectWallet);
 
   const { selectedNetworkId } = useWeb3ModalState();
+
+  const [chainOptions, setChainOptions] = useState<DropdownOptionType[]>([]);
+  const selectedChain = useSelector((state: RootState) => state.blockchain.selectedChain);
+
+  useEffect(() => {
+    setChainOptions(chains.map(chain => {
+      return {
+        label: chain.name,
+        key: chain.chainId.toString()
+      }
+    }));
+  }, [chains])
 
   const account = useAccount({
     onConnect() {
@@ -58,6 +71,10 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
     }
   }, [wallet.chainId, chains]);
 
+  const handleDropdownChange = (key: string) => {
+    dispatch(setSelectedChain(chains.find(x => x.chainId.toString() === key)))
+  };
+
   useLoadData();
 
   return (
@@ -71,7 +88,8 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
           <div>Reaper Dashboard</div>
         </div>
       </Link>
-      <WalletConnect />
+      {/* <WalletConnect />*/}
+      <Dropdown options={chainOptions} onChange={handleDropdownChange} selectedKey={selectedChain?.chainId.toString()}/> 
     </div>
   )
 }

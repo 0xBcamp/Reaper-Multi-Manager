@@ -4,8 +4,6 @@ import Loader from '../../components/layout/Loader';
 import { selectChain, selectVaultsByChain, selectWallet } from '../../redux/selectors';
 import DashboardVaultSummary from './components/DashboardVaultSummary';
 import SnapshotContainer from '../../components/SnapshotCard/SnapshotContainer';
-import UnsupportedChain from '../../components/UnsupportedChain';
-import NoWalletConnected from '../../components/NoWalletConnected';
 import { Link } from 'react-router-dom';
 
 const DahboardPage = () => {
@@ -19,7 +17,7 @@ const DahboardPage = () => {
         <div>
             {!isInitialized && <Loader />}
 
-            {isInitialized && chain && wallet.status === "connected" &&
+            {isInitialized && chain &&
                 <div>
                     <div className="bg-white p-3 shadow-md">
                             <div className="flex justify-between items-center">
@@ -59,8 +57,8 @@ const DahboardPage = () => {
                 </div>
 
             }
-            <UnsupportedChain />
-            <NoWalletConnected />
+            {/* <UnsupportedChain />
+            <NoWalletConnected /> */}
 
         </div>
     )

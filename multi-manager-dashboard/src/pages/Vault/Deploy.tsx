@@ -17,6 +17,7 @@ import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { IVaultCreateRequest, addVault } from '../../services/vaultService';
 import { setLastRefetch } from '../../redux/slices/appSlice';
+import WalletConnect from '../../components/WalletConnect';
 
 interface DeployVaultForm {
     tokenAddress: string;
@@ -86,9 +87,8 @@ const VaultDeployPage = () => {
                     <div className='bg-white w-[30%] mx-auto mt-5'>
                         <div className='border border-b-gray-200 py-4 px-2 flex flex-row justify-between items-center'>
                             <div className='text-base text-gray-900'>Deploy New Vault</div>
-
                         </div>
-                        <div className='flex flex-col gap-4 p-4 border border-gray-200'>
+                        {chain.chainId === wallet?.chainId && <div className='flex flex-col gap-4 p-4 border border-gray-200'>
                             <div className=''>
                                 <Dropdown label='Token' options={tokenOptions} onChange={handleTokenChange} selectedKey={formState?.tokenAddress} />
                             </div>
@@ -214,7 +214,10 @@ const VaultDeployPage = () => {
                                 <Button text='Reset' color='default' variant='outlined' onClick={() => setFormState(initialValues)} />
                             </div>
 
-                        </div>
+                        </div>}
+                        {chain.chainId !== wallet?.chainId && <div className='flex flex-col gap-4 p-4 border border-gray-200'>
+                            <WalletConnect />
+                        </div>}
                     </div>
                 </>
             }
