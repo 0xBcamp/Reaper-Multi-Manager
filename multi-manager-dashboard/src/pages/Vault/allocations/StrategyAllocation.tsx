@@ -27,6 +27,8 @@ const StrategyAllocation = ({ strategy }: IStrategyAllocationProps) => {
     };
 
     const [formState, setFormState] = useState<UpdateStrategyAllocationForm>(initialValues);
+    const [isHarvesting, setIsHarvesting] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     const { address } = useAccount();
     const provider = new ethers.BrowserProvider(window.ethereum as any);
@@ -57,7 +59,8 @@ const StrategyAllocation = ({ strategy }: IStrategyAllocationProps) => {
                     <TextField label='New allocBPS' type='number' value={formState.allocBPS} onChange={(value: number) => setFormState(prevState => ({ ...prevState, allocBPS: value }))} />
                 </div>
                 <div className='px-3 pb-3 text-right'>
-                    <Button text={`Harvest`} color='primary' variant='outlined' className='mr-3' onClick={async () => {
+                    <Button text={`Harvest`} color='primary' variant='outlined' className='mr-3' isBusy={isHarvesting} disabled={isUpdating} onClick={async () => {
+                        setIsHarvesting(true);
                         try {
                             const signer = await provider.getSigner(address);
                             const contract = new ethers.Contract(strategy.address, ReaperBaseStrategyV4, signer);
@@ -76,8 +79,10 @@ const StrategyAllocation = ({ strategy }: IStrategyAllocationProps) => {
                                 toast.error(error);
                             }
                         }
+                        setIsHarvesting(false);
                     }} />
-                    <Button text={`Update`} color='primary' variant='outlined' onClick={async () => {
+                    <Button text={`Update`} color='primary' variant='outlined' isBusy={isUpdating} disabled={isHarvesting} onClick={async () => {
+                        setIsUpdating(true);
                         try {
                             const signer = await provider.getSigner(address);
                             const contract = new ethers.Contract(strategy.vaultAddress, VAULT_V2_ABI, signer);
@@ -96,6 +101,7 @@ const StrategyAllocation = ({ strategy }: IStrategyAllocationProps) => {
                                 toast.error(error);
                             }
                         }
+                        setIsUpdating(false);
                     }} />
                 </div>
             </div>
