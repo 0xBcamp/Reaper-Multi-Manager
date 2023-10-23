@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLoadData } from '../../hooks/useLoadData';
 import { disconnectWallet, setSelectedChain, setWalletAddress, setWalletChainId, setWalletStatus } from '../../redux/slices/blockchainSlice';
@@ -17,9 +18,9 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
 
   const chains = useSelector((state: RootState) => state.blockchain.chains);
   const wallet = useSelector(selectWallet);
- 
+
   const { selectedNetworkId } = useWeb3ModalState();
- 
+
   const account = useAccount({
     onConnect() {
       if (selectedNetworkId) {
@@ -41,23 +42,35 @@ const NavBar: React.FC<INavBarProps> = ({ menuButtonToggled }) => {
   }, [account.address])
 
   useEffect(() => {
-      dispatch(setWalletChainId(selectedNetworkId));
-}, [selectedNetworkId])
+    dispatch(setWalletChainId(selectedNetworkId));
+  }, [selectedNetworkId])
 
   useEffect(() => {
     if (chains?.length > 0 && wallet.chainId) {
-      const selectedChain = chains.find(x => x.chainId === wallet.chainId);
-      dispatch(setSelectedChain(selectedChain));
+      if (wallet.chainId === 1337) {
+        const selectedChain = chains.find(x => x.chainId === 10);
+        dispatch(setSelectedChain(selectedChain));
+      } else {
+        const selectedChain = chains.find(x => x.chainId === wallet.chainId);
+        dispatch(setSelectedChain(selectedChain));
+      }
+
     }
   }, [wallet.chainId, chains]);
 
   useLoadData();
 
   return (
-    <div className='flex flex-row justify-between w-full py-3 px-6 bg-white shadow-slate-200 text-xl text-slate-800 border-b-gray-200 border-b'>
-      <button onClick={menuButtonToggled} aria-label="Toggle Menu">
-        <img src={`${process.env.PUBLIC_URL}/icons/icons8-hamburger-menu-50.png`} alt="Menu Icon" className='h-[25px] hover:cursor-pointer' />
-      </button>
+    <div className='flex flex-row justify-between w-full py-2 px-6 bg-white shadow-slate-200 text-xl text-slate-800 border-b-gray-200 border-b'>
+      {/* <button onClick={menuButtonToggled} aria-label="Toggle Menu">
+        <img src={`/icons/icons8-hamburger-menu-50.png`} alt="Menu Icon" className='h-[25px] hover:cursor-pointer' />
+      </button> */}
+      <Link to="/">
+        <div className='flex flex-row space-x-2 items-center hover:text-gray-500 transition-colors duration-200'>
+          <img src={`${process.env.PUBLIC_URL}/icons/strategy-development.png`} alt='project logo' className='h-[35px] hover:cursor-pointer' />
+          <div>Reaper Dashboard</div>
+        </div>
+      </Link>
       <WalletConnect />
     </div>
   )

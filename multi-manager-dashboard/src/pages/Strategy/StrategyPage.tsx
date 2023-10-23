@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { setSelectedVaultAddress } from '../../redux/slices/vaultsSlice';
 import { setSelectedStrategyAddress } from '../../redux/slices/strategiesSlice';
 import { selectStrategy, selectVault } from '../../redux/selectors';
@@ -24,22 +24,26 @@ const StrategyPage = () => {
 
     return (
         <>
-            {vault && strategy && <div className='p-4'>
-                <div>
-                    <span className="text-lg">{vault?.name} - {strategy.address}</span>
+            {vault && strategy && <>
+                <div className="bg-white p-3 shadow-md">
+                    <div className="flex items-center flex-row gap-x-1">
+                        <Link to={`/vaults/${vault.address}`}>{vault?.name}</Link>
+                        <div className="text-gray-600">/</div>
+                        <div className="text-gray-600 font-bold">{strategy.address}</div>
+                    </div>
                 </div>
-                <div className="grid grid-cols-4 gap-4 my-4">
+                <div className="grid grid-cols-4 gap-4 p-4">
                     <div className='h-full col-span-3'>
                         <StrategyAprSummary vault={vault} strategy={strategy} showSlider={true} />
                     </div>
                     <div>
-                        <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={vault.strategies}/>
+                        <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={vault.strategies} />
                     </div>
                 </div>
-                <div className='flex'>
+                <div className='flex p-4'>
                     {strategy && <DataGrid data={sortTimestampByProp(strategy.aprReports, "reportDate", "desc")} columns={getStrategyReportColumns()} heading='Strategy Reports' />}
                 </div>
-            </div>}
+            </>}
             {!vault && <div className='flex h-full justify-center'>
                 <div className='mt-16 text-xl text-gray-400'>No strategy selected</div>
             </div>}

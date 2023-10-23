@@ -126,18 +126,12 @@ const StrategyAprSummary = ({ vault, strategy, showSlider }: IStrategyAprSummary
     };
 
     return (
-        <Card title={strategy?.address} >
+        <Card>
             <>
                 {lastHarvest ?
                     <>
-                        <div className='flex flex-col p-2 text-gray-600 text-md h-full'>
-                            <div className='flex justify-between'>
-                                <div>Last harvest:</div>
-                                <div>{formatDate(strategy.lastReport?.reportDate)}</div>
-                            </div>
-                        </div>
                         {strategy.aprReports?.length > 0 && <div style={{ width: '100%', height: '250px' }}>
-                           {showSlider && <div className='flex flex-col p-2 space-x-2 justify-items-center'>
+                            {showSlider && <div className='flex flex-col p-2 space-x-2 justify-items-center'>
                                 <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-gray-400 dark:text-white">Threshold: {threshold}</label>
                                 <input id="default-range" type="range" value={threshold} onChange={handleThresholdChange} min={0.1} max={4} step={0.1} className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
                             </div>}

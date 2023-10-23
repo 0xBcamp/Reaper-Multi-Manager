@@ -1,13 +1,22 @@
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import Loader from '../../components/layout/Loader';
-import { selectTokensByChain } from '../../redux/selectors';
+import { selectChain, selectTokensByChain, selectWallet } from '../../redux/selectors';
 import Dropdown, { DropdownOptionType } from '../../components/form/Dropdown';
 import { useEffect, useState } from 'react';
 import TextField from '../../components/form/TextField';
 import Label from '../../components/form/Label';
 import FormLink from '../../components/form/FormLink';
 import Button from '../../components/form/Button';
+import { useAccount } from 'wagmi';
+import { VAULT_V2_ABI } from '../../abi/vaultV2Abi';
+import { useNavigate } from 'react-router-dom';
+
+import reaperVaultV2 from "../../abi/out/ReaperVaultV2.json";
+import { ethers } from 'ethers';
+import { toast } from 'react-toastify';
+import { IVaultCreateRequest, addVault } from '../../services/vaultService';
+import { setLastRefetch } from '../../redux/slices/appSlice';
 
 interface DeployVaultForm {
     tokenAddress: string;
@@ -20,12 +29,17 @@ interface DeployVaultForm {
 }
 
 const VaultDeployPage = () => {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const isInitialized = useSelector((state: RootState) => state.app.isInitialized);
 
     const tokens = useSelector(selectTokensByChain);
+    const wallet = useSelector(selectWallet);
+    const chain = useSelector(selectChain);
 
     const [tokenOptions, setTokenOptions] = useState<DropdownOptionType[]>([]);
+    const [isDeploying, setIsdeploying] = useState(false);
 
     const initialValues: DeployVaultForm = {
         tokenAddress: "",
@@ -36,6 +50,11 @@ const VaultDeployPage = () => {
         strategists: [],
         multisigs: []
     };
+
+    const { address } = useAccount();
+    const provider = new ethers.BrowserProvider(window.ethereum as any);
+
+
 
     const [formState, setFormState] = useState<DeployVaultForm>(initialValues);
 
@@ -146,21 +165,56 @@ const VaultDeployPage = () => {
                                 />
                             </div>
                             <div className='flex flex-row justify-between items-center'>
-                                <Button text='Deploy Vault' color='primary' variant='contained' />
+                                <Button text={isDeploying ? `Deploying...` : `Deploy Vault`} color='primary' variant='contained' onClick={async () => {
+                                    try {
+                                        console.log("formState", formState)
+                                        setIsdeploying(true);
+                                        const signer = await provider.getSigner(address)
+                                        const factory = new ethers.ContractFactory(VAULT_V2_ABI, reaperVaultV2.bytecode, signer);
+                                        const contract = await factory.deploy(formState.tokenAddress, formState.name, formState.symbol, formState.tvlCap, formState.treasury, formState.strategists, formState.multisigs); // 123 is the _value argument for the constructor
+                                        await contract.waitForDeployment();
+                                        const deployedAddress = await contract.getAddress();
+
+                                        const request: IVaultCreateRequest = {
+                                            address: deployedAddress,
+                                            chainId: chain.chainId,
+                                        }
+
+                                        toast.success("Vault deployed! Updating indexer...")
+                                        await addVault(request);
+
+                                        setTimeout(() => {
+                                            dispatch(setLastRefetch());
+                                            toast.success("Indexer succesfully updated")
+                                            navigate(`/vaults/${deployedAddress}`);
+                                            setIsdeploying(false);
+                                        }, 4000);
+
+                                    } catch (error) {
+                                        setIsdeploying(false);
+
+                                        let jsonString = error.message.match(/\[ethjs-query\] while formatting outputs from RPC '(.+?)'/)[1];
+                                        let cleanedJsonString = jsonString.replace(/\\\"/g, '"');
+
+                                        // Parse the JSON string
+                                        let parsedObj;
+                                        try {
+                                            parsedObj = JSON.parse(cleanedJsonString);
+                                        } catch (error) {
+                                            console.error("Error parsing JSON:", error);
+                                            return;
+                                        }
+
+                                        // Extract the desired message
+                                        let desiredMessage = parsedObj.value.data.message;
+                                        toast.error(desiredMessage);
+                                    }
+
+                                }} />
                                 <Button text='Reset' color='default' variant='outlined' onClick={() => setFormState(initialValues)} />
                             </div>
 
                         </div>
-
-                        {/* <div className=''>
-                            Deploy vault
-                        </div>
-                        <div className=''>
-                            Deploy vault
-                        </div>
-                        <div className=''>
-                            Deploy vault
-                        </div> */}
                     </div>
                 </>
             }

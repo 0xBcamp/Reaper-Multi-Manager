@@ -33,7 +33,7 @@ function DashboardVaultSummary({ vault }: Props) {
       <div className="flex flex-row p-2 justify-between items-center">
         <div className=''>{vault.name}</div>
         <div className='flex flex-row items-center'>
-          <div className='text-gray-700 text-lg flex-1 pr-2'>${Number(vault.lastSnapShot.usd.tvl.toFixed(0)).toLocaleString()}</div>
+          <div className='text-gray-700 text-lg flex-1 pr-2'>${vault.lastSnapShot.usd?.tvl ? Number(vault.lastSnapShot.usd?.tvl?.toFixed(0)).toLocaleString() : "0"}</div>
           <div className=''><img src={`${process.env.PUBLIC_URL}/icons/${getVaultPercentageDirection(vault.lastSnapShot.deltas.tvl.perc.days30)}.png`} alt="Menu Icon" className='h-[12px]' /></div>
           <div className={`${getVaultPercentageClassname(vault.lastSnapShot.deltas.tvl.perc.days30)} text-xs`}>{getVaultPercentageText(vault.lastSnapShot.deltas.tvl.perc.days30)}</div>
 
