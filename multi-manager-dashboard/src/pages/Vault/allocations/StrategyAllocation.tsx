@@ -9,6 +9,7 @@ import { ethers } from 'ethers';
 import { useAccount } from 'wagmi';
 import { VAULT_V2_ABI } from '../../../abi/vaultV2Abi';
 import { toast } from 'react-toastify';
+import { ReaperBaseStrategyV4 } from '../../../abi/ReaperBaseStrategyV4';
 
 interface UpdateStrategyAllocationForm {
     allocBPS: number;
@@ -56,6 +57,26 @@ const StrategyAllocation = ({ strategy }: IStrategyAllocationProps) => {
                     <TextField label='New allocBPS' type='number' value={formState.allocBPS} onChange={(value: number) => setFormState(prevState => ({ ...prevState, allocBPS: value }))} />
                 </div>
                 <div className='px-3 pb-3 text-right'>
+                    <Button text={`Harvest`} color='primary' variant='outlined' className='mr-3' onClick={async () => {
+                        try {
+                            const signer = await provider.getSigner(address);
+                            const contract = new ethers.Contract(strategy.address, ReaperBaseStrategyV4, signer);
+
+                            const txResponse = await contract.harvest();
+                            await txResponse.wait();
+
+                            toast.success("Strategy successfully harvested")
+                            await processEvents();
+                            dispatch(setLastRefetch());
+                        } catch (error) {
+                            const revertReasonMatch = /reason="([^"]+)"/.exec(error.message);
+                            if (revertReasonMatch && revertReasonMatch[1]) {
+                                toast.error(revertReasonMatch[1]);
+                            } else {
+                                toast.error(error);
+                            }
+                        }
+                    }} />
                     <Button text={`Update`} color='primary' variant='outlined' onClick={async () => {
                         try {
                             const signer = await provider.getSigner(address);

@@ -1,5 +1,5 @@
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
-import { localhost, optimism } from 'wagmi/chains'
+import { arbitrum, fantom, localhost, optimism } from 'wagmi/chains'
 import { Route, Routes } from "react-router-dom";
 import VaultDetailsPage from "./pages/Vault/VaultPage";
 import SideBar from "./components/layout/sidebar/SideBar";
@@ -22,8 +22,9 @@ const metadata = {
   description: 'Reaper Dashboard',
 }
 
-// const chains = [optimism, localhost]
-const chains = [optimism]
+const chains = [optimism, localhost]
+// const chains = [optimism, fantom, arbitrum]
+// const chains = [optimism]
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 createWeb3Modal({ wagmiConfig, projectId, chains })
