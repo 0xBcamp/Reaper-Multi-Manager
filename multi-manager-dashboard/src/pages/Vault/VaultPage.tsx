@@ -58,19 +58,15 @@ const VaultPage = () => {
         </div>
         <div className="grid grid-cols-4 gap-4 m-4">
           {vault.strategies.map((strategy) => {
-            // Calculate whether the lastHarvest timestamp is more than 2 days old
-            const isStale = strategy.lastReport
-            ? Date.now()/1000 - strategy.lastReport.reportDate > TWO_UNIX_DAYS
-            : false;
 
-          return (
-            // Change strategy border colour if it has not harvested in 2 days
-            <div className={`h-full ${isStale ? 'border border-red-500' : 'border border-gray-200'}`} key={strategy._id}>
-              <Link to={`strategy/${strategy?.address}`}>
-                <VaultStrategySummary strategy={strategy} vault={vault} />
-              </Link>
-            </div>
-          );
+            return (
+              // Change strategy border colour if it has not harvested in 2 days
+              <div className={`h-full ${strategy.isStale ? 'border border-red-500' : 'border border-gray-200'}`} key={strategy._id}>
+                <Link to={`strategy/${strategy?.address}`}>
+                  <VaultStrategySummary strategy={strategy} vault={vault} />
+                </Link>
+              </div>
+            );
           })}
         </div>
 
