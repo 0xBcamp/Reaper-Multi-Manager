@@ -22,9 +22,9 @@ const metadata = {
   description: 'Reaper Dashboard',
 }
 
-const chains = [optimism, localhost]
+// const chains = [optimism, localhost]
 // const chains = [optimism, fantom, arbitrum]
-// const chains = [optimism]
+const chains = [optimism]
 const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata })
 
 createWeb3Modal({ wagmiConfig, projectId, chains })
