@@ -42,6 +42,7 @@ export interface Strategy {
   actualAllocatedBPS: string;
   optimumAllocation: string;
   optimumAllocationBPS: string;
+  isStale: boolean;
 }
 
 
