@@ -59,6 +59,7 @@ const VaultPage = () => {
             : false;
 
           return (
+            // Change strategy border colour if it has not harvested in 2 days
             <div className={`h-full ${isStale ? 'border border-red-500' : 'border border-gray-200'}`} key={strategy._id}>
               <Link to={`strategy/${strategy?.address}`}>
                 <VaultStrategySummary strategy={strategy} vault={vault} />
