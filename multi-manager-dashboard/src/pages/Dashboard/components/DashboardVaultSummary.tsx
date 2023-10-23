@@ -48,7 +48,7 @@ function DashboardVaultSummary({ vault }: Props) {
               <div className="text-gray-400 text-xs">APR</div>
             </div>
             <div className='flex-1'>
-              <div className="text-gray-600 font-semibold text-xl">{(vault.actualAllocated * 100).toFixed(2)}%</div>
+              <div className="text-gray-600 font-semibold text-xl">{(vault.vaultAllocatedBPS / 100).toFixed(2)}%</div>
               <div className="text-gray-400 text-xs">Allocated</div>
             </div>
           </div>

@@ -33,7 +33,7 @@ export interface Vault {
   tokenDto: ReaperToken;
   allocatedAPR: number;
   totalAPR: number;
-  actualAllocated: number;
+  vaultAllocatedBPS: number;
   healthScore?: number;
 }
 

@@ -1,4 +1,4 @@
-import { calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAllocatedAPR, calculateVaultTotalAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "./calculateStrategyAllocations";
+import { calculateActualAllocatedBPS, calculateOptimumAllocation, calculateOptimumAllocationBPS, calculateStrategyProductValues, calculateVaultAllocatedAPR, calculateVaultTotalAPR, getStrategyAPRValues, getStrategyAllocatedValues } from "./calculateStrategyAllocations";
 import { Strategy, StrategyReport } from "../redux/slices/strategiesSlice";
 import { Vault } from "../redux/slices/vaultsSlice";
 import { DEFAULT_STD_DEV_THRESHOLD } from "./constants";
@@ -79,7 +79,7 @@ const calculateVaultAPRValues = (vault: Vault, strategies: Strategy[]) => {
   let lastVaultTotalAssets: number;
   let strategyAPRValues: number[];
   let strategyAllocatedValues: number[];
-  let actualAllocated: number;
+  let vaultAllocatedBPS: number;
 
   if (vault.lastSnapShot) {
       lastVaultAllocated = parseFloat(vault.lastSnapShot?.totalAllocated || "0");
@@ -87,7 +87,7 @@ const calculateVaultAPRValues = (vault: Vault, strategies: Strategy[]) => {
       strategyAPRValues = getStrategyAPRValues(strategies);
       strategyAllocatedValues = getStrategyAllocatedValues(vault.strategies);
 
-      actualAllocated = lastVaultTotalAssets !== 0 ? lastVaultAllocated / lastVaultTotalAssets : 0;
+      vaultAllocatedBPS = lastVaultTotalAssets !== 0 ? lastVaultAllocated / lastVaultTotalAssets * 10000 : 0;
 
       const strategyProductValues = calculateStrategyProductValues(strategyAPRValues, strategyAllocatedValues);
 
@@ -102,7 +102,7 @@ const calculateVaultAPRValues = (vault: Vault, strategies: Strategy[]) => {
 
       lastVaultAllocated = parseFloat(vault.lastSnapShot?.totalAllocated || "0");
 
-      const actualAllocatedBPS = (parseFloat(strategy.lastReport?.allocated || "0") / lastVaultAllocated * 10000)?.toFixed(2);
+      const actualAllocatedBPS = calculateActualAllocatedBPS(parseFloat(strategy.lastReport?.allocated || "0"), lastVaultAllocated)
       const optimumAllocation = calculateOptimumAllocation(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, vault.allocatedAPR);
       const optimumAllocationBPS = calculateOptimumAllocationBPS(parseFloat(strategy.lastReport?.allocated || "0"), strategy.APR, vault.allocatedAPR, lastVaultAllocated);
 
@@ -119,7 +119,7 @@ const calculateVaultAPRValues = (vault: Vault, strategies: Strategy[]) => {
   return {
       ...vault,
       strategies: strategiesWithOptimumValues,
-      actualAllocated,
+      vaultAllocatedBPS: vaultAllocatedBPS,
       healthScore: calculateVaultHealthScore(strategiesWithOptimumValues)
   };
 };
