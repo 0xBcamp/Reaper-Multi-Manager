@@ -20,6 +20,18 @@ export interface StrategyReport {
   chainId: number;
 }
 
+export interface StrategyHarvestSnapshot {
+  timestamp: number;
+  accumulatedGain: string;
+  accumulatedGainValue: number;
+}
+
+export interface StrategyProtocol {
+  address: string;
+  name: string;
+  symbol: string;
+}
+
 export interface Strategy {
   _id: string;
   address: string;
@@ -42,6 +54,9 @@ export interface Strategy {
   actualAllocatedBPS: string;
   optimumAllocation: string;
   optimumAllocationBPS: string;
+  last30daysHarvests: StrategyHarvestSnapshot[];
+  last30daysHarvestProfit: number;
+  protocol?: StrategyProtocol
 }
 
 

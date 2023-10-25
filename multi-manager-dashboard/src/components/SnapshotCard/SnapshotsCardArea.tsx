@@ -3,12 +3,13 @@ import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YA
 type Props = {
   data: any[];
   dataKey: string;
+  heigth?: number;
 }
 
-function SnapshotsCardArea({ data, dataKey }: Props) {
+function SnapshotsCardArea({ data, dataKey, heigth }: Props) {
   return (
     <>
-      {data?.length > 0 ? <ResponsiveContainer width='100%' height={200}>
+      {data?.length > 0 ? <ResponsiveContainer width='100%' height={heigth || 200}>
         <AreaChart data={data}
           margin={{ top: 10, right: 30, left: 30, bottom: 0 }}>
           <defs>

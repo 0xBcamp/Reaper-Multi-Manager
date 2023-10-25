@@ -8,6 +8,7 @@ import { getStrategyReportColumns } from '../../utils/gridColumns/strategy_repor
 import { sortTimestampByProp } from '../../utils/data/sortByProp';
 import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
 import StrategyAllocations from '../../components/cards/StrategyAllocations';
+import SnapshotsCardArea from '../../components/SnapshotCard/SnapshotsCardArea';
 
 
 const StrategyPage = () => {
@@ -32,11 +33,23 @@ const StrategyPage = () => {
                         <div className="text-gray-600 font-bold">{strategy.address}</div>
                     </div>
                 </div>
-                <div className="grid grid-cols-4 gap-4 p-4">
-                    <div className='h-full col-span-3'>
+                <div className="grid grid-cols-12 gap-4 p-4">
+                    <div className='h-full col-span-5'>
                         <StrategyAprSummary vault={vault} strategy={strategy} showSlider={true} />
                     </div>
-                    <div>
+                    <div className='grid grid-cols-12 col-span-5 bg-white border border-gray-200 mb-8'>
+                        <div className={`col-span-12 flex flex-col flex-1`}>
+                            <div className='p-3 text-gray-600 font-semibold flex flex-row justify-between items-center'>
+                                <div>Harvest Profits</div>
+                                <div className='pr-2 flex flex-row gap-x-1 items-center'>
+                                    <div>${strategy.last30daysHarvestProfit}</div>
+                                    <div className='pb-[1px]'><img src={`${process.env.PUBLIC_URL}/icons/money-bag-50.png`} alt="Harvest Icon" className='h-[16px] cursor-pointer' /></div>
+                                </div>
+                            </div>
+                            <SnapshotsCardArea data={strategy.last30daysHarvests} dataKey={"accumulatedGainValue"} />
+                        </div>
+                    </div>
+                    <div className='col-span-2'>
                         <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={vault.strategies} />
                     </div>
                 </div>
