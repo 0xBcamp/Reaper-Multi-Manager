@@ -126,24 +126,35 @@ const StrategyAprSummary = ({ vault, strategy, showSlider }: IStrategyAprSummary
     };
 
     return (
-        <Card>
-            <>
-                {lastHarvest ?
-                    <>
-                        {strategy.aprReports?.length > 0 && <div style={{ width: '100%', height: '250px' }}>
-                            {showSlider && <div className='flex flex-col p-2 space-x-2 justify-items-center'>
-                                <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-gray-400 dark:text-white">Threshold: {threshold}</label>
-                                <input id="default-range" type="range" value={threshold} onChange={handleThresholdChange} min={0.1} max={4} step={0.1} className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
-                            </div>}
-                            <div style={{ width: '100%', height: '200px' }}>
-                                <Scatter options={options} data={data} height={null} width={null} />
-                            </div>
-                        </div>}
-                    </>
-                    :
-                    <div className='flex justify-center h-full my-auto p-10 text-gray-500'>No harvests found</div>}
-            </>
-        </Card>
+        <div className='grid grid-cols-12 col-span-5 bg-white border border-gray-200 mb-8'>
+            <div className={`col-span-12 flex flex-col flex-1`}>
+                <div className='p-3 text-gray-800 flex flex-row justify-between items-center'>
+                    <div className='font-bold'>Strategy APR</div>
+                    <div className='text-xl'>{strategy?.APR?.toFixed(2)}%</div>
+                </div>
+                <div className='px-3 h-[200px]'>
+                    <Scatter options={options} data={data} height={null} width={null} />
+                </div>
+            </div>
+        </div>
+        // <Card>
+        //     <>
+        //         {lastHarvest ?
+        //             <>
+        //                 {strategy.aprReports?.length > 0 && <div style={{ width: '100%', height: '250px' }}>
+        //                     {showSlider && <div className='flex flex-col p-2 space-x-2 justify-items-center'>
+        //                         <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-gray-400 dark:text-white">Threshold: {threshold}</label>
+        //                         <input id="default-range" type="range" value={threshold} onChange={handleThresholdChange} min={0.1} max={4} step={0.1} className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
+        //                     </div>}
+        //                     <div style={{ width: '100%', height: '200px' }}>
+        //                         <Scatter options={options} data={data} height={null} width={null} />
+        //                     </div>
+        //                 </div>}
+        //             </>
+        //             :
+        //             <div className='flex justify-center h-full my-auto p-10 text-gray-500'>No harvests found</div>}
+        //     </>
+        // </Card>
 
     );
 };

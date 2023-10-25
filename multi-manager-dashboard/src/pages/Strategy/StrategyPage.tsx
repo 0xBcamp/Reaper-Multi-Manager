@@ -33,16 +33,16 @@ const StrategyPage = () => {
                         <div className="text-gray-600 font-bold">{strategy.address}</div>
                     </div>
                 </div>
-                <div className="grid grid-cols-12 gap-4 p-4">
+                <div className="grid grid-cols-12 gap-4 px-4 pt-4">
                     <div className='h-full col-span-5'>
                         <StrategyAprSummary vault={vault} strategy={strategy} showSlider={true} />
                     </div>
                     <div className='grid grid-cols-12 col-span-5 bg-white border border-gray-200 mb-8'>
                         <div className={`col-span-12 flex flex-col flex-1`}>
-                            <div className='p-3 text-gray-600 font-semibold flex flex-row justify-between items-center'>
-                                <div>Harvest Profits</div>
-                                <div className='pr-2 flex flex-row gap-x-1 items-center'>
-                                    <div>${strategy.last30daysHarvestProfit}</div>
+                            <div className='p-3 text-gray-800 flex flex-row justify-between items-center'>
+                                <div className='font-bold '>Harvest Profits</div>
+                                <div className='text-xl pr-2 flex flex-row gap-x-1 items-center'>
+                                    <div className='pr-2'>${strategy.last30daysHarvestProfit.toFixed(2)}</div>
                                     <div className='pb-[1px]'><img src={`${process.env.PUBLIC_URL}/icons/money-bag-50.png`} alt="Harvest Icon" className='h-[16px] cursor-pointer' /></div>
                                 </div>
                             </div>
@@ -53,7 +53,7 @@ const StrategyPage = () => {
                         <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={vault.strategies} />
                     </div>
                 </div>
-                <div className='flex p-4'>
+                <div className='flex px-4 pt-2'>
                     {strategy && <DataGrid data={sortTimestampByProp(strategy.aprReports, "reportDate", "desc")} columns={getStrategyReportColumns()} heading='Strategy Reports' />}
                 </div>
             </>}
