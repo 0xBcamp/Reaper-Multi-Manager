@@ -7,7 +7,7 @@ import DataGrid from '../../components/DataGrid';
 import { getStrategyReportColumns } from '../../utils/gridColumns/strategy_report_columns';
 import { sortTimestampByProp } from '../../utils/data/sortByProp';
 import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
-import StrategyAllocations from '../../components/cards/StrategyAllocations';
+import StrategyAllocations from './components/StrategyAllocations';
 import SnapshotsCardArea from '../../components/SnapshotCard/SnapshotsCardArea';
 
 
