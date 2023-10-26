@@ -8,6 +8,7 @@ import SnapshotsCardArea from '../../components/SnapshotCard/SnapshotsCardArea';
 import SnapshotsDeltas from '../../components/SnapshotCard/SnapshotsDeltas';
 import VaultStrategySummary from './components/VaultStrategySummary';
 import { TVLTooltip, UsersTooltip } from '../Dashboard/DahboardPage';
+import VaultHealthScore from '../Dashboard/components/VaultHealthScore';
 
 const VaultPage = () => {
   let { vaultAddress } = useParams();
@@ -38,9 +39,20 @@ const VaultPage = () => {
           </div>
         </div>
         <div className='grid grid-cols-12 gap-4 p-4'>
-          <div className='grid grid-cols-12 col-span-5 bg-white border border-gray-200'>
+          <div className='flex flex-col col-span-1 bg-white border border-gray-200 gap-y-4 items-center pt-2'>
+            <VaultHealthScore vault={vault} height={100} />
+            <div className='flex flex-col items-center justify-between'>
+              <div className="text-gray-600 font-semibold text-xl">{vault.totalAPR.toFixed(2)}%</div>
+              <div className="text-gray-400 text-xs">APR</div>
+            </div>
+            <div className='flex flex-col items-center justify-between'>
+              <div className={`font-semibold text-xl ${vault.last30daysHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${vault.last30daysHarvestProfit.toFixed(2)}</div>
+              <div className="text-gray-400 text-xs">30 day profit</div>
+            </div>
+          </div>
+          <div className='grid grid-cols-12 col-span-6 bg-white border border-gray-200'>
             <div className={`col-span-${vault.last30SnapShots?.length > 0 ? "10" : "12"}`}>
-              <div className='p-3 text-gray-600 font-semibold'>
+              <div className='p-3 text-gray-500 font-semibold'>
                 TVL
               </div>
               <SnapshotsCardArea data={vault.last30SnapShots} dataKey={"usd.tvl"} yxaisType='usd' customTooltip={<TVLTooltip />} />
