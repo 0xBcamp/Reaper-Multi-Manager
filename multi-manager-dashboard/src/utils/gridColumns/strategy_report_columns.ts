@@ -1,17 +1,13 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { DateTime, Duration } from "luxon";
 import { StrategyReport } from "../../redux/slices/strategiesSlice";
+import { Vault } from "../../redux/slices/vaultsSlice";
+import { ethers } from "ethers";
 
-export const getStrategyReportColumns = () => {
+export const getStrategyReportColumns = (vault: Vault) => {
     const columnHelper = createColumnHelper<StrategyReport>();
 
     const columns = [
-        // columnHelper.accessor("reportDate", {
-        //     header: "Report date",
-        //     cell: info => {
-        //         return DateTime.fromSeconds(info.getValue()).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS)
-        //     }
-        // }),
         columnHelper.accessor("reportDate", {
             header: "Report date",
             cell: info => {
@@ -19,9 +15,6 @@ export const getStrategyReportColumns = () => {
                 return date.toFormat('dd LLL yy HH:mm');
             }
         }),
-        // columnHelper.accessor("block", {
-        //     cell: info => info.getValue()
-        // }),
         columnHelper.accessor("duration", {
             cell: info => {
                 const duration = Duration.fromObject({ seconds: info.getValue() });
@@ -32,22 +25,52 @@ export const getStrategyReportColumns = () => {
             cell: info => info.getValue()
         }),
         columnHelper.accessor("allocated", {
-            cell: info => info.getValue()
+            cell: info => {
+                const units = parseFloat(ethers.formatUnits(info.getValue(), vault.decimals));
+                const multipliedValue = units * vault.tokenDto.usd;
+                const value = `$${multipliedValue.toFixed(2).toLocaleString()}`;
+                return value;
+            }
         }),
         columnHelper.accessor("debtPaid", {
-            cell: info => info.getValue()
+            cell: info => {
+                const units = parseFloat(ethers.formatUnits(info.getValue(), vault.decimals));
+                const multipliedValue = units * vault.tokenDto.usd;
+                const value = `$${multipliedValue.toFixed(2).toLocaleString()}`;
+                return value;
+            }
         }),
         columnHelper.accessor("gain", {
-            cell: info => info.getValue()
+            cell: info => {
+                const units = parseFloat(ethers.formatUnits(info.getValue(), vault.decimals));
+                const multipliedValue = units * vault.tokenDto.usd;
+                const value = `$${multipliedValue.toFixed(2).toLocaleString()}`;
+                return value;
+            }
         }),
         columnHelper.accessor("gains", {
-            cell: info => info.getValue()
+            cell: info => {
+                const units = parseFloat(ethers.formatUnits(info.getValue(), vault.decimals));
+                const multipliedValue = units * vault.tokenDto.usd;
+                const value = `$${multipliedValue.toFixed(2).toLocaleString()}`;
+                return value;
+            }
         }),
         columnHelper.accessor("loss", {
-            cell: info => info.getValue()
+            cell: info => {
+                const units = parseFloat(ethers.formatUnits(info.getValue(), vault.decimals));
+                const multipliedValue = units * vault.tokenDto.usd;
+                const value = `$${multipliedValue.toFixed(2).toLocaleString()}`;
+                return value;
+            }
         }),
         columnHelper.accessor("losses", {
-            cell: info => info.getValue()
+            cell: info => {
+                const units = parseFloat(ethers.formatUnits(info.getValue(), vault.decimals));
+                const multipliedValue = units * vault.tokenDto.usd;
+                const value = `$${multipliedValue.toFixed(2).toLocaleString()}`;
+                return value;
+            }
         }),
         columnHelper.accessor("apr", {
             header: "APR",

@@ -97,7 +97,7 @@ const StrategyPage = () => {
                     </div>
                 </div>
                 <div className='flex px-4 pt-2'>
-                    {strategy && <DataGrid data={sortTimestampByProp(strategy.aprReports, "reportDate", "desc")} columns={getStrategyReportColumns()} heading='Strategy Reports' />}
+                    {strategy && <DataGrid data={sortTimestampByProp(strategy.aprReports, "reportDate", "desc")} columns={getStrategyReportColumns(vault)} heading='Strategy Reports' />}
                 </div>
             </>}
             {!vault && <div className='flex h-full justify-center'>
