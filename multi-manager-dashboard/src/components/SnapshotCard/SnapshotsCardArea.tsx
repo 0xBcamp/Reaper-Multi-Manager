@@ -4,9 +4,11 @@ type Props = {
   data: any[];
   dataKey: string;
   heigth?: number;
+  customTooltip?: React.ReactElement;
+  yxaisType?: "number" | "usd"
 }
 
-function SnapshotsCardArea({ data, dataKey, heigth }: Props) {
+function SnapshotsCardArea({ data, dataKey, heigth, customTooltip, yxaisType = "number" }: Props) {
   return (
     <>
       {data?.length > 0 ? <ResponsiveContainer width='100%' height={heigth || 200}>
@@ -20,6 +22,7 @@ function SnapshotsCardArea({ data, dataKey, heigth }: Props) {
           </defs>
           <XAxis
             dataKey="timestamp"
+            tick={{ fontSize: '11px' }}
             axisLine={false}
             tickLine={false}
             tickFormatter={(value, index) => {
@@ -35,17 +38,21 @@ function SnapshotsCardArea({ data, dataKey, heigth }: Props) {
 
           <YAxis
             dataKey={dataKey}
-
+            tick={{ fontSize: '11px' }}
             axisLine={false}
             tickLine={false}
-            tickCount={8}
             tickFormatter={(value) => {
-              return value.toLocaleString();
+              if (yxaisType === "number") {
+                return Number(value.toFixed(0)).toLocaleString();
+              } else {
+                return `$${value.toLocaleString()}`;
+              }
+              
             }}
           />
 
           <CartesianGrid opacity={0.1} vertical={false} />
-          <Tooltip />
+          <Tooltip content={customTooltip}/>
           <Area dataKey={dataKey} stroke="#2451B7" fillOpacity={1} strokeWidth={2} fill="url(#colorUv)" type={"monotone"} />
         </AreaChart>
       </ResponsiveContainer>

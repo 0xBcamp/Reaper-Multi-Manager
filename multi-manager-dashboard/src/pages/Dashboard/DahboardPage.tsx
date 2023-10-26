@@ -36,6 +36,7 @@ const DahboardPage = () => {
                             dataKey="tvl"
                             deltas={chain.lastSnapShotDelta.tvl}
                             type='usd'
+                            customTooltip={<TVLTooltip />}
                         />
                         <SnapshotContainer
                             title="Total users"
@@ -43,6 +44,7 @@ const DahboardPage = () => {
                             dataKey="totalUsers"
                             deltas={chain.lastSnapShotDelta.totalUsers}
                             type='number'
+                            customTooltip={<UsersTooltip />}
                         />
                     </div>
 
@@ -65,5 +67,39 @@ const DahboardPage = () => {
         </div>
     )
 }
+
+export const TVLTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+
+        const date = new Date(label * 1000);
+		const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+		const formattedDate = formatter.format(date);
+
+        return (
+            <div className="p-2 bg-white shadow rounded border border-gray-300">
+                <div className="text-sm text-gray-700 mb-2 font-semibold">{`${formattedDate}`}</div>
+                <div className="text-sm text-blue-500 mb-1">{`TVL: $${Number(payload[0].value.toFixed(0)).toLocaleString()}`}</div>
+            </div>
+        );
+    }
+    return null;
+};
+
+export const UsersTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+
+        const date = new Date(label * 1000);
+		const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+		const formattedDate = formatter.format(date);
+
+        return (
+            <div className="p-2 bg-white shadow rounded border border-gray-300">
+                <div className="text-sm text-gray-700 mb-2 font-semibold">{`${formattedDate}`}</div>
+                <div className="text-sm text-blue-500 mb-1">{`Users: ${Number(payload[0].value.toFixed(0)).toLocaleString()}`}</div>
+            </div>
+        );
+    }
+    return null;
+};
 
 export default DahboardPage

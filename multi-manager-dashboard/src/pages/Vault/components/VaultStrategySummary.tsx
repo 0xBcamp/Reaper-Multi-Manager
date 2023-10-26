@@ -28,6 +28,7 @@ function VaultStrategySummary({ strategy, vault }: Props) {
   return (
     <div className="flex flex-col cursor-pointer bg-white border border-gray-200 shadow-sm h-32">
       <div className="flex flex-row p-2 justify-between items-center">
+        <div className='text-gray-600 text-xs'>{strategy.protocol ? strategy.protocol.name : ""}</div>
         <div className='text-gray-400 text-xs'>{strategy.address}</div>
       </div>
       <div className="grid grid-cols-4 items-center justify-between">
@@ -38,7 +39,7 @@ function VaultStrategySummary({ strategy, vault }: Props) {
               <div className="text-gray-400 text-xs">APR</div>
             </div>
             <div className='flex-1'>
-              <div className={`text-gray-600 font-semibold text-xl ${totalProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(totalProfit).toFixed(2)}</div>
+              <div className={`text-gray-600 font-semibold text-xl ${strategy.last30daysHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(strategy.last30daysHarvestProfit).toFixed(2)}</div>
               <div className="text-gray-400 text-xs">30 day profit</div>
             </div>
           </div>

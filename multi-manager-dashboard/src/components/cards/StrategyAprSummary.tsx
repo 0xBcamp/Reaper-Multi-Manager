@@ -1,41 +1,18 @@
-import { useMemo, useState } from 'react';
-import { formatDate } from '../../utils/dateUtils';
-import Card from './Card';
+import { useMemo } from 'react';
 import { DEFAULT_STD_DEV_THRESHOLD } from '../../utils/constants';
-import { Scatter } from 'react-chartjs-2';
-import {
-    Chart as ChartJS,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Tooltip,
-    Legend,
-    CoreChartOptions,
-    DatasetChartOptions,
-    ElementChartOptions,
-    PluginChartOptions,
-    ScaleChartOptions,
-    LineControllerChartOptions,
-} from 'chart.js';
-import { _DeepPartialObject } from 'chart.js/dist/types/utils';
-import { Vault } from '../../redux/slices/vaultsSlice';
-import { Strategy } from '../../redux/slices/strategiesSlice';
+
 import { calculateDataWithThreshold, calculateTimeBasedMovingAverage } from '../../utils/calculateStrategyAPR';
+import { CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip, Line, Scatter, ComposedChart } from 'recharts';
+import { selectStrategy } from '../../redux/selectors';
+import { useSelector } from 'react-redux';
 
-ChartJS.register(LinearScale, PointElement, LineElement, Tooltip, Legend);
 
-interface IStrategyAprSummaryProps {
-    vault: Vault;
-    strategy: Strategy;
-    showSlider: boolean;
-}
 
-const StrategyAprSummary = ({ vault, strategy, showSlider }: IStrategyAprSummaryProps) => {
-    const [threshold, setThreshold] = useState(DEFAULT_STD_DEV_THRESHOLD)
+const StrategyAprSummary = () => {
 
-    const lastHarvest = strategy.aprReports?.length > 0 ? strategy.aprReports[strategy.aprReports?.length - 1] : undefined;
-
-    const { xData, yData } = useMemo(() => calculateDataWithThreshold(strategy.aprReports, threshold), [strategy.aprReports, threshold]);
+    const strategy = useSelector(selectStrategy);
+    
+    const { xData, yData } = useMemo(() => calculateDataWithThreshold(strategy.aprReports, DEFAULT_STD_DEV_THRESHOLD), [strategy.aprReports, DEFAULT_STD_DEV_THRESHOLD]);
 
     const timeBasedMovingAverageResults = useMemo(() => {
         if (xData.length > 0 && yData.length > 0) {
@@ -44,86 +21,19 @@ const StrategyAprSummary = ({ vault, strategy, showSlider }: IStrategyAprSummary
         return null;
     }, [xData, yData]);
 
+
+
     const data = useMemo(() => {
         if (timeBasedMovingAverageResults && xData.length > 0) {
-            return {
-                datasets: [
-                    {
-                        label: 'Apr',
-                        data: xData.map((x, index) => ({
-                            x,
-                            y: yData[index],
-                        })),
-                        backgroundColor: 'blue',
-                    },
-                    {
-                        label: 'Regression Line',
-                        data: timeBasedMovingAverageResults?.resultXData.map((x, index) => ({
-                            x,
-                            y: timeBasedMovingAverageResults?.resultYData[index],
-                        })),
-                        borderColor: 'green',
-                        backgroundColor: 'transparent',
-                        borderWidth: 1,
-                        showLine: true,
-                        pointRadius: 0,
-                    },
-                ],
-            };
+            return xData.map((x, index) => ({
+                    x,
+                    y1: yData[index],
+                    y2: timeBasedMovingAverageResults?.resultYData[index],
+                }))
+            ;
         }
         return null;
     }, [xData, yData, timeBasedMovingAverageResults]);
-
-    const options: _DeepPartialObject<
-        CoreChartOptions<"scatter"> &
-        ElementChartOptions<"scatter"> &
-        PluginChartOptions<"scatter"> &
-        DatasetChartOptions<"scatter"> &
-        ScaleChartOptions<"scatter"> &
-        LineControllerChartOptions
-    > = {
-        scales: {
-            x: {
-                beginAtZero: false,
-                ticks: {
-                    font: {
-                        size: 10,
-                    },
-                    count: 2,
-                },
-                grid: {
-                    display: false,
-                },
-            },
-            y: {
-                beginAtZero: false,
-                ticks: {
-                    font: {
-                        size: 10,
-                    },
-                    count: 2,
-                },
-                grid: {
-                    display: false,
-                },
-            },
-        },
-        plugins: {
-            legend: {
-                display: false,
-            },
-        },
-        maintainAspectRatio: false,
-        hover: {
-            mode: 'index',
-            intersect: false,
-            axis: 'x',
-        },
-    };
-
-    const handleThresholdChange = (event) => {
-        setThreshold(parseFloat(event.target.value));
-    };
 
     return (
         <div className='grid grid-cols-12 col-span-5 bg-white border border-gray-200 mb-8'>
@@ -133,30 +43,69 @@ const StrategyAprSummary = ({ vault, strategy, showSlider }: IStrategyAprSummary
                     <div className='text-xl'>{strategy?.APR?.toFixed(2)}%</div>
                 </div>
                 <div className='px-3 h-[200px]'>
-                    <Scatter options={options} data={data} height={null} width={null} />
+                    <ResponsiveContainer width='100%' height={200}>
+                        <ComposedChart
+                            data={data}
+                        >
+                            <CartesianGrid opacity={0.4} vertical={false} />
+                            <XAxis
+                                type="number"
+                                dataKey="x"
+                                name="date"
+                                axisLine={false}
+                                tickLine={false}
+                                domain={[data[0].x - 50000, data[data?.length - 1].x + 50000]}
+                                tick={{ fontSize: '11px' }}
+                                tickFormatter={(value, index) => {
+                                    const date = new Date(value * 1000);
+                                    const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+                                    return formatter.format(date);
+                                }}
+                            />
+                            <YAxis
+                                type="number"
+                                dataKey="y1"
+                                name="APR"
+                                tickFormatter={(value) => {
+                                    return `${value.toFixed(0)}%`;
+                                }}
+                                tick={{ fontSize: '11px' }}
+                                axisLine={false}
+                                tickLine={false}
+                                domain={[(Math.min(...data.map(x => x.y1)) * 0.9) , (Math.max(...data.map(x => x.y1)) * 1.1)]}
+                            />
+                            <Tooltip content={<StrategyAprTooltip />} />
+                            <Scatter 
+                                name="APR" 
+                                fill="#3B82F6" 
+                                dataKey="y1"
+                            />
+                            <Line type="monotone" name="Weighted APR" dataKey="y2" stroke="#10B981" strokeWidth={1} dot={{ r: 2 }}/>
+                            
+                        </ComposedChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         </div>
-        // <Card>
-        //     <>
-        //         {lastHarvest ?
-        //             <>
-        //                 {strategy.aprReports?.length > 0 && <div style={{ width: '100%', height: '250px' }}>
-        //                     {showSlider && <div className='flex flex-col p-2 space-x-2 justify-items-center'>
-        //                         <label htmlFor="default-range" className="block mb-2 text-sm font-medium text-gray-400 dark:text-white">Threshold: {threshold}</label>
-        //                         <input id="default-range" type="range" value={threshold} onChange={handleThresholdChange} min={0.1} max={4} step={0.1} className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" />
-        //                     </div>}
-        //                     <div style={{ width: '100%', height: '200px' }}>
-        //                         <Scatter options={options} data={data} height={null} width={null} />
-        //                     </div>
-        //                 </div>}
-        //             </>
-        //             :
-        //             <div className='flex justify-center h-full my-auto p-10 text-gray-500'>No harvests found</div>}
-        //     </>
-        // </Card>
-
     );
+};
+
+const StrategyAprTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+
+        const date = new Date(label * 1000);
+		const formatter = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' });
+		const formattedDate = formatter.format(date);
+
+        return (
+            <div className="p-2 bg-white shadow rounded border border-gray-300">
+                <div className="text-sm text-gray-700 mb-2 font-semibold">{`${formattedDate}`}</div>
+                <div className="text-sm text-blue-500 mb-1">{`Report APR: ${payload[0].value.toFixed(2)}%`}</div>
+                <div className="text-sm text-green-500 mb-1">{`Strategy APR: ${payload[1].value.toFixed(2)}%`}</div>
+            </div>
+        );
+    }
+    return null;
 };
 
 export default StrategyAprSummary;

@@ -8,16 +8,17 @@ interface ISnapshotContainerProps {
     dataKey: string;
     deltas: ISnapshot_Delta;
     type: 'usd' | 'number';
+    customTooltip?: React.ReactElement;
 }
 
-const SnapshotContainer: React.FC<ISnapshotContainerProps> = ({ title, data, dataKey, deltas, type }) => {
+const SnapshotContainer: React.FC<ISnapshotContainerProps> = ({ title, data, dataKey, deltas, type, customTooltip }) => {
     return (
         <div className='grid grid-cols-12 bg-white border border-gray-200 mb-8'>
             <div className='col-span-10 flex flex-col'>
                 <div className='p-3 text-gray-600 font-semibold'>
                     {title}
                 </div>
-                <SnapshotsCardArea data={data} dataKey={dataKey} />
+                <SnapshotsCardArea data={data} dataKey={dataKey} yxaisType={type} customTooltip={customTooltip}/>
             </div>
             <div className='col-span-2 mr-2'>
                 <SnapshotsDeltas deltas={deltas} type={type} total={data[data.length - 1][dataKey]} />
