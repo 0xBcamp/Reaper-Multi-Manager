@@ -43,7 +43,7 @@ const StrategyAprSummary = () => {
                     <div className='text-xl'>{strategy?.APR?.toFixed(2)}%</div>
                 </div>
                 <div className='px-3 h-[200px]'>
-                    <ResponsiveContainer width='100%' height={200}>
+                    {strategy?.aprReports?.length > 0 &&<ResponsiveContainer width='100%' height={200}>
                         <ComposedChart
                             data={data}
                         >
@@ -54,7 +54,7 @@ const StrategyAprSummary = () => {
                                 name="date"
                                 axisLine={false}
                                 tickLine={false}
-                                domain={[data[0].x - 50000, data[data?.length - 1].x + 50000]}
+                                domain={[data[0]?.x - 50000, data[data?.length - 1]?.x + 50000]}
                                 tick={{ fontSize: '11px' }}
                                 tickFormatter={(value, index) => {
                                     const date = new Date(value * 1000);
@@ -83,7 +83,7 @@ const StrategyAprSummary = () => {
                             <Line type="monotone" name="Weighted APR" dataKey="y2" stroke="#10B981" strokeWidth={1} dot={{ r: 2 }}/>
                             
                         </ComposedChart>
-                    </ResponsiveContainer>
+                    </ResponsiveContainer>}
                 </div>
             </div>
         </div>
