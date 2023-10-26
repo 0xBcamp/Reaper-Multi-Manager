@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectVault } from '../../redux/selectors';
+import { selectChain, selectVault } from '../../redux/selectors';
 import { setSelectedVaultAddress } from '../../redux/slices/vaultsSlice';
 import Loader from '../../components/layout/Loader';
 import { RootState } from '../../redux/store';
@@ -18,6 +18,7 @@ const VaultPage = () => {
   const isInitialized = useSelector((state: RootState) => state.app.isInitialized);
 
   const vault = useSelector(selectVault);
+  const chain = useSelector(selectChain);
 
   return (
     <>
@@ -30,8 +31,9 @@ const VaultPage = () => {
               <div className="text-gray-600">/</div>
               <div className="text-gray-600 font-bold">{vault?.name}</div>
             </div>
-            <div className="space-x-4">
+            <div className="space-x-4 flex flex-row">
               <Link to={`/vaults/${vault.address}/allocations`} className="text-blue-500 hover:text-blue-700" >Update Allocations</Link>
+              <Link to={`${chain.etherscanUrl}${vault.address}`} className="text-blue-500 hover:text-blue-700" target='_blank' >Etherscan</Link>
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ export interface Chain {
   _id: string;
   chainId: number;
   name: string;
+  etherscanUrl: string;
   last30SnapShots?: { timestamp: number; tvl: number; totalUsers: number }[];
   lastSnapShotDelta?: {
     tvl?: ISnapshot_Delta;

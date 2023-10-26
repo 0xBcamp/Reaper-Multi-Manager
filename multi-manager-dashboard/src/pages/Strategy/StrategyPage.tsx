@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import { setSelectedVaultAddress } from '../../redux/slices/vaultsSlice';
 import { setSelectedStrategyAddress } from '../../redux/slices/strategiesSlice';
-import { selectStrategy, selectVault } from '../../redux/selectors';
+import { selectChain, selectStrategy, selectVault } from '../../redux/selectors';
 import DataGrid from '../../components/DataGrid';
 import { getStrategyReportColumns } from '../../utils/gridColumns/strategy_report_columns';
 import { sortTimestampByProp } from '../../utils/data/sortByProp';
@@ -17,15 +17,19 @@ import { setLastRefetch } from '../../redux/slices/appSlice';
 import { ReaperBaseStrategyV4 } from '../../abi/ReaperBaseStrategyV4';
 import { useAccount } from 'wagmi';
 import Spinner from '../../components/Spinner';
+import Tooltip from '../../components/Tooltip';
 
 const StrategyPage = () => {
     let { vaultAddress } = useParams();
     let { strategyAddress } = useParams();
 
     const dispatch = useDispatch();
-    
+
     const strategy = useSelector(selectStrategy);
     const vault = useSelector(selectVault);
+    const chain = useSelector(selectChain);
+
+    console.log("chain", chain)
 
     dispatch(setSelectedVaultAddress(vaultAddress));
     dispatch(setSelectedStrategyAddress(strategyAddress));
@@ -39,12 +43,18 @@ const StrategyPage = () => {
         <>
             {vault && strategy && <>
                 <div className="bg-white p-3 shadow-md">
-                    <div className="flex items-center flex-row gap-x-1">
-                        <Link to={`/`} className="hover:text-blue-600">Dashboard</Link>
-                        <div className="text-gray-600">/</div>
-                        <Link to={`/vaults/${vault.address}`} className="hover:text-blue-600">{vault?.name}</Link>
-                        <div className="text-gray-600">/</div>
-                        <div className="text-gray-600 font-bold">{strategy.protocol ? strategy.protocol.name : strategy.address}</div>
+                    <div className="flex justify-between items-center">
+                        <div className="flex items-center flex-row gap-x-1">
+                            <Link to={`/`} className="hover:text-blue-600">Dashboard</Link>
+                            <div className="text-gray-600">/</div>
+                            <Link to={`/vaults/${vault.address}`} className="hover:text-blue-600">{vault?.name}</Link>
+                            <div className="text-gray-600">/</div>
+                            <div className="text-gray-600 font-bold">{strategy.protocol ? strategy.protocol.name : strategy.address}</div>
+                        </div>
+                        <div className="space-x-4 flex flex-row">
+                            <Link to={`/vaults/${vault.address}/allocations`} className="text-blue-500 hover:text-blue-700" >Update Allocations</Link>
+                            <Link to={`${chain.etherscanUrl}${vault.address}`} className="text-blue-500 hover:text-blue-700" target='_blank' >Etherscan</Link>
+                        </div>
                     </div>
                 </div>
                 <div className="grid grid-cols-12 gap-4 px-4 pt-4">
@@ -59,33 +69,36 @@ const StrategyPage = () => {
                                     <div className='pr-2'>${strategy.last30daysHarvestProfit.toFixed(2)}</div>
                                     <div className='pb-[1px]'>
                                         {isHarvesting && <Spinner />}
-                                        {!isHarvesting && <img
-                                            src={`${process.env.PUBLIC_URL}/icons/money-bag-50.png`}
-                                            alt="Harvest Icon"
-                                            className='h-[16px] cursor-pointer'
-                                            onClick={async () => {
-                                                setIsHarvesting(true);
-                                                try {
-                                                    const signer = await provider.getSigner(address);
-                                                    const contract = new ethers.Contract(strategy.address, ReaperBaseStrategyV4, signer);
-                        
-                                                    const txResponse = await contract.harvest();
-                                                    await txResponse.wait();
-                        
-                                                    toast.success("Strategy successfully harvested")
-                                                    await processEvents();
-                                                    dispatch(setLastRefetch());
-                                                } catch (error) {
-                                                    const revertReasonMatch = /reason="([^"]+)"/.exec(error.message);
-                                                    if (revertReasonMatch && revertReasonMatch[1]) {
-                                                        toast.error(revertReasonMatch[1]);
-                                                    } else {
-                                                        toast.error(error);
-                                                    }
-                                                }
-                                                setIsHarvesting(false);
-                                            }}
-                                        />}
+                                        {!isHarvesting &&
+                                            <Tooltip content="Harvest">
+                                                <img
+                                                    src={`${process.env.PUBLIC_URL}/icons/money-bag-50.png`}
+                                                    alt="Harvest Icon"
+                                                    className='h-[16px] cursor-pointer'
+                                                    onClick={async () => {
+                                                        setIsHarvesting(true);
+                                                        try {
+                                                            const signer = await provider.getSigner(address);
+                                                            const contract = new ethers.Contract(strategy.address, ReaperBaseStrategyV4, signer);
+
+                                                            const txResponse = await contract.harvest();
+                                                            await txResponse.wait();
+
+                                                            toast.success("Strategy successfully harvested")
+                                                            await processEvents();
+                                                            dispatch(setLastRefetch());
+                                                        } catch (error) {
+                                                            const revertReasonMatch = /reason="([^"]+)"/.exec(error.message);
+                                                            if (revertReasonMatch && revertReasonMatch[1]) {
+                                                                toast.error(revertReasonMatch[1]);
+                                                            } else {
+                                                                toast.error(error);
+                                                            }
+                                                        }
+                                                        setIsHarvesting(false);
+                                                    }}
+                                                />
+                                            </Tooltip>}
                                     </div>
                                 </div>
                             </div>

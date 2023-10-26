@@ -3,6 +3,7 @@ import { Vault } from '../../../redux/slices/vaultsSlice';
 import Card from '../../../components/cards/Card';
 import ProgressBar from '../../../components/ProgressBar';
 import { useEffect, useState } from 'react';
+import Tooltip from '../../../components/Tooltip';
 
 interface IAllocationProps {
     vault: Vault;
@@ -31,7 +32,9 @@ const AllocationSummary = ({ vault, strategy, strategies }: IAllocationProps) =>
             <div className={`col-span-12 flex flex-col flex-1`}>
                 <div className='p-3 text-gray-800 flex flex-row justify-between items-center'>
                     <div className='font-bold'>Allocations</div>
-                    <div className={` text-xl ${allocDiff < 5 ? "text-green-600" : allocDiff < 10 ? "text-orange-600" : "text-red-600"}`}>{allocDiff}%</div>
+                    <div className={` text-xl ${allocDiff < 5 ? "text-green-600" : allocDiff < 10 ? "text-orange-600" : "text-red-600"}`}>
+                        <Tooltip content="Optimum vs Actual %" direction='left'>{allocDiff}%</Tooltip>
+                    </div>
                 </div>
                 <div className='px-3 h-[200px]'>
                     <div>
