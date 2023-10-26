@@ -10,6 +10,8 @@ import { useAccount } from 'wagmi';
 import { VAULT_V2_ABI } from '../../../abi/vaultV2Abi';
 import { toast } from 'react-toastify';
 import { ReaperBaseStrategyV4 } from '../../../abi/ReaperBaseStrategyV4';
+import ProgressBar from '../../../components/ProgressBar';
+import Tooltip from '../../../components/Tooltip';
 
 interface UpdateStrategyAllocationForm {
     allocBPS: number;
@@ -36,24 +38,26 @@ const StrategyAllocation = ({ strategy }: IStrategyAllocationProps) => {
     return (
         <div className='bg-white w-[30%] mx-auto mt-5'>
             <div className='flex flex-col border border-gray-200'>
-                <div className='bg-blue-100 p-2 tex-sm text-gray-600'>
-                    <div>{strategy.address}</div>
+                <div className='p-2 shadow-sm flex flex-row justify-between items-center'>
+                    <div>
+                        <div className='text-gray-600 font-semibold'>{strategy.protocol ? strategy.protocol.name : strategy.address}</div>
+                        <div className='text-gray-400 text-xs'>{strategy.address}</div>
+                    </div>
+                    <div className='text-gray-600 font-semibold pr-1'>
+                        <Tooltip content={"Strategy APR"}>
+                            {strategy.APR.toFixed(2)}%
+                        </Tooltip>
+                    </div>
                 </div>
-                <div className='flex flex-row py-1 px-3 justify-between hover:bg-blue-50 text-xs text-gray-400'>
-                    <div>APR</div>
-                    <div>{strategy.APR.toFixed(2)}%</div>
+
+                <div className='px-3'>
+                    <ProgressBar title='Contract allocated BPS' percentage={parseFloat(strategy.lastReport?.allocBPS) / 100} percentageDisplay={strategy.lastReport?.allocBPS} showPercentage={false} colorScheme='primary' />
                 </div>
-                <div className='flex flex-row py-1 px-3 justify-between hover:bg-blue-50 text-xs text-gray-400'>
-                    <div>allocBPS</div>
-                    <div>{strategy.allocBPS}</div>
+                <div className='px-3'>
+                    <ProgressBar title='Actual allocated BPS' percentage={parseFloat(strategy?.actualAllocatedBPS) / 100} percentageDisplay={strategy?.actualAllocatedBPS} showPercentage={false} colorScheme='secondary' />
                 </div>
-                <div className='flex flex-row py-1 px-3 justify-between hover:bg-blue-50 text-xs text-gray-400'>
-                    <div>Actual Allocated BPS</div>
-                    <div>{strategy.actualAllocatedBPS}</div>
-                </div>
-                <div className='flex flex-row py-1 px-3 justify-between hover:bg-blue-50 text-xs text-gray-400'>
-                    <div>Optimum Allocation BPS</div>
-                    <div>{strategy.optimumAllocationBPS}</div>
+                <div className='px-3'>
+                    <ProgressBar title='Optimum Allocation BPS' percentage={parseFloat(strategy?.optimumAllocationBPS) / 100} percentageDisplay={strategy?.optimumAllocationBPS} showPercentage={false} colorScheme='tertiary' />
                 </div>
                 <div className=' px-3 py-4'>
                     <TextField label='New allocBPS' type='number' value={formState.allocBPS} onChange={(value: number) => setFormState(prevState => ({ ...prevState, allocBPS: value }))} />

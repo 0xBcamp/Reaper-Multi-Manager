@@ -54,9 +54,11 @@ export interface Strategy {
   actualAllocatedBPS: string;
   optimumAllocation: string;
   optimumAllocationBPS: string;
+  actualOptimumPercDiff: number;
   last30daysHarvests: StrategyHarvestSnapshot[];
   last30daysHarvestProfit: number;
-  protocol?: StrategyProtocol
+  protocol?: StrategyProtocol;
+  isStale: boolean;
 }
 
 

@@ -35,6 +35,7 @@ export interface Vault {
   totalAPR: number;
   vaultAllocatedBPS: number;
   healthScore?: number;
+  last30daysHarvestProfit: number;
 }
 
 export interface VaultTransaction {

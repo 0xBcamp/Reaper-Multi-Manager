@@ -28,8 +28,8 @@ function DataGrid({ data, columns, heading }: Props) {
     return (
         <div className="bg-white shadow-sm overflow-hidden w-full border-gray-200 border">
             <div className="flex justify-between items-center p-2 pl-5">
-                <span className="text-md font-bold">{heading}</span>
-                <div className="flex items-center border bg-white focus-within:border-blue-500 hover:border-blue-200 relative">
+                <span className="text-gray-800 font-bold">{heading}</span>
+                {/* <div className="flex items-center border bg-white focus-within:border-blue-500 hover:border-blue-200 relative">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3">
                         <img src={`${process.env.PUBLIC_URL}/icons/search-50.png`} alt="Search icon" className="h-3 w-3 text-gray-200" />
                     </div>
@@ -38,7 +38,7 @@ function DataGrid({ data, columns, heading }: Props) {
                         placeholder="Search"
                         className="flex-1 py-2 px-10 text-sm bg-transparent outline-none text-gray-500 pl-9" // `pl-7` is used to give space for the icon
                     />
-                </div>
+                </div> */}
             </div>
 
             <table className="min-w-full divide-y divide-gray-200">

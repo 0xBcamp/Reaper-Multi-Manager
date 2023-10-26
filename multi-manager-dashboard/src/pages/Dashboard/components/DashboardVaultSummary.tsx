@@ -54,7 +54,7 @@ function DashboardVaultSummary({ vault }: Props) {
           </div>
         </div>
         <div className='col-span-1 flex justify-end pr-2 pb-2'>
-          <VaultHealthScore vault={vault} />
+          <VaultHealthScore vault={vault} height={80}/>
         </div>
       </div>
     </div>

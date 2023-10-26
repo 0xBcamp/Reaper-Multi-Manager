@@ -3,11 +3,11 @@ import { Vault } from '../../../redux/slices/vaultsSlice';
 
 type Props = {
   vault: Vault
+  height: number;
 }
 
-function VaultHealthScore({ vault }: Props) {
+function VaultHealthScore({ vault, height }: Props) {
   const endAngle = 90 - (360 * (vault.healthScore / 100));
-  const height = 80;
 
   return (
     <RadialBarChart

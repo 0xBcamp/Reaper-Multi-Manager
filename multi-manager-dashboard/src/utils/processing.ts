@@ -109,6 +109,13 @@ const calculateVaultAPRValues = (vault: Vault, strategies: Strategy[]) => {
     const optimumAllocation = isNaN(parseFloat(optimumAllocationValue)) ? "0" : optimumAllocationValue;
     const optimumAllocationBPS = isNaN(parseFloat(optimumAllocationBPSValue)) ? "0" : optimumAllocationBPSValue;
 
+    //calculating % diff between actual and optimum allocations
+    const actual = parseFloat(actualAllocatedBPS || "0");
+    const optimum = parseFloat(optimumAllocationBPS || "0");
+
+    const difference = Math.abs(actual - optimum) / 100;
+    const actualOptimumPercDiff = parseFloat(difference.toFixed(2)); // rounded to 2 decimal places
+
     // Calculate whether the lastHarvest timestamp is more than 2 days old
     const isStale = strategy.lastReport ? Date.now()/1000 - strategy.lastReport?.reportDate > TWO_UNIX_DAYS : false;
 
@@ -117,7 +124,8 @@ const calculateVaultAPRValues = (vault: Vault, strategies: Strategy[]) => {
       actualAllocatedBPS,
       optimumAllocation,
       optimumAllocationBPS,
-      isStale
+      isStale,
+      actualOptimumPercDiff
     }
 
     return updatedStrategy;
