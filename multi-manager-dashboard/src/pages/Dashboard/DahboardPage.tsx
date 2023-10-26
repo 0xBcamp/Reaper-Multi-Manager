@@ -48,10 +48,10 @@ const DahboardPage = () => {
                         />
                     </div>
 
-                    <div className='p-2 text-gray-800 text-lg'>
+                    <div className='px-4 py-2 text-gray-800 text-lg'>
                         Vaults
                     </div>
-                    <div className='grid grid-cols-4 gap-4 px-3'>
+                    <div className='grid grid-cols-4 gap-4 px-4'>
                         {vaults.map((vault) => {
                             return (
                                 <DashboardVaultSummary vault={vault} key={vault._id} />

@@ -74,9 +74,11 @@ const VaultPage = () => {
             </div>}
           </div>
         </div>
-        <div className="grid grid-cols-4 gap-4 m-4">
+        <div className='py-2 px-4 text-gray-800 text-lg'>
+          Strategies
+        </div>
+        <div className="grid grid-cols-4 gap-4 px-4">
           {vault.strategies.map((strategy) => {
-
             return (
               // Change strategy border colour if it has not harvested in 2 days
               <div className={`h-full ${strategy.isStale ? 'border border-red-500' : 'border border-gray-200'}`} key={strategy._id}>

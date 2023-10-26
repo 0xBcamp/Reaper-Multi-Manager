@@ -33,18 +33,18 @@ function VaultStrategySummary({ strategy, vault }: Props) {
           <div className='text-gray-600 text-sm'>{strategy.protocol ? strategy.protocol.name : ""}</div>
           <div className='text-gray-400 text-xs'>{strategy.address}</div>
         </div>
-        <div className="grid grid-cols-4 items-center justify-between">
-          <div className='flex-1 col-span-3'>
-            <div className='flex flex-row justify-between text-center pl-2'>
-              <div className='flex-1'>
-                <div className="text-gray-600 font-semibold text-xl">{strategy.APR.toFixed(2)}%</div>
-                <div className="text-gray-400 text-xs">APR</div>
-              </div>
-              <div className='flex-1'>
-                <div className={`text-gray-600 font-semibold text-xl ${strategy.last30daysHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(strategy.last30daysHarvestProfit).toFixed(2)}</div>
-                <div className="text-gray-400 text-xs">30 day profit</div>
-              </div>
-            </div>
+        <div className="flex flex-row items-center justify-around flex-1">
+          <div className='flex flex-col items-center'>
+            <div className="text-gray-600 font-semibold text-xl">{strategy.APR.toFixed(2)}%</div>
+            <div className="text-gray-400 text-xs">APR</div>
+          </div>
+          <div className='flex flex-col items-center'>
+            <div className={`text-gray-600 font-semibold text-xl ${strategy.last30daysHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(strategy.last30daysHarvestProfit).toFixed(2)}</div>
+            <div className="text-gray-400 text-xs">30 day profit</div>
+          </div>
+          <div className='flex flex-col items-center'>
+            <div className={`text-gray-600 font-semibold text-xl`}>{(strategy.aprReports?.length || 0)}</div>
+            <div className="text-gray-400 text-xs">Harvests</div>
           </div>
         </div>
       </div>
