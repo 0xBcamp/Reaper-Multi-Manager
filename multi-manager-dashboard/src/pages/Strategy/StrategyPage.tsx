@@ -106,7 +106,7 @@ const StrategyPage = () => {
                         </div>
                     </div>
                     <div className='col-span-2'>
-                        <StrategyAllocations key={strategy._id} vault={vault} strategy={strategy} strategies={vault.strategies} />
+                        <StrategyAllocations key={strategy._id} strategy={strategy} />
                     </div>
                 </div>
                 <div className='flex px-4 pt-2'>
