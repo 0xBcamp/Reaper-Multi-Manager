@@ -52,7 +52,7 @@ function DashboardVaultSummary({ vault }: Props) {
               <div className="text-gray-400 text-xs">Allocated</div>
             </div>
             <div className='flex-1'>
-              <div className={`text-gray-600 font-semibold text-xl ${vault.last30daysHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(vault.last30daysHarvestProfit).toFixed(2)}</div>
+              <div className={`text-gray-600 text-xl ${vault.last30daysHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(vault.last30daysHarvestProfit).toFixed(2)}</div>
               <div className="text-gray-400 text-xs">30 day profit</div>
             </div>
           </div>
