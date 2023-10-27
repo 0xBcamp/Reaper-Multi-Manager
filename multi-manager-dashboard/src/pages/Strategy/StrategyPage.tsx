@@ -53,7 +53,7 @@ const StrategyPage = () => {
                         </div>
                         <div className="space-x-4 flex flex-row">
                             <Link to={`/vaults/${vault.address}/allocations`} className="text-blue-500 hover:text-blue-700" >Update Allocations</Link>
-                            <Link to={`${chain.etherscanUrl}${vault.address}`} className="text-blue-500 hover:text-blue-700" target='_blank' >Etherscan</Link>
+                            <Link to={`${chain.etherscanUrl}${strategy.address}`} className="text-blue-500 hover:text-blue-700" target='_blank' >Etherscan</Link>
                         </div>
                     </div>
                 </div>
