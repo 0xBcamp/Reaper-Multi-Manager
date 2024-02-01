@@ -18,6 +18,9 @@ import { ReaperBaseStrategyV4 } from '../../abi/ReaperBaseStrategyV4';
 import { useAccount } from 'wagmi';
 import Spinner from '../../components/Spinner';
 import Tooltip from '../../components/Tooltip';
+import StrategySupplyBorrow from './components/StrategySupplyBorrow';
+import GranaryAddresses from './components/granary/GranaryAddresses';
+import GranaryRewards from './components/granary/GranaryRewards';
 
 const StrategyPage = () => {
     let { vaultAddress } = useParams();
@@ -107,6 +110,17 @@ const StrategyPage = () => {
                     </div>
                     <div className='col-span-2'>
                         <StrategyAllocations key={strategy._id} strategy={strategy} />
+                    </div>
+                </div>
+                <div className="grid grid-cols-12 gap-4 px-4 pt-4">
+                    <div className='h-full col-span-4'>
+                        {strategy.protocol.fork === "Granary" && <StrategySupplyBorrow vault={vault} strategy={strategy} />}
+                    </div>
+                    <div className='h-full col-span-3'>
+                        {strategy.protocol.fork === "Granary" && <GranaryAddresses vault={vault} strategy={strategy} />}
+                    </div>
+                    <div className='col-span-3'>
+                        {strategy.protocol.fork === "Granary" && <GranaryRewards vault={vault} strategy={strategy} />}
                     </div>
                 </div>
                 <div className='flex px-4 pt-2'>

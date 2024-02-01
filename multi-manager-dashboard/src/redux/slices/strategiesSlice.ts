@@ -30,6 +30,7 @@ export interface StrategyProtocol {
   address: string;
   name: string;
   symbol: string;
+  fork: string;
 }
 
 export interface Strategy {
@@ -59,6 +60,11 @@ export interface Strategy {
   last30daysHarvestProfit: number;
   protocol?: StrategyProtocol;
   isStale: boolean;
+  lendingPoolAddress?: string;
+  dataProviderAddress?: string;
+  addressProviderAddress?: string;
+  rewarderAddress?: string;
+  swapperAddress?: string;
 }
 
 
