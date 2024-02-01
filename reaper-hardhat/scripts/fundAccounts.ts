@@ -11,7 +11,7 @@ async function main() {
   const WHALE_WBTC_ADDRESS = "0x69bAdF095B03d62e97445EB0142e6488d19fF38B"
   const WHALE_WETH_ADDRESS = "0x7E6BEE8157aCeB2CBAaa74868f99a369f9E5d4c1"
 
-  const [account1] = await ethers.getSigners();
+  const [account1, account2] = await ethers.getSigners();
 
   const opWhale = await ethers.getImpersonatedSigner(WHALE_OP_ADDRESS);
   const wbtcWhale = await ethers.getImpersonatedSigner(WHALE_WBTC_ADDRESS);
@@ -40,15 +40,20 @@ async function main() {
   await op.connect(opWhale).approve(opWhale.address, "50000000000000000000000");
   await op.connect(opWhale).transfer(account1.address, "50000000000000000000000");
 
-  await weth.connect(wethWhale).approve(wethWhale.address, "5000000000000000000");
-  await weth.connect(wethWhale).transfer(account1.address, "5000000000000000000");
+  await weth.connect(wethWhale).approve(wethWhale.address, "4000000000000000000");
+  await weth.connect(wethWhale).transfer(account1.address, "4000000000000000000");
+
+  await weth.connect(wethWhale).approve(wethWhale.address, "1000000000000000000");
+  await weth.connect(wethWhale).transfer(account2.address, "1000000000000000000");
 
   const newbalance = await wbtc.balanceOf(account1.address);
   const newbalanceop = await op.balanceOf(account1.address);
   const newbalanceweth = await weth.balanceOf(account1.address);
+  const newbalanceweth2 = await weth.balanceOf(account2.address);
   console.log("newbalance", newbalance)
   console.log("newbalanceop", newbalanceop)
   console.log("newbalanceweth", newbalanceweth)
+  console.log("newbalanceweth2", newbalanceweth2)
 }
 
 main()
