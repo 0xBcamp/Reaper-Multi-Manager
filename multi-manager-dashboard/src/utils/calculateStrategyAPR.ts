@@ -62,9 +62,13 @@ const calculateXData = (data: StrategyReport[]) => {
 // y data calculated as normalized performance metric (annualized rate)
 // correct for allocationAdded
 const calculateYData = (data: StrategyReport[]) => {
-    return data.map(({ gain, loss, allocated, allocationAdded, duration }) =>
-        ((Number(gain) - Number(loss)) / (Number(allocated) - Number(allocationAdded)) * 100) / duration * ONE_UNIX_YEAR
-    );
+    return data.map(({ gain, loss, allocated, allocationAdded, duration }) => {
+        const netAllocation = Number(allocated) - Number(allocationAdded);
+        if (netAllocation === 0) {
+            return 0;
+        }
+        return ((Number(gain) - Number(loss)) / netAllocation * 100) / duration * ONE_UNIX_YEAR
+    });
 }
 
 // Calculate the mean of an array of values
@@ -81,41 +85,41 @@ const calculateStandardDeviation = (values: number[]) => {
 // Calculate time-based moving average with a window of 1 week
 export const calculateTimeBasedMovingAverage = (xData: number[], yData: number[]) => {
     if (xData.length !== yData.length) {
-      throw new Error("Input arrays must have the same length");
+        throw new Error("Input arrays must have the same length");
     }
-  
+
     const resultX: number[] = [];
     const resultY: number[] = [];
-  
+
     const totalDataPoints = xData.length;
-  
+
     for (let i = 0; i < totalDataPoints; i++) {
-      // Calculate the time window boundaries
-      const windowStart = xData[i] - ONE_UNIX_WEEK;
-      const windowEnd = xData[i];
-  
-      // Calculate the moving average for the current window
-      let sumY = 0;
-      let count = 0;
-  
-      for (let j = i; j >= 0; j--) {
-        if (xData[j] < windowStart) {
-          break;
+        // Calculate the time window boundaries
+        const windowStart = xData[i] - ONE_UNIX_WEEK;
+        const windowEnd = xData[i];
+
+        // Calculate the moving average for the current window
+        let sumY = 0;
+        let count = 0;
+
+        for (let j = i; j >= 0; j--) {
+            if (xData[j] < windowStart) {
+                break;
+            }
+
+            sumY += yData[j];
+            count++;
         }
-  
-        sumY += yData[j];
-        count++;
-      }
-  
-      const averageY = sumY / count;
-  
-      // Push the timestamp and moving average into the result arrays
-      resultX.push(windowEnd);
-      resultY.push(averageY);
+
+        const averageY = sumY / count;
+
+        // Push the timestamp and moving average into the result arrays
+        resultX.push(windowEnd);
+        resultY.push(averageY);
     }
-  
+
     return {
-      resultXData: resultX,
-      resultYData: resultY,
+        resultXData: resultX,
+        resultYData: resultY,
     };
-  };
+};
