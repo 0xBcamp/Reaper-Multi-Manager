@@ -63,8 +63,12 @@ export interface Strategy {
   lendingPoolAddress?: string;
   dataProviderAddress?: string;
   addressProviderAddress?: string;
-  rewarderAddress?: string;
   swapperAddress?: string;
+  rewarderAddress?: string;
+  supplied?: number;
+  borrowed?: number;
+  pendingRewards?: number;
+  timeSinceLastHarvest?: number;
 }
 
 

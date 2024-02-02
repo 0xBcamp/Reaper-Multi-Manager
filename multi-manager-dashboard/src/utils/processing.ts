@@ -53,6 +53,9 @@ const processStrategies = (strategies: Strategy[]) => {
 
     const strategyAPR = calculateStrategyAPR(updatedAprReports);
 
+    // Calculate the time since the last harvest with no decimals
+    const timeSinceLastHarvest = strategy.lastReport ? Math.floor(new Date().getTime()/1000 - strategy.lastReport.reportDate) : 0;
+
     const strategyWithOptimumValues = {
       ...strategy,
       APR: strategyAPR,
@@ -62,7 +65,8 @@ const processStrategies = (strategies: Strategy[]) => {
           apr: calculateStrategyReportApr(strategy.lastReport)
         }
       },
-      aprReports: updatedAprReports
+      aprReports: updatedAprReports,
+      timeSinceLastHarvest
     }
 
     return strategyWithOptimumValues;

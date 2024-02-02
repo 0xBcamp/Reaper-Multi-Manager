@@ -8,9 +8,10 @@ type Props = {
     colorScheme?: 'primary' | 'secondary' | 'tertiary';
     vertical?: boolean;
     height?: number;
+    isDashboardShowDetails?: boolean;
 }
 
-const ProgressBar = ({ title, percentage, percentageDisplay, showPercentage = true, colorScheme = 'primary', vertical = false, height}: Props) => {
+const ProgressBar = ({ title, percentage, percentageDisplay, showPercentage = true, colorScheme = 'primary', vertical = false, height, isDashboardShowDetails}: Props) => {
     const getColorClasses = () => {
         switch (colorScheme) {
             case 'primary':
@@ -44,7 +45,7 @@ const ProgressBar = ({ title, percentage, percentageDisplay, showPercentage = tr
 
     if (vertical) {
         return (
-            <div className={`relative h-[95px] w-3 ${colorClasses.bg}`}>
+            <div className={`relative h-[${isDashboardShowDetails ? "150px" : "95px"}] w-3 ${colorClasses.bg}`}>
                 <div
                     style={{ height: `${percentage}%` }}
                     className={`absolute bottom-0 w-full ${colorClasses.progress}`}

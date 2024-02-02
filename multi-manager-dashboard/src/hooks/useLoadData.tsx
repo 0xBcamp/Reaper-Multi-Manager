@@ -7,6 +7,7 @@ import { setInitialized } from "../redux/slices/appSlice";
 import { setTokens } from "../redux/slices/reaperSlice";
 import { processVaults } from "../utils/processing";
 import { RootState } from "../redux/store";
+import { setStrategies } from "../redux/slices/strategiesSlice";
 
 export const useLoadData = () => {
     const dispatch = useDispatch();
@@ -35,6 +36,10 @@ export const useLoadData = () => {
         ]);
 
         const processedVaults = processVaults(vaultsData);
+
+        dispatch(setStrategies(processedVaults.reduce((accumulator, vault) => {
+            return accumulator.concat(vault.strategies);
+        }, [])));
 
         dispatch(setTokens(tokensData));
         dispatch(setVaults(processedVaults));
