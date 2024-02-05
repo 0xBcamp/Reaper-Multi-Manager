@@ -80,6 +80,7 @@ const processStrategies = (vault: Vault, strategies: Strategy[]) => {
 
     const strategyWithOptimumValues = {
       ...strategy,
+      strategyName: strategy?.protocol ? strategy.protocol.name : "(no name)",
       APR: strategyAPR,
       ...strategy.lastReport && {
         lastReport: {
@@ -90,7 +91,8 @@ const processStrategies = (vault: Vault, strategies: Strategy[]) => {
       aprReports: updatedAprReports,
       timeSinceLastHarvest,
       supplied,
-      borrowed
+      borrowed,
+      harvestCount: strategy.aprReports?.length > 0 ? strategy.aprReports?.length : 0
     }
 
     return strategyWithOptimumValues;

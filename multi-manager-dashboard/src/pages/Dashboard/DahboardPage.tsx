@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import Dropdown, { DropdownOptionType } from '../../components/form/Dropdown';
 import { Vault } from '../../redux/slices/vaultsSlice';
 import VaultStrategySummary from '../Vault/components/VaultStrategySummary';
+import { Strategy } from '../../redux/slices/strategiesSlice';
 
 const DahboardPage = () => {
     const isInitialized = useSelector((state: RootState) => state.app.isInitialized);
@@ -21,11 +22,32 @@ const DahboardPage = () => {
     const strategies = useSelector(selectStrategiesByChain);
 
     const [sortedVaults, setSortedVaults] = useState<Vault[]>([]);
+    const [sortedStrategies, setSortedStrategies] = useState<Strategy[]>([]);
 
     const [dashboardViewOptions] = useState([
         { label: "Vaults", key: "vaults" },
         { label: "Strategies (Overview)", key: "strategies-overview" },
         { label: "Strategies (Detailed)", key: "strategies-detailed" }
+    ]);
+
+    const [dashboardFilterProtocolOptions] = useState([
+        { label: "All Protocols", key: "all" },
+        { label: "Granary", key: "granary" },
+        { label: "Sonne", key: "compound" },
+        // { label: "Yearn", key: "yearn" },
+        // { label: "Other", key: "other" }
+    ]);
+
+    const [dashboardFilterAssetsOptions] = useState([
+        { label: "All Assets", key: "all" },
+        { label: "WETH", key: "weth" },
+        { label: "WBTC", key: "wbtc" },
+        { label: "OP", key: "op" },
+        { label: "ERN", key: "ern" },
+        { label: "DAI", key: "dai" },
+        { label: "USDC", key: "usdc" },
+        { label: "USDT", key: "usdt" },
+        { label: "wstETH", key: "wsteth" }
     ]);
 
     const [vaultSortOptions] = useState([
@@ -36,38 +58,75 @@ const DahboardPage = () => {
     ]);
 
     const [strategySortOptions] = useState([
-        { label: "Vault", key: "vault" },
-        { label: "Protocol", key: "Protocol" },
+        // { label: "Vault", key: "vault" },
+        // { label: "Protocol", key: "Protocol" },
+        { label: "Since last harvest", key: "last-harvest" },
         { label: "Name", key: "name" },
         { label: "APR", key: "apr" },
         { label: "Profit", key: "profit" },
-        { label: "Pending Profit", key: "pending-profit" },
-        { label: "Since last harvest", key: "last-harvest" },
+        { label: "Harvests", key: "harvests" },
+        // { label: "Pending Profit", key: "pending-profit" },
+        
     ]);
 
     const [vaultSortSelectedKey, setVaultSortSelectedKey] = useState<string>("tvl");
-    const [strategySortSelectedKey, setStrategySortSelectedKey] = useState<string>("vault");
+    const [strategySortSelectedKey, setStrategySortSelectedKey] = useState<string>("last-harvest");
     const [dashboardViewSelectedKey, setDashboardViewSelectedKey] = useState<string>("vaults");
+    const [dashboardFilterProtocolSelectedKey, setDashboardFilterProtocolSelectedKey] = useState<string>("all");
+    const [dashboardilterAssetsSelectedKey, setDashboardAssetsSelectedKey] = useState<string>("all");
 
     // Effect to sort vaults whenever the vaults or selected sort key changes
     useEffect(() => {
-        const sorted = [...vaults].sort((a, b) => {
-            switch (vaultSortSelectedKey) {
-                case 'name':
-                    return a.name.localeCompare(b.name);
-                case 'tvl':
-                    return b.lastSnapShot.usd.tvl - a.lastSnapShot.usd.tvl;
-                case 'health':
-                    return b.healthScore - a.healthScore;
-                case 'apr':
-                    return b.totalAPR - a.totalAPR;
-                default:
-                    return 0;
+        if (dashboardViewSelectedKey === "vaults") {
+            const sorted = [...vaults].sort((a, b) => {
+                switch (vaultSortSelectedKey) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'tvl':
+                        return b.lastSnapShot.usd.tvl - a.lastSnapShot.usd.tvl;
+                    case 'health':
+                        return b.healthScore - a.healthScore;
+                    case 'apr':
+                        return b.totalAPR - a.totalAPR;
+                    default:
+                        return 0;
+                }
+            });
+            setSortedVaults(sorted);
+        }
+    }, [vaults, dashboardViewSelectedKey, vaultSortSelectedKey]);
+
+    // Effect to sort vaults whenever the vaults or selected sort key changes
+    useEffect(() => {
+        if (dashboardViewSelectedKey.includes("strategies")) {
+            let sorted = [...strategies];
+            if (dashboardFilterProtocolSelectedKey !== "all") {
+                sorted = [...sorted].filter(x => x.protocol?.fork.toLowerCase() === dashboardFilterProtocolSelectedKey)
             }
-        });
-        console.log("sorted", sorted)
-        setSortedVaults(sorted);
-    }, [vaults, vaultSortSelectedKey]);
+
+            sorted = [...sorted].sort((a, b) => {
+                switch (strategySortSelectedKey) {
+                    case 'last-harvest':
+                        return b.timeSinceLastHarvest - a.timeSinceLastHarvest;
+                    case 'name':
+                        return a.strategyName.toLocaleLowerCase().localeCompare(b.strategyName.toLocaleLowerCase());
+                    case 'profit':
+                        return b.last30daysHarvestProfit - a.last30daysHarvestProfit;
+                    case 'harvests':
+                        return b.harvestCount - a.harvestCount;
+                    case 'apr':
+                        // Ensure APR values are numbers and default to 0 if undefined
+                        const aprA = Number(a.APR) || 0;
+                        const aprB = Number(b.APR) || 0;
+                        return aprB - aprA;
+                    default:
+                        return 0;
+                }
+            });
+
+            setSortedStrategies(sorted);
+        }
+    }, [strategies, dashboardViewSelectedKey, strategySortSelectedKey, dashboardFilterProtocolSelectedKey]);
 
     return (
         <div>
@@ -103,8 +162,11 @@ const DahboardPage = () => {
                     </div>
 
                     <div className='flex justify-between px-4 py-2 text-gray-800 text-lg items-center'>
-                        <div>
+                        <div className='flex flex-row gap-x-1'>
                             <Dropdown options={dashboardViewOptions} onChange={setDashboardViewSelectedKey} selectedKey={dashboardViewSelectedKey} />
+                            {dashboardViewSelectedKey.includes("strategies") && <Dropdown options={dashboardFilterProtocolOptions} onChange={setDashboardFilterProtocolSelectedKey} selectedKey={dashboardFilterProtocolSelectedKey} />}
+                            {/* {dashboardViewSelectedKey.includes("strategies") && <Dropdown options={dashboardFilterAssetsOptions} onChange={setDashboardAssetsSelectedKey} selectedKey={dashboardilterAssetsSelectedKey} />} */}
+
                         </div>
                         <div>
                             {dashboardViewSelectedKey === "vaults" && <Dropdown options={vaultSortOptions} onChange={setVaultSortSelectedKey} selectedKey={vaultSortSelectedKey} />}
@@ -119,7 +181,7 @@ const DahboardPage = () => {
                         })}
                     </div>}
                     {dashboardViewSelectedKey.includes("strategies") && <div className="grid grid-cols-4 gap-4 px-4">
-                        {strategies.map((strategy) => {
+                        {sortedStrategies.map((strategy) => {
                             const currentVault = vaults.find((vault) => vault.strategies.find((s) => s._id === strategy._id));
                             return (
                                 // Change strategy border colour if it has not harvested in 2 days

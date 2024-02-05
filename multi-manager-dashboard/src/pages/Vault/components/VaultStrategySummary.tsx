@@ -35,7 +35,7 @@ function VaultStrategySummary({ strategy, vault, showDetails }: Props) {
       {showDetails && <div className='flex flex-row bg-white border border-gray-200 shadow-sm h-56'>
         <div className="flex flex-col cursor-pointer flex-1">
           <div className="flex flex-col p-2">
-            <div className='text-gray-600 text-xs'>{strategy.protocol ? strategy.protocol.name : ""}</div>
+            <div className='text-gray-600 text-xs'>{strategy.strategyName}</div>
             <div className='text-gray-400 text-xs'>{vault.name}</div>
             <div className='text-gray-400 text-xs'>{strategy.address}</div>
           </div>
@@ -45,7 +45,7 @@ function VaultStrategySummary({ strategy, vault, showDetails }: Props) {
               <div className="text-gray-400 text-xs">APR</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold`}>{(strategy.aprReports?.length || 0)}</div>
+              <div className={`text-gray-600 font-semibold`}>{strategy.harvestCount}</div>
               <div className="text-gray-400 text-xs">Harvests</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
@@ -74,7 +74,7 @@ function VaultStrategySummary({ strategy, vault, showDetails }: Props) {
               <div className="text-gray-400 text-xs">Vault health</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold`}>{Duration.fromObject({ seconds: strategy.timeSinceLastHarvest }).toFormat('dd:hh:mm')}</div>
+              <div className={`text-gray-600 font-semibold ${strategy.isStale ? "text-red-500" : "text-green-500"}`}>{Duration.fromObject({ seconds: strategy.timeSinceLastHarvest }).toFormat('dd:hh:mm')}</div>
               <div className="text-gray-400 text-xs">Since last harvest</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
@@ -103,7 +103,7 @@ function VaultStrategySummary({ strategy, vault, showDetails }: Props) {
       {!showDetails && <div className='flex flex-row bg-white border border-gray-200 shadow-sm h-32'>
         <div className="flex flex-col cursor-pointer flex-1">
           <div className="flex flex-col p-2">
-            <div className='text-gray-600 text-xs'>{strategy.protocol ? strategy.protocol.name : ""}</div>
+            <div className='text-gray-600 text-xs'>{strategy.strategyName}</div>
             <div className='text-gray-400 text-xs'>{vault.name}</div>
             <div className='text-gray-400 text-xs'>{strategy.address}</div>
           </div>
@@ -113,7 +113,7 @@ function VaultStrategySummary({ strategy, vault, showDetails }: Props) {
               <div className="text-gray-400 text-xs">APR</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold text-xl`}>{(strategy.aprReports?.length || 0)}</div>
+              <div className={`text-gray-600 font-semibold text-xl`}>{strategy.harvestCount}</div>
               <div className="text-gray-400 text-xs">Harvests</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>

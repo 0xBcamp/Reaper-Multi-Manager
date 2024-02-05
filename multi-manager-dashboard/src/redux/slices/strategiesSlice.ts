@@ -64,6 +64,7 @@ export interface Strategy {
   lastReport: StrategyReport | null;
   APR: number;
   aprReports: StrategyReport[];
+  harvestCount?: number;
   reports: StrategyReport[];
   vault: {
     name: string
@@ -75,6 +76,7 @@ export interface Strategy {
   last30daysHarvests: StrategyHarvestSnapshot[];
   last30daysHarvestProfit: number;
   protocol?: StrategyProtocol;
+  strategyName?: string;
   isStale: boolean;
   lendingPoolAddress?: string;
   dataProviderAddress?: string;

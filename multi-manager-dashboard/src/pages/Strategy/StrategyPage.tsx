@@ -148,7 +148,7 @@ const StrategyPage = () => {
                         {strategy.protocol.fork === "Granary" && <StrategySupplyBorrow vault={vault} strategy={strategy} />}
                     </div> */}
                     <div className='h-full col-span-3'>
-                        {strategy.protocol.fork === "Granary" && <GranaryAddresses vault={vault} strategy={strategy} />}
+                        {strategy.protocol?.fork === "Granary" && <GranaryAddresses vault={vault} strategy={strategy} />}
                     </div>
                     {/* <div className='col-span-3'>
                         {strategy.protocol.fork === "Granary" && <GranaryRewards vault={vault} strategy={strategy} />}
