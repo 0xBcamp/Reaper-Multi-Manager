@@ -41,44 +41,45 @@ function VaultStrategySummary({ strategy, vault, showDetails }: Props) {
           </div>
           <div className="flex flex-row items-center justify-around flex-1">
             <div className='flex flex-col items-center w-1/3'>
-              <div className="text-gray-600 font-semibold text-lg">{strategy.APR.toFixed(2)}%</div>
+              <div className="text-gray-600 font-semibold">{strategy.APR.toFixed(2)}%</div>
               <div className="text-gray-400 text-xs">APR</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold text-lg`}>{(strategy.aprReports?.length || 0)}</div>
+              <div className={`text-gray-600 font-semibold`}>{(strategy.aprReports?.length || 0)}</div>
               <div className="text-gray-400 text-xs">Harvests</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold text-lg ${strategy.last30daysHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(strategy.last30daysHarvestProfit).toFixed(2)}</div>
+              <div className={`text-gray-600 font-semibold ${strategy.last30daysHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(strategy.last30daysHarvestProfit).toFixed(2)}</div>
               <div className="text-gray-400 text-xs">30 day profit</div>
             </div>
 
           </div>
           <div className="flex flex-row items-center justify-around flex-1">
             <div className='flex flex-col items-center w-1/3'>
-              <div className="text-gray-600 font-semibold text-lg">-</div>
+              <div className="text-gray-600 font-semibold">{strategy?.supplied ? strategy?.supplied : "-"}</div>
               <div className="text-gray-400 text-xs">Supplied</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold text-lg`}>-</div>
+              <div className={`text-gray-600 font-semibold`}>{strategy?.borrowed ? strategy?.borrowed : "-"}</div>
               <div className="text-gray-400 text-xs">Borrowed</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold text-lg ${averageHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(averageHarvestProfit).toFixed(2)}</div>
+              <div className={`text-gray-600 font-semibold ${averageHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(averageHarvestProfit).toFixed(2)}</div>
               <div className="text-gray-400 text-xs">Avg profit</div>
             </div>
           </div>
           <div className="flex flex-row items-center justify-around flex-1">
             <div className='flex flex-col items-center w-1/3'>
-              <div className="text-gray-600 font-semibold text-lg">{vault.healthScore}%</div>
+              <div className="text-gray-600 font-semibold">{vault.healthScore}%</div>
               <div className="text-gray-400 text-xs">Vault health</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold text-lg`}>{Duration.fromObject({ seconds: strategy.timeSinceLastHarvest }).toFormat('dd:hh:mm')}</div>
+              <div className={`text-gray-600 font-semibold`}>{Duration.fromObject({ seconds: strategy.timeSinceLastHarvest }).toFormat('dd:hh:mm')}</div>
               <div className="text-gray-400 text-xs">Since last harvest</div>
             </div>
             <div className='flex flex-col items-center w-1/3'>
-              <div className={`text-gray-600 font-semibold text-lg ${averageHarvestProfit >= 0 ? "text-green-500" : "text-red-500"}`}>${(averageHarvestProfit).toFixed(2)}</div>
+              {/* <div className={`text-gray-600 font-semibold ${strategy.pendingRewards >= 0 ? "text-green-500" : "text-red-500"}`}>-</div> */}
+              <div className={`text-gray-600 font-semibold`}>-</div>
               <div className="text-gray-400 text-xs">Pending</div>
             </div>
           </div>

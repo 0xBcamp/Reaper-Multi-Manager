@@ -14,18 +14,6 @@ interface IAllocationProps {
     strategy: Strategy;
 }
 
-interface UserReserveData {
-    currentATokenBalance: string;
-    currentStableDebt: string;
-    currentVariableDebt: string;
-    principalStableDebt: string;
-    scaledVariableDebt: string;
-    stableBorrowRate: string;
-    liquidityRate: string;
-    stableRateLastUpdated: string;
-    usageAsCollateralEnabled: boolean;
-}
-
 const StrategySupplyBorrow = ({ vault, strategy }: IAllocationProps) => {
     const tokens = useSelector(selectTokensByChain);
 
@@ -34,49 +22,49 @@ const StrategySupplyBorrow = ({ vault, strategy }: IAllocationProps) => {
     const [supplyUSD, setSupplyUSD] = useState("");
     const [expectedSupplyUSD, setExpectedSupplyUSD] = useState("");
 
-    const [userReserveData, setUserReserveData] = useState<UserReserveData | null>(null);
+    // const [userReserveData, setUserReserveData] = useState<UserReserveData | null>(null);
 
     const { address } = useAccount();
     const provider = new ethers.BrowserProvider(window.ethereum as any);
 
-    useEffect(() => {
-        if (userReserveData && assetToken) {
-            const _supplyUSD = ((parseFloat(userReserveData.currentATokenBalance) * assetToken.usd).toFixed(2)).toLocaleString();
+    // useEffect(() => {
+    //     if (userReserveData && assetToken) {
+    //         const _supplyUSD = ((parseFloat(userReserveData.currentATokenBalance) * assetToken.usd).toFixed(2)).toLocaleString();
 
-            const actualAllocate = parseFloat(strategy.actualAllocatedBPS) / 10000;
-            const _expectedSupplyUSD = ((vault.lastSnapShot.usd.tvl * actualAllocate).toFixed(2)).toLocaleString();
-            setSupplyUSD(_supplyUSD);
-            setExpectedSupplyUSD(_expectedSupplyUSD);
-        }
-    }, [userReserveData, assetToken, vault])
+    //         const actualAllocate = parseFloat(strategy.actualAllocatedBPS) / 10000;
+    //         const _expectedSupplyUSD = ((vault.lastSnapShot.usd.tvl * actualAllocate).toFixed(2)).toLocaleString();
+    //         setSupplyUSD(_supplyUSD);
+    //         setExpectedSupplyUSD(_expectedSupplyUSD);
+    //     }
+    // }, [userReserveData, assetToken, vault])
 
-    useEffect(() => {
-        (async () => {
-            if (strategy.dataProviderAddress) {
-                const signer = await provider.getSigner(address);
-                const contract = new ethers.Contract(strategy.dataProviderAddress, GRANARY_DATA_PROVIDER, signer);
+    // useEffect(() => {
+    //     (async () => {
+    //         if (strategy.dataProviderAddress) {
+    //             const signer = await provider.getSigner(address);
+    //             const contract = new ethers.Contract(strategy.dataProviderAddress, GRANARY_DATA_PROVIDER, signer);
     
-                // Call the getUserReservesData function
-                 const response = await contract.getUserReserveData(vault.asset, strategy.address); //op
+    //             // Call the getUserReservesData function
+    //              const response = await contract.getUserReserveData(vault.asset, strategy.address); //op
     
-                const data: UserReserveData = {
-                    currentATokenBalance: ethers.formatUnits(response.currentATokenBalance.toString(), vault.decimals).toString(),
-                    currentStableDebt: response.currentStableDebt.toString(),
-                    currentVariableDebt: response.currentVariableDebt.toString(),
-                    principalStableDebt: response.principalStableDebt.toString(),
-                    scaledVariableDebt: response.scaledVariableDebt.toString(),
-                    stableBorrowRate: response.stableBorrowRate.toString(),
-                    liquidityRate: response.liquidityRate.toString(),
-                    stableRateLastUpdated: response.stableRateLastUpdated.toString(),
-                    usageAsCollateralEnabled: response.usageAsCollateralEnabled,
-                };
+    //             const data: UserReserveData = {
+    //                 currentATokenBalance: ethers.formatUnits(response.currentATokenBalance.toString(), vault.decimals).toString(),
+    //                 currentStableDebt: response.currentStableDebt.toString(),
+    //                 currentVariableDebt: response.currentVariableDebt.toString(),
+    //                 principalStableDebt: response.principalStableDebt.toString(),
+    //                 scaledVariableDebt: response.scaledVariableDebt.toString(),
+    //                 stableBorrowRate: response.stableBorrowRate.toString(),
+    //                 liquidityRate: response.liquidityRate.toString(),
+    //                 stableRateLastUpdated: response.stableRateLastUpdated.toString(),
+    //                 usageAsCollateralEnabled: response.usageAsCollateralEnabled,
+    //             };
     
-                console.log(data);
-                setUserReserveData(data);
-            }
-        })()
+    //             console.log(data);
+    //             setUserReserveData(data);
+    //         }
+    //     })()
 
-    }, [strategy.dataProviderAddress]);
+    // }, [strategy.dataProviderAddress]);
 
     return (
         <div className='grid grid-cols-12 col-span-5 bg-white border border-gray-200 mb-8'>
@@ -84,7 +72,7 @@ const StrategySupplyBorrow = ({ vault, strategy }: IAllocationProps) => {
                 <div className='p-3 text-gray-800 items-center'>
                     <div className='font-bold'>Supply and Borrow</div>
                 </div>
-                {!strategy?.dataProviderAddress &&
+                {/* {!strategy?.dataProviderAddress &&
                     <div className='text-md text-center py-10 text-gray-400'>
                         No Data Provider Found
                     </div>
@@ -119,7 +107,7 @@ const StrategySupplyBorrow = ({ vault, strategy }: IAllocationProps) => {
                         <div className='col-span-6'>liquidityRate</div>
                         <div className='col-span-6'>{userReserveData.liquidityRate}</div>
                     </div>
-                </div>}
+                </div>} */}
             </div>
         </div>
     );

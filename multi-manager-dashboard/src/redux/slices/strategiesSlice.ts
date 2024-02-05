@@ -33,6 +33,22 @@ export interface StrategyProtocol {
   fork: string;
 }
 
+export interface GranaryData {
+  userReserveData?: GranaryUserReserveData;
+}
+
+export interface GranaryUserReserveData {
+  currentATokenBalance: string;
+  currentStableDebt: string;
+  currentVariableDebt: string;
+  principalStableDebt: string;
+  scaledVariableDebt: string;
+  stableBorrowRate: string;
+  liquidityRate: string;
+  stableRateLastUpdated: string;
+  usageAsCollateralEnabled: boolean;
+}
+
 export interface Strategy {
   _id: string;
   address: string;
@@ -65,10 +81,11 @@ export interface Strategy {
   addressProviderAddress?: string;
   swapperAddress?: string;
   rewarderAddress?: string;
-  supplied?: number;
-  borrowed?: number;
+  supplied?: string;
+  borrowed?: string;
   pendingRewards?: number;
   timeSinceLastHarvest?: number;
+  granary?: GranaryData;
 }
 
 

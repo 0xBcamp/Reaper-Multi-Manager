@@ -3,6 +3,8 @@ import { Strategy, StrategyReport } from "../redux/slices/strategiesSlice";
 import { Vault } from "../redux/slices/vaultsSlice";
 import { DEFAULT_STD_DEV_THRESHOLD, TWO_UNIX_DAYS } from "./constants";
 import { calculateDataWithThreshold, calculateStrategyAPR } from "./calculateStrategyAPR";
+import { ProtocolFork } from "../enums";
+import { ethers } from "ethers";
 
 export const calculateVaultHealthScore = (vaultStrategies: Strategy[]) => {
   try {
@@ -33,7 +35,7 @@ export const calculateVaultHealthScore = (vaultStrategies: Strategy[]) => {
 
 export const processVaults = (vaultsData: Vault[]) => {
   return vaultsData.map(vault => {
-    const strategiesWithUpdatedApr = processStrategies(vault.strategies || []);
+    const strategiesWithUpdatedApr = processStrategies(vault, vault.strategies || []);
     const vaultAPRValues = calculateVaultAPRValues(vault, strategiesWithUpdatedApr);
 
     return {
@@ -44,8 +46,8 @@ export const processVaults = (vaultsData: Vault[]) => {
   });
 };
 
-const processStrategies = (strategies: Strategy[]) => {
-  return strategies.map(strategy => {
+const processStrategies = (vault: Vault, strategies: Strategy[]) => {
+  return strategies.filter(x => x.isActive).map(strategy => {
     const updatedAprReports = strategy.aprReports.map(report => ({
       ...report,
       apr: calculateStrategyReportApr(report)
@@ -55,6 +57,26 @@ const processStrategies = (strategies: Strategy[]) => {
 
     // Calculate the time since the last harvest with no decimals
     const timeSinceLastHarvest = strategy.lastReport ? Math.floor(new Date().getTime()/1000 - strategy.lastReport.reportDate) : 0;
+
+    let supplied: string;
+    let borrowed: string;
+    if (strategy?.protocol?.fork === ProtocolFork.Granary) {
+      supplied = strategy.granary?.userReserveData ? ethers.formatUnits(strategy.granary?.userReserveData.currentATokenBalance.toString(), vault.decimals).toString() : null;
+      if (supplied) {
+        supplied = parseFloat(supplied).toFixed(3).toString();
+        if (supplied.startsWith("0")) {
+          supplied = "0";
+        }
+      }
+
+      borrowed = strategy.granary?.userReserveData ? ethers.formatUnits(strategy.granary?.userReserveData.currentVariableDebt.toString(), vault.decimals).toString() : null;
+      if (borrowed) {
+        borrowed = parseFloat(borrowed).toFixed(3).toString();
+        if (borrowed.startsWith("0")) {
+          borrowed = "0";
+        }
+      }
+    }
 
     const strategyWithOptimumValues = {
       ...strategy,
@@ -66,7 +88,9 @@ const processStrategies = (strategies: Strategy[]) => {
         }
       },
       aprReports: updatedAprReports,
-      timeSinceLastHarvest
+      timeSinceLastHarvest,
+      supplied,
+      borrowed
     }
 
     return strategyWithOptimumValues;

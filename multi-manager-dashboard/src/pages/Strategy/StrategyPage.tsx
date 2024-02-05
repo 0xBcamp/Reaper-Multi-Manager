@@ -9,7 +9,7 @@ import { sortTimestampByProp } from '../../utils/data/sortByProp';
 import StrategyAprSummary from '../../components/cards/StrategyAprSummary';
 import StrategyAllocations from './components/StrategyAllocations';
 import SnapshotsCardArea from '../../components/SnapshotCard/SnapshotsCardArea';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { toast } from 'react-toastify';
 import { processEvents } from '../../services/appService';
@@ -21,6 +21,9 @@ import Tooltip from '../../components/Tooltip';
 import StrategySupplyBorrow from './components/StrategySupplyBorrow';
 import GranaryAddresses from './components/granary/GranaryAddresses';
 import GranaryRewards from './components/granary/GranaryRewards';
+import { GRANARY_DATA_PROVIDER } from '../../abi/GranaryDataProvider';
+import { UserReserveData, addUserReserveData } from '../../services/strategyService';
+import { ProtocolFork } from '../../enums';
 
 const StrategyPage = () => {
     let { vaultAddress } = useParams();
@@ -32,8 +35,6 @@ const StrategyPage = () => {
     const vault = useSelector(selectVault);
     const chain = useSelector(selectChain);
 
-    console.log("chain", chain)
-
     dispatch(setSelectedVaultAddress(vaultAddress));
     dispatch(setSelectedStrategyAddress(strategyAddress));
 
@@ -41,6 +42,36 @@ const StrategyPage = () => {
 
     const { address } = useAccount();
     const provider = new ethers.BrowserProvider(window.ethereum as any);
+
+    useEffect(() => {
+        (async () => {
+            if (strategy?.dataProviderAddress && strategy?.protocol?.fork === ProtocolFork.Granary) {
+                const signer = await provider.getSigner(address);
+                const contract = new ethers.Contract(strategy.dataProviderAddress, GRANARY_DATA_PROVIDER, signer);
+
+                // Call the getUserReservesData function
+                const response = await contract.getUserReserveData(vault.asset, strategy.address); //op
+
+                const data: UserReserveData = {
+                    // currentATokenBalance: ethers.formatUnits(response.currentATokenBalance.toString(), vault.decimals).toString(),
+                    currentATokenBalance: response.currentATokenBalance.toString(),
+                    currentStableDebt: response.currentStableDebt.toString(),
+                    currentVariableDebt: response.currentVariableDebt.toString(),
+                    principalStableDebt: response.principalStableDebt.toString(),
+                    scaledVariableDebt: response.scaledVariableDebt.toString(),
+                    stableBorrowRate: response.stableBorrowRate.toString(),
+                    liquidityRate: response.liquidityRate.toString(),
+                    stableRateLastUpdated: response.stableRateLastUpdated.toString(),
+                    usageAsCollateralEnabled: response.usageAsCollateralEnabled,
+                };
+
+                console.log(data);
+                const results = await addUserReserveData(strategy._id, data);
+                dispatch(setLastRefetch());
+            }
+        })()
+
+    }, [strategy?.dataProviderAddress]);
 
     return (
         <>
@@ -113,15 +144,15 @@ const StrategyPage = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-12 gap-4 px-4 pt-4">
-                    <div className='h-full col-span-4'>
+                    {/* <div className='h-full col-span-4'>
                         {strategy.protocol.fork === "Granary" && <StrategySupplyBorrow vault={vault} strategy={strategy} />}
-                    </div>
+                    </div> */}
                     <div className='h-full col-span-3'>
                         {strategy.protocol.fork === "Granary" && <GranaryAddresses vault={vault} strategy={strategy} />}
                     </div>
-                    <div className='col-span-3'>
+                    {/* <div className='col-span-3'>
                         {strategy.protocol.fork === "Granary" && <GranaryRewards vault={vault} strategy={strategy} />}
-                    </div>
+                    </div> */}
                 </div>
                 <div className='flex px-4 pt-2'>
                     {strategy && <DataGrid data={sortTimestampByProp(strategy.aprReports, "reportDate", "desc")} columns={getStrategyReportColumns(vault)} heading='Strategy Reports' />}
