@@ -43,9 +43,11 @@ const ProgressBar = ({ title, percentage, percentageDisplay, showPercentage = tr
 
     const colorClasses = getColorClasses();
 
+    const verticalClassName = isDashboardShowDetails ? `relative h-[150px] w-3 ${colorClasses.bg}` : `relative h-[95px] w-3 ${colorClasses.bg}`
+
     if (vertical) {
         return (
-            <div className={`relative h-[${isDashboardShowDetails ? "150px" : "95px"}] w-3 ${colorClasses.bg}`}>
+            <div className={verticalClassName}>
                 <div
                     style={{ height: `${percentage}%` }}
                     className={`absolute bottom-0 w-full ${colorClasses.progress}`}
